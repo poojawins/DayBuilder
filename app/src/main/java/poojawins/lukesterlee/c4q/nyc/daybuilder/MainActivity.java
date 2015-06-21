@@ -7,6 +7,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ListView;
 
+import com.squareup.picasso.Picasso;
+
 
 public class MainActivity extends ActionBarActivity {
 
@@ -21,9 +23,7 @@ public class MainActivity extends ActionBarActivity {
 
         updateData();
 
-        ListView m;
 
-        CardView c;
 
     }
 
