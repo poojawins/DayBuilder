@@ -4,6 +4,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ListView;
 
 
 public class MainActivity extends ActionBarActivity {
@@ -12,6 +13,49 @@ public class MainActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        initializeViews();
+        
+        initializeData();
+
+        updateData();
+
+
+    }
+
+    private void setUpListeners(boolean isResumed) {
+        if (!isResumed) {
+
+        } else {
+
+        }
+
+    }
+
+    private void initializeViews() {
+
+    }
+
+    private void initializeData() {
+
+
+    }
+
+    // TODO : every time the app starts, update all the card information.
+    private void updateData() {
+
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        setUpListeners(false);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        setUpListeners(true);
     }
 
     @Override
