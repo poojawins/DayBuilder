@@ -82,7 +82,8 @@ Features
 2. create our own custom adapterview
 3. create our own custom adapter
 4. choose our product name
-5. 
+5. learn Picasso
+6. Learn Retrofit(json parsing)
 
 # Resources
 
