@@ -79,11 +79,14 @@ Features
 # THINGS TO DO
 
 1. choose our team name
-2. create our own custom adapterview
-3. create our own custom adapter
+2. learn RecycleView
+3. learn CardView
+4. create our own custom adapter
 4. choose our product name
-5. 
+5. learn Picasso
+6. Learn Retrofit(json parsing)
 
 # Resources
 
 1. this is for back up : https://github.com/nhaarman/ListViewAnimations
+2. cardview and recyleview : http://code.tutsplus.com/tutorials/getting-started-with-recyclerview-and-cardview-on-android--cms-23465
