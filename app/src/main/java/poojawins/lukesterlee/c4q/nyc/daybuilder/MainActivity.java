@@ -5,12 +5,15 @@ import android.os.Bundle;
 import android.support.v7.widget.CardView;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.ListView;
-
 import com.squareup.picasso.Picasso;
 
 
 public class MainActivity extends ActionBarActivity {
+
+    CardView mCardViewWeather;
+    CardView mCardViewTodo;
+    CardView mCardViewStock;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,8 +25,6 @@ public class MainActivity extends ActionBarActivity {
         initializeData();
 
         updateData();
-
-
 
     }
 
@@ -37,7 +38,9 @@ public class MainActivity extends ActionBarActivity {
     }
 
     private void initializeViews() {
-
+        mCardViewWeather = (CardView) findViewById(R.id.card_view_weather);
+        mCardViewTodo = (CardView) findViewById(R.id.card_view_todo);
+        mCardViewStock = (CardView) findViewById(R.id.card_view_stock);
     }
 
     private void initializeData() {
