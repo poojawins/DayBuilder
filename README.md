@@ -72,9 +72,9 @@ Features
 
 1. Todo list that stores/retrieves a file locally.
 2. Weather card, customized to user's location (can use zip code, GPS, etc) [Pooja]
-3. TBD [Luke]
-4. Notifications
-5. 
+3. Stock Markets
+4. Dark Sky API with Notifications
+
 
 # THINGS TO DO
 
