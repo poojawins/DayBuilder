@@ -2,6 +2,7 @@ package poojawins.lukesterlee.c4q.nyc.daybuilder;
 
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.widget.CardView;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ListView;
@@ -15,11 +16,14 @@ public class MainActivity extends ActionBarActivity {
         setContentView(R.layout.activity_main);
 
         initializeViews();
-        
+
         initializeData();
 
         updateData();
 
+        ListView m;
+
+        CardView c;
 
     }
 
