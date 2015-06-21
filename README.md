@@ -83,3 +83,7 @@ Features
 3. create our own custom adapter
 4. choose our product name
 5. 
+
+# Resources
+
+1. this is for back up : https://github.com/nhaarman/ListViewAnimations
