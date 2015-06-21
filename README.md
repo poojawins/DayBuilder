@@ -87,3 +87,4 @@ Features
 # Resources
 
 1. this is for back up : https://github.com/nhaarman/ListViewAnimations
+2. cardview and recyleview : http://code.tutsplus.com/tutorials/getting-started-with-recyclerview-and-cardview-on-android--cms-23465
