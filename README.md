@@ -74,3 +74,12 @@ Features
 2. Weather card, customized to user's location (can use zip code, GPS, etc) [Pooja]
 3. TBD [Luke]
 4. Notifications
+5. 
+
+# THINGS TO DO
+
+1. choose our team name
+2. create our own custom adapterview
+3. create our own custom adapter
+4. choose our product name
+5. 
