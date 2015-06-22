@@ -7,6 +7,32 @@ import android.view.Menu;
 import android.view.MenuItem;
 import com.squareup.picasso.Picasso;
 
+/*
+ * C4Q Access Code 2.1 Unit 2 Final Project
+ *
+ * Rules
+ * 1. always "git pull origin master" first before starting to work
+ * 2. push to master only when the code is working
+ * 3. keep refactoring each other's code
+ *
+ * Basic Requirements
+ * TODO : todo feature (Luke)
+ * TODO : stock market card (Luke)
+ * TODO : weather card (Pooja)
+ * TODO : dark sky API with notifications (Pooja)
+ *
+ * Bonus
+ * TODO : animation - swipe to remove a card
+ * TODO : animation - pull to refresh
+ * TODO : animation - infinite scrolling
+ * TODO : songza API
+ *
+ * ETC
+ * TODO : choose our team name
+ * TODO : choose our product name
+ * TODO : complete readme documentation
+ * TODO : prepare Demo Day
+ */
 
 public class MainActivity extends ActionBarActivity {
 
