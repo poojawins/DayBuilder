@@ -75,6 +75,10 @@ Features
 3. Stock Markets
 4. Dark Sky API with Notifications
 
+# Rules
+1. always "git pull origin master" first before starting to work
+2. push to master only when the code is working
+3. keep refactoring each other's code
 
 # THINGS TO DO
 
