@@ -1,11 +1,26 @@
 package poojawins.lukesterlee.c4q.nyc.daybuilder;
 
+import android.content.Intent;
+import android.os.AsyncTask;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.support.v7.widget.CardView;
 import android.view.Menu;
 import android.view.MenuItem;
-import com.squareup.picasso.Picasso;
+import android.view.View;
+import android.widget.Button;
+import android.widget.ListView;
+
+import org.json.JSONException;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Set;
+
+import poojawins.lukesterlee.c4q.nyc.daybuilder.stock.StockDialogActivity;
+import poojawins.lukesterlee.c4q.nyc.daybuilder.stock.Stock;
+import poojawins.lukesterlee.c4q.nyc.daybuilder.stock.StockAdapter;
+import poojawins.lukesterlee.c4q.nyc.daybuilder.stock.StocksGetter;
 
 /*
  * C4Q Access Code 2.1 Unit 2 Final Project
@@ -20,16 +35,19 @@ import com.squareup.picasso.Picasso;
  * TODO : stock market card (Luke)
  * TODO : weather card (Pooja)
  * TODO : dark sky API with notifications (Pooja)
+ * TODO : create our app icon
  *
  * Bonus
+ * TODO : main screen takes up to status bar
  * TODO : animation - swipe to remove a card
  * TODO : animation - pull to refresh
  * TODO : animation - infinite scrolling
+ * TODO : add Google search bar with Ok Google
  * TODO : songza API
  *
  * ETC
- * TODO : choose our team name
- * TODO : choose our product name
+ * TODO : choose our team name :
+ * TODO : choose our product name : C4Q Now
  * TODO : complete readme documentation
  * TODO : prepare Demo Day
  */
@@ -40,6 +58,14 @@ public class MainActivity extends ActionBarActivity {
     CardView mCardViewTodo;
     CardView mCardViewStock;
 
+    private static final String JSON_STOCK_ENDPOINT = "http://finance.google.com/finance/info?client=ig&q=GOOG";
+    private static final String TICKERS_KEY = "tickers";
+
+    ListView mListViewStock;
+    Button mButtonStockRefresh;
+    Button mButtonStockAdd;
+    private static Set<String> tickersList = null;
+    StockAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,18 +74,32 @@ public class MainActivity extends ActionBarActivity {
 
         initializeViews();
 
-        initializeData();
-
-        updateData();
 
     }
 
     private void setUpListeners(boolean isResumed) {
         if (!isResumed) {
-
+            mButtonStockAdd.setOnClickListener(null);
+            mButtonStockRefresh.setOnClickListener(null);
         } else {
+            mButtonStockRefresh.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
 
+                }
+            });
+            mButtonStockAdd.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(MainActivity.this, StockDialogActivity.class);
+                    startActivity(intent);
+                }
+            });
         }
+
+    }
+
+    private void refreshStockData() {
 
     }
 
@@ -67,10 +107,15 @@ public class MainActivity extends ActionBarActivity {
         mCardViewWeather = (CardView) findViewById(R.id.card_view_weather);
         mCardViewTodo = (CardView) findViewById(R.id.card_view_todo);
         mCardViewStock = (CardView) findViewById(R.id.card_view_stock);
+        mListViewStock = (ListView) findViewById(R.id.listView_stock);
+        mButtonStockAdd = (Button) findViewById(R.id.button_stock_add);
+        mButtonStockRefresh = (Button) findViewById(R.id.button_stock_refresh);
     }
 
     private void initializeData() {
 
+//        SharedPreferences sharedPreferences = MainActivity.this.getPreferences(Context.MODE_PRIVATE);
+//        tickersList = sharedPreferences.getStringSet(TICKERS_KEY, null);
 
     }
 
@@ -88,6 +133,9 @@ public class MainActivity extends ActionBarActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        initializeData();
+        updateData();
+        new StockTask().execute();
         setUpListeners(true);
     }
 
@@ -111,5 +159,31 @@ public class MainActivity extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private class StockTask extends AsyncTask<Void, Void, List<Stock>> {
+
+        @Override
+        protected List<Stock> doInBackground(Void... params) {
+            String jsonUrl = JSON_STOCK_ENDPOINT;
+            if (tickersList != null) {
+
+            }
+            jsonUrl += ",AAPL,HMC,GE,VZ";
+            try {
+                return new StocksGetter(jsonUrl).getStocksList();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(List<Stock> stocks) {
+            adapter = new StockAdapter(MainActivity.this, stocks);
+            mListViewStock.setAdapter(adapter);
+        }
     }
 }
