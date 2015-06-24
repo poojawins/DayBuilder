@@ -1,99 +1,108 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    android:paddingBottom="@dimen/activity_vertical_margin" tools:context=".MainActivity">
+    android:layout_height="wrap_content">
 
-
-    <android.support.v7.widget.CardView
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/card_view_weather"
-
-        />
-
-    <android.support.v7.widget.CardView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/card_view_todo"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:paddingTop="@dimen/activity_vertical_margin"
+        android:paddingBottom="@dimen/activity_vertical_margin" tools:context=".MainActivity">
 
 
-        />
 
 
-    <android.support.v7.widget.CardView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/card_view_stock">
 
-        <LinearLayout
-            android:orientation="vertical"
+        <android.support.v7.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="8dp">
+            android:id="@+id/card_view_weather"
+
+            />
+
+        <android.support.v7.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/card_view_todo"
+
+
+            />
+
+
+        <android.support.v7.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/card_view_stock">
 
             <LinearLayout
                 android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="8dp"
-                android:id="@+id/stock_header">
+                android:padding="8dp">
 
-                <TextView
+                <LinearLayout
+                    android:orientation="vertical"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:fontFamily="sans-serif-thin"
-                    android:text="@string/stock_title"
-                    android:textSize="40sp"
-                    android:id="@+id/stock_title"/>
+                    android:padding="8dp"
+                    android:id="@+id/stock_header">
 
-                <TextView
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="sans-serif-thin"
+                        android:text="@string/stock_title"
+                        android:textSize="40sp"
+                        android:id="@+id/stock_title"/>
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+
+                        android:text="@string/stock_update"
+                        android:id="@+id/stock_update"/>
+
+
+                </LinearLayout>
+
+                <ListView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-
-                    android:text="@string/stock_update"
-                    android:id="@+id/stock_update"/>
+                    android:id="@+id/listView_stock">
 
 
-            </LinearLayout>
-
-            <ListView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/listView_stock">
+                </ListView>
 
 
-            </ListView>
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
 
+                    <Button
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:id="@+id/button_stock_refresh"
+                        android:textColor="@color/white"
+                        android:text="@string/stock_refresh"
+                        android:background="@color/green"
+                        android:drawableLeft="@drawable/ic_action_refresh"/>
 
-            <LinearLayout
-                android:orientation="horizontal"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <Button
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:id="@+id/button_stock_refresh"
-                    android:textColor="@color/white"
-                    android:text="@string/stock_refresh"
-                    android:background="@color/green"
-                    android:drawableLeft="@drawable/ic_action_refresh"/>
-
-                <Button
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:id="@+id/button_stock_add"
-                    android:textColor="@color/white"
-                    android:text="@string/stock_add"
-                    android:background="@color/blue"
-                    android:drawableLeft="@drawable/ic_action_new"/>
+                    <Button
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:id="@+id/button_stock_add"
+                        android:textColor="@color/white"
+                        android:text="@string/stock_add"
+                        android:background="@color/blue"
+                        android:drawableLeft="@drawable/ic_action_new"/>
 
                 </LinearLayout>
 
@@ -101,7 +110,7 @@
 
 
 
-        </LinearLayout>
+            </LinearLayout>
 
 
         </android.support.v7.widget.CardView>
@@ -114,4 +123,10 @@
 
 
 
-</LinearLayout>
+    </LinearLayout>
+
+
+
+</ScrollView>
+
+
