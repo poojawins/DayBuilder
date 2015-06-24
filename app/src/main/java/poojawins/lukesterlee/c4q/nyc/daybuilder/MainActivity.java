@@ -5,6 +5,7 @@ import android.os.AsyncTask;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.support.v7.widget.CardView;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -56,6 +57,8 @@ public class MainActivity extends ActionBarActivity {
     private static final String JSON_STOCK_ENDPOINT = "http://finance.google.com/finance/info?client=ig&q=GOOG";
     private static final String TICKERS_KEY = "tickers";
 
+
+    // Stock view stuffs
     ListView mListViewStock;
     Button mButtonStockRefresh;
     Button mButtonStockAdd;
@@ -80,6 +83,8 @@ public class MainActivity extends ActionBarActivity {
             mButtonStockRefresh.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    LayoutInflater inflater = (LayoutInflater) MainActivity.this.getSystemService(LAYOUT_INFLATER_SERVICE);
+                    inflater.inflate(R.layout.list_item_stock, )
 
                 }
             });
@@ -165,7 +170,7 @@ public class MainActivity extends ActionBarActivity {
             if (tickersList != null) {
 
             }
-            jsonUrl += ",AAPL,HMC,GE,VZ";
+            jsonUrl += ",HMC,GE,VZ";
             try {
                 return new StocksGetter(jsonUrl).getStocksList();
             } catch (IOException e) {
