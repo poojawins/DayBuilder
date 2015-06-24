@@ -1,4 +1,4 @@
-package poojawins.lukesterlee.c4q.nyc.daybuilder.stock;
+package poojawins.lukesterlee.c4q.nyc.daybuilder;
 
 import android.content.Context;
 

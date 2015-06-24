@@ -16,14 +16,14 @@
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
-                <ticker android:name="android.intent.ticker.LAUNCHER" />
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
         <activity
             android:screenOrientation="portrait"
             android:theme="@android:style/Theme.Holo.Light.Dialog"
-            android:name=".stock.StockDialogActivity"
+            android:name=".StockDialogActivity"
             android:label="@string/title_dialog" >
 
         </activity>

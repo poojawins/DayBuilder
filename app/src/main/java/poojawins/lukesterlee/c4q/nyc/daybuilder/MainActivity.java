@@ -17,11 +17,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 
-import poojawins.lukesterlee.c4q.nyc.daybuilder.stock.StockDialogActivity;
-import poojawins.lukesterlee.c4q.nyc.daybuilder.stock.Stock;
-import poojawins.lukesterlee.c4q.nyc.daybuilder.stock.StockAdapter;
-import poojawins.lukesterlee.c4q.nyc.daybuilder.stock.StocksGetter;
-
 /*
  * C4Q Access Code 2.1 Unit 2 Final Project
  *

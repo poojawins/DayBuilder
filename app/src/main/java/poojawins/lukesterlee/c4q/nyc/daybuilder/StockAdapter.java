@@ -1,4 +1,4 @@
-package poojawins.lukesterlee.c4q.nyc.daybuilder.stock;
+package poojawins.lukesterlee.c4q.nyc.daybuilder;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -8,8 +8,6 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import java.util.List;
-
-import poojawins.lukesterlee.c4q.nyc.daybuilder.R;
 
 /**
  * Created by Luke on 6/22/2015.

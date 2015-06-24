@@ -1,4 +1,4 @@
-package poojawins.lukesterlee.c4q.nyc.daybuilder.stock;
+package poojawins.lukesterlee.c4q.nyc.daybuilder;
 
 /**
  * Created by Luke on 6/22/2015.

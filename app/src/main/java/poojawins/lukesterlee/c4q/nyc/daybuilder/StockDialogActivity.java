@@ -1,24 +1,18 @@
-package poojawins.lukesterlee.c4q.nyc.daybuilder.stock;
+package poojawins.lukesterlee.c4q.nyc.daybuilder;
 
 import android.app.Activity;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.ListView;
 
-import java.util.ArrayList;
 import java.util.List;
-
-import poojawins.lukesterlee.c4q.nyc.daybuilder.R;
 
 /**
  * Created by Luke on 6/22/2015.
