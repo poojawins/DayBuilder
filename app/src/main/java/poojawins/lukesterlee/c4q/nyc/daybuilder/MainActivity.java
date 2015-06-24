@@ -10,7 +10,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import org.json.JSONException;
 
@@ -57,19 +59,23 @@ public class MainActivity extends ActionBarActivity {
     private static final String JSON_STOCK_ENDPOINT = "http://finance.google.com/finance/info?client=ig&q=GOOG";
     private static final String TICKERS_KEY = "tickers";
 
+    LayoutInflater inflater;
 
     // Stock view stuffs
+    LinearLayout mLinearLayoutParent;
     ListView mListViewStock;
     Button mButtonStockRefresh;
     Button mButtonStockAdd;
     private static Set<String> tickersList = null;
     StockAdapter adapter;
+    int stockCount;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        inflater = (LayoutInflater) MainActivity.this.getSystemService(LAYOUT_INFLATER_SERVICE)
+        stockCount = 0;
         initializeViews();
 
 
@@ -83,9 +89,12 @@ public class MainActivity extends ActionBarActivity {
             mButtonStockRefresh.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    LayoutInflater inflater = (LayoutInflater) MainActivity.this.getSystemService(LAYOUT_INFLATER_SERVICE);
-                    inflater.inflate(R.layout.list_item_stock, )
 
+                    View row = inflater.inflate(R.layout.list_item_stock, null);
+                    TextView company = (TextView) row.findViewById(R.id.stock_company_name);
+                    company.setText("Hello");
+                    int index = mLinearLayoutParent.getChildCount();
+                    mLinearLayoutParent.addView(row, index-1);
                 }
             });
             mButtonStockAdd.setOnClickListener(new View.OnClickListener() {
@@ -111,6 +120,7 @@ public class MainActivity extends ActionBarActivity {
         mListViewStock = (ListView) findViewById(R.id.listView_stock);
         mButtonStockAdd = (Button) findViewById(R.id.button_stock_add);
         mButtonStockRefresh = (Button) findViewById(R.id.button_stock_refresh);
+        mLinearLayoutParent = (LinearLayout) findViewById(R.id.stock_parent);
     }
 
     private void initializeData() {
@@ -183,6 +193,8 @@ public class MainActivity extends ActionBarActivity {
 
         @Override
         protected void onPostExecute(List<Stock> stocks) {
+
+
             adapter = new StockAdapter(MainActivity.this, stocks);
             mListViewStock.setAdapter(adapter);
         }
