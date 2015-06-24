@@ -8,4 +8,5 @@
     <string name="stock_add">Add</string>
     <string name="stock_refresh">refresh</string>
     <string name="title_dialog">Add a stock</string>
+    <string name="title_todo">Things to do</string>
 </resources>
