@@ -101,6 +101,7 @@ public class MainActivity extends ActionBarActivity {
 
     private void refreshStockData() {
 
+
     }
 
     private void initializeViews() {
