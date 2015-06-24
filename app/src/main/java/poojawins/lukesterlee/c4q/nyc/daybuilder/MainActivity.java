@@ -45,7 +45,7 @@ import java.util.Set;
  *
  * ETC
  * TODO : choose our team name :
- * TODO : choose our product name : C4Q Now
+ * TODO : choose our product name : C4Q Now, DayBuilder
  * TODO : complete readme documentation
  * TODO : prepare Demo Day
  */
