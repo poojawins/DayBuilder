@@ -68,9 +68,5 @@ public class NoScrollAdapter<T> {
 
     }
 
-    public void addSingleStockView(List<T> mList) {
-
-    }
-
 
 }

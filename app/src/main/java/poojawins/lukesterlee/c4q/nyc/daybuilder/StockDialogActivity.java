@@ -1,6 +1,7 @@
 package poojawins.lukesterlee.c4q.nyc.daybuilder;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -79,6 +80,10 @@ public class StockDialogActivity extends Activity {
                 Set<String> list = sp.getStringSet(SHARED_PREFERENCES_STOCK_KEY, new TreeSet<String>());
                 list.add(stock);
                 editor.putStringSet(SHARED_PREFERENCES_STOCK_KEY, list);
+                editor.commit();
+
+                Intent intent = new Intent(StockDialogActivity.this, MainActivity.class);
+                startActivity(intent);
             }
         });
 

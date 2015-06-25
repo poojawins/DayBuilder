@@ -75,8 +75,7 @@ public class MainActivity extends ActionBarActivity {
         setContentView(R.layout.activity_main);
 
         initializeViews();
-        fetchDataFromSharedPreferences();
-        new StockTask().execute(stocksList);
+
 
     }
 
@@ -107,7 +106,7 @@ public class MainActivity extends ActionBarActivity {
     private void fetchDataFromSharedPreferences() {
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         stocksList = sp.getStringSet(SHARED_PREFERENCES_STOCK_KEY, new TreeSet<String>());
-
+        
     }
 
 
@@ -131,8 +130,8 @@ public class MainActivity extends ActionBarActivity {
     @Override
     protected void onResume() {
         super.onResume();
-
-
+        fetchDataFromSharedPreferences();
+        new StockTask().execute(stocksList);
         setUpListeners(true);
     }
 
@@ -167,9 +166,11 @@ public class MainActivity extends ActionBarActivity {
             HashMap<String, String> stockNames = new HashMap<>();
             if (mList.size() > 0) {
                 for (String line : mList) {
-                    String[] lines = line.split("|");
-                    stockNames.put(lines[0], lines[1]);
-                    jsonUrl += "," + lines[0];
+                    int index = line.indexOf("|");
+                    String ticker = line.substring(0, index);
+                    String name = line.substring(index+1);
+                    stockNames.put(ticker, name);
+                    jsonUrl += "," + ticker;
                 }
             }
             try {
