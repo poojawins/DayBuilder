@@ -12,10 +12,13 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import org.json.JSONException;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
@@ -59,10 +62,15 @@ public class MainActivity extends ActionBarActivity {
 
     private static final String JSON_STOCK_ENDPOINT = "http://finance.google.com/finance/info?client=ig&q=GOOGL";
     private static final String SHARED_PREFERENCES_STOCK_KEY = "stock";
+    private static final String SHARED_PREFERENCES_TODO_KEY = "todo";
+
+
+    // to do view stuffs
 
 
     // Stock view stuffs
     LinearLayout mParentLayoutStock;
+    TextView mTextViewStockUpdate;
     Button mButtonStockRefresh;
     Button mButtonStockAdd;
     private static Set<String> stocksList;
@@ -106,7 +114,7 @@ public class MainActivity extends ActionBarActivity {
     private void fetchDataFromSharedPreferences() {
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         stocksList = sp.getStringSet(SHARED_PREFERENCES_STOCK_KEY, new TreeSet<String>());
-        
+
     }
 
 
@@ -117,6 +125,7 @@ public class MainActivity extends ActionBarActivity {
         mButtonStockAdd = (Button) findViewById(R.id.button_stock_add);
         mButtonStockRefresh = (Button) findViewById(R.id.button_stock_refresh);
         mParentLayoutStock = (LinearLayout) findViewById(R.id.stock_list_parent);
+        mTextViewStockUpdate = (TextView) findViewById(R.id.stock_update);
     }
 
 
@@ -168,7 +177,7 @@ public class MainActivity extends ActionBarActivity {
                 for (String line : mList) {
                     int index = line.indexOf("|");
                     String ticker = line.substring(0, index);
-                    String name = line.substring(index+1);
+                    String name = line.substring(index + 1);
                     stockNames.put(ticker, name);
                     jsonUrl += "," + ticker;
                 }
@@ -185,6 +194,7 @@ public class MainActivity extends ActionBarActivity {
 
         @Override
         protected void onPostExecute(List<Stock> stocks) {
+            mTextViewStockUpdate.setText("Last Update : " + new SimpleDateFormat("HH:mm").format(new Date()));
             stockAdapter = new NoScrollAdapter<>(MainActivity.this, mParentLayoutStock, R.layout.list_item_stock);
             stockAdapter.addStockViews(stocks);
 

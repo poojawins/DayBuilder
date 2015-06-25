@@ -32,6 +32,7 @@ public class StockDialogActivity extends Activity {
 
     private static final String SHARED_PREFERENCES_STOCK_KEY = "stock";
 
+
     private Runnable runnable = new Runnable() {
         @Override
         public void run() {
@@ -80,7 +81,7 @@ public class StockDialogActivity extends Activity {
                 Set<String> list = sp.getStringSet(SHARED_PREFERENCES_STOCK_KEY, new TreeSet<String>());
                 list.add(stock);
                 editor.putStringSet(SHARED_PREFERENCES_STOCK_KEY, list);
-                editor.commit();
+                editor.apply();
 
                 Intent intent = new Intent(StockDialogActivity.this, MainActivity.class);
                 startActivity(intent);
