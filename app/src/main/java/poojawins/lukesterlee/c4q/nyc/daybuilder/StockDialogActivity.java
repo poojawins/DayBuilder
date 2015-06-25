@@ -1,9 +1,11 @@
 package poojawins.lukesterlee.c4q.nyc.daybuilder;
 
 import android.app.Activity;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
@@ -13,6 +15,8 @@ import android.widget.EditText;
 import android.widget.ListView;
 
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * Created by Luke on 6/22/2015.
@@ -24,6 +28,8 @@ public class StockDialogActivity extends Activity {
     ArrayAdapter<String> adapter;
 
     String userSearchInput = "";
+
+    private static final String SHARED_PREFERENCES_STOCK_KEY = "stock";
 
     private Runnable runnable = new Runnable() {
         @Override
@@ -68,7 +74,11 @@ public class StockDialogActivity extends Activity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 String stock = adapter.getItem(position);
-
+                SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                SharedPreferences.Editor editor = sp.edit();
+                Set<String> list = sp.getStringSet(SHARED_PREFERENCES_STOCK_KEY, new TreeSet<String>());
+                list.add(stock);
+                editor.putStringSet(SHARED_PREFERENCES_STOCK_KEY, list);
             }
         });
 
@@ -87,5 +97,9 @@ public class StockDialogActivity extends Activity {
             adapter = new ArrayAdapter<String>(StockDialogActivity.this, android.R.layout.simple_list_item_1, strings);
             mListView.setAdapter(adapter);
         }
+    }
+
+    public interface AddStockListener {
+        public void addStockClicked(String stock);
     }
 }

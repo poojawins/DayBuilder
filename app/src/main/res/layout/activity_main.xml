@@ -1,5 +1,5 @@
 
-<poojawins.lukesterlee.c4q.nyc.daybuilder.VerticalScrollView
+<ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -97,13 +97,15 @@
 
                 </LinearLayout>
 
-                <ListView
+                <LinearLayout
+                    android:id="@+id/stock_list_parent"
+                    android:orientation="vertical"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/listView_stock">
+                    android:layout_height="wrap_content">
 
 
-                </ListView>
+
+                    </LinearLayout>
 
 
                 <LinearLayout
@@ -154,6 +156,6 @@
 
 
 
-</poojawins.lukesterlee.c4q.nyc.daybuilder.VerticalScrollView>
+</ScrollView>
 
 

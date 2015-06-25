@@ -1,24 +1,25 @@
 package poojawins.lukesterlee.c4q.nyc.daybuilder;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
+import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.support.v7.widget.CardView;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
-import android.widget.ListView;
-import android.widget.TextView;
 
 import org.json.JSONException;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 
 /*
  * C4Q Access Code 2.1 Unit 2 Final Project
@@ -56,28 +57,26 @@ public class MainActivity extends ActionBarActivity {
     CardView mCardViewTodo;
     CardView mCardViewStock;
 
-    private static final String JSON_STOCK_ENDPOINT = "http://finance.google.com/finance/info?client=ig&q=GOOG";
-    private static final String TICKERS_KEY = "tickers";
+    private static final String JSON_STOCK_ENDPOINT = "http://finance.google.com/finance/info?client=ig&q=GOOGL";
+    private static final String SHARED_PREFERENCES_STOCK_KEY = "stock";
 
-    LayoutInflater inflater;
 
     // Stock view stuffs
-    LinearLayout mLinearLayoutParent;
-    ListView mListViewStock;
+    LinearLayout mParentLayoutStock;
     Button mButtonStockRefresh;
     Button mButtonStockAdd;
-    private static Set<String> tickersList = null;
-    StockAdapter adapter;
-    int stockCount;
+    private static Set<String> stocksList;
+    NoScrollAdapter<Stock> stockAdapter;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        inflater = (LayoutInflater) MainActivity.this.getSystemService(LAYOUT_INFLATER_SERVICE)
-        stockCount = 0;
-        initializeViews();
 
+        initializeViews();
+        fetchDataFromSharedPreferences();
+        new StockTask().execute(stocksList);
 
     }
 
@@ -89,12 +88,9 @@ public class MainActivity extends ActionBarActivity {
             mButtonStockRefresh.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    fetchDataFromSharedPreferences();
+                    new StockTask().execute(stocksList);
 
-                    View row = inflater.inflate(R.layout.list_item_stock, null);
-                    TextView company = (TextView) row.findViewById(R.id.stock_company_name);
-                    company.setText("Hello");
-                    int index = mLinearLayoutParent.getChildCount();
-                    mLinearLayoutParent.addView(row, index-1);
                 }
             });
             mButtonStockAdd.setOnClickListener(new View.OnClickListener() {
@@ -108,32 +104,23 @@ public class MainActivity extends ActionBarActivity {
 
     }
 
-    private void refreshStockData() {
-
+    private void fetchDataFromSharedPreferences() {
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        stocksList = sp.getStringSet(SHARED_PREFERENCES_STOCK_KEY, new TreeSet<String>());
 
     }
+
 
     private void initializeViews() {
         mCardViewWeather = (CardView) findViewById(R.id.card_view_weather);
         mCardViewTodo = (CardView) findViewById(R.id.card_view_todo);
         mCardViewStock = (CardView) findViewById(R.id.card_view_stock);
-        mListViewStock = (ListView) findViewById(R.id.listView_stock);
         mButtonStockAdd = (Button) findViewById(R.id.button_stock_add);
         mButtonStockRefresh = (Button) findViewById(R.id.button_stock_refresh);
-        mLinearLayoutParent = (LinearLayout) findViewById(R.id.stock_parent);
+        mParentLayoutStock = (LinearLayout) findViewById(R.id.stock_list_parent);
     }
 
-    private void initializeData() {
 
-//        SharedPreferences sharedPreferences = MainActivity.this.getPreferences(Context.MODE_PRIVATE);
-//        tickersList = sharedPreferences.getStringSet(TICKERS_KEY, null);
-
-    }
-
-    // TODO : every time the app starts, update all the card information.
-    private void updateData() {
-
-    }
 
     @Override
     protected void onPause() {
@@ -144,9 +131,8 @@ public class MainActivity extends ActionBarActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        initializeData();
-        updateData();
-        new StockTask().execute();
+
+
         setUpListeners(true);
     }
 
@@ -172,17 +158,22 @@ public class MainActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private class StockTask extends AsyncTask<Void, Void, List<Stock>> {
+    private class StockTask extends AsyncTask<Set<String>, Void, List<Stock>> {
 
         @Override
-        protected List<Stock> doInBackground(Void... params) {
+        protected List<Stock> doInBackground(Set<String>... params) {
+            Set<String> mList = params[0];
             String jsonUrl = JSON_STOCK_ENDPOINT;
-            if (tickersList != null) {
-
+            HashMap<String, String> stockNames = new HashMap<>();
+            if (mList.size() > 0) {
+                for (String line : mList) {
+                    String[] lines = line.split("|");
+                    stockNames.put(lines[0], lines[1]);
+                    jsonUrl += "," + lines[0];
+                }
             }
-            jsonUrl += ",HMC,GE,VZ";
             try {
-                return new StocksGetter(jsonUrl).getStocksList();
+                return new StocksGetter(jsonUrl, stockNames).getStocksList();
             } catch (IOException e) {
                 e.printStackTrace();
             } catch (JSONException e) {
@@ -193,10 +184,9 @@ public class MainActivity extends ActionBarActivity {
 
         @Override
         protected void onPostExecute(List<Stock> stocks) {
+            stockAdapter = new NoScrollAdapter<>(MainActivity.this, mParentLayoutStock, R.layout.list_item_stock);
+            stockAdapter.addStockViews(stocks);
 
-
-            adapter = new StockAdapter(MainActivity.this, stocks);
-            mListViewStock.setAdapter(adapter);
         }
     }
 }

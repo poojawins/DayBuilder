@@ -11,6 +11,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -22,8 +23,14 @@ public class StocksGetter {
 
     private String jsonUrl = "";
 
-    public StocksGetter(String jsonUrl) {
+    private HashMap<String, String> stockNames;
+
+    private static final String JSON_STOCK_ENDPOINT = "http://finance.google.com/finance/info?client=ig&q=";
+
+    public StocksGetter(String jsonUrl, HashMap<String, String> stockNames) {
         this.jsonUrl = jsonUrl;
+        this.stockNames = stockNames;
+        stockNames.put("GOOGL", "Google Inc.");
     }
 
     public String getJsonString() throws IOException {
@@ -66,7 +73,7 @@ public class StocksGetter {
             stock.setPrice(item.getString("l"));
             stock.setGrowth(item.getString("c"));
             stock.setPercentage(item.getString("cp"));
-
+            stock.setCompany(stockNames.get(stock.getTicker()));
             stocks.add(stock);
         }
 
