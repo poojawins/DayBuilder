@@ -112,8 +112,6 @@
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-
-                            android:text="@string/stock_update"
                             android:id="@+id/stock_update"/>
 
 
@@ -130,37 +128,15 @@
 
                     </LinearLayout>
 
-
-                    <LinearLayout
-                        android:orientation="vertical"
+                    <Button
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
+                        android:layout_height="wrap_content"
+                        android:id="@+id/button_stock_footer"
+                        android:textColor="@color/white"
+                        android:text="@string/stock_add"
+                        android:background="@color/blue"
+                        android:drawableLeft="@drawable/ic_add_white_18dp"/>
 
-                        <Button
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:id="@+id/button_stock_show_more"
-                            android:text="Show more"/>
-
-                        <Button
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:id="@+id/button_stock_refresh"
-                            android:textColor="@color/white"
-                            android:text="@string/stock_refresh"
-                            android:background="@color/green"
-                            android:drawableLeft="@drawable/ic_action_refresh"/>
-
-                        <Button
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:id="@+id/button_stock_add"
-                            android:textColor="@color/white"
-                            android:text="@string/stock_add"
-                            android:background="@color/blue"
-                            android:drawableLeft="@drawable/ic_action_new"/>
-
-                    </LinearLayout>
 
 
 

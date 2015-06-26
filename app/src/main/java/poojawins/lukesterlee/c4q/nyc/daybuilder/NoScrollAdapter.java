@@ -42,10 +42,13 @@ public class NoScrollAdapter<T> {
         return mList.get(position);
     }
 
-    public void addStockViews(List<T> mList) {
+    public void addStockViews(List<T> mList, boolean isRest) {
         this.mList = mList;
 
-        mParentLayout.removeAllViews();
+        if (!isRest) {
+            mParentLayout.removeAllViews();
+        }
+
 
         for (int i = 0; i < mList.size(); i++) {
             View row = inflater.inflate(mLayoutResource, null);
