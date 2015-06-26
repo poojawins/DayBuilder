@@ -1,6 +1,7 @@
 package poojawins.lukesterlee.c4q.nyc.daybuilder;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -60,7 +61,16 @@ public class NoScrollAdapter<T> {
             company.setText(stock.getCompany());
             category.setText(stock.getTicker() + " (" + stock.getExchange() + ")");
             price.setText(stock.getPrice());
-            growth.setText(stock.getGrowth() + " (" + stock.getPercentage() + "%)");
+            String flux = stock.getGrowth();
+            growth.setText(flux + " (" + stock.getPercentage() + "%)");
+            if (flux.startsWith("+")) {
+                growth.append(" ↑");
+                growth.setTextColor(mContext.getResources().getColor(R.color.green));
+            } else {
+                growth.append(" ↓");
+                growth.setTextColor(mContext.getResources().getColor(R.color.red));
+            }
+
 
             mParentLayout.addView(row, i);
 

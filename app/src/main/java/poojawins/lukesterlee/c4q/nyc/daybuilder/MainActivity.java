@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.support.v7.widget.CardView;
@@ -12,6 +13,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import org.json.JSONException;
@@ -54,33 +56,34 @@ import java.util.TreeSet;
  * TODO : prepare Demo Day
  */
 
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends ActionBarActivity implements SwipeRefreshLayout.OnRefreshListener {
 
-    CardView mCardViewWeather;
-    CardView mCardViewTodo;
-    CardView mCardViewStock;
+    private CardView mCardViewWeather;
+    private CardView mCardViewTodo;
+    private CardView mCardViewStock;
 
     private static final String JSON_STOCK_ENDPOINT = "http://finance.google.com/finance/info?client=ig&q=GOOGL";
     private static final String SHARED_PREFERENCES_STOCK_KEY = "stock";
     private static final String SHARED_PREFERENCES_TODO_KEY = "todo";
 
+    private SwipeRefreshLayout mSwipeRefreshLayout;
 
     // to do view stuffs
-    LinearLayout mParentLayoutTodo;
-    Button mButtonTodoShowMore;
-    Button mButtonTodoAdd;
-    Set<String> todoList;
-    NoScrollAdapter<String> todoAdapter;
+    private LinearLayout mParentLayoutTodo;
+    private Button mButtonTodoShowMore;
+    private Button mButtonTodoAdd;
+    private Set<String> todoList;
+    private NoScrollAdapter<String> todoAdapter;
 
 
     // Stock view stuffs
-    LinearLayout mParentLayoutStock;
-    TextView mTextViewStockUpdate;
-    Button mButtonStockShowMore;
-    Button mButtonStockRefresh;
-    Button mButtonStockAdd;
-    Set<String> stockList;
-    NoScrollAdapter<Stock> stockAdapter;
+    private LinearLayout mParentLayoutStock;
+    private TextView mTextViewStockUpdate;
+    private Button mButtonStockShowMore;
+    private Button mButtonStockRefresh;
+    private Button mButtonStockAdd;
+    private Set<String> stockList;
+    private NoScrollAdapter<Stock> stockAdapter;
 
 
     @Override
@@ -98,6 +101,7 @@ public class MainActivity extends ActionBarActivity {
         if (!isResumed) {
             mButtonStockAdd.setOnClickListener(null);
             mButtonStockRefresh.setOnClickListener(null);
+            mSwipeRefreshLayout.setOnRefreshListener(null);
         } else {
             mButtonStockRefresh.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -114,6 +118,7 @@ public class MainActivity extends ActionBarActivity {
                     startActivity(intent);
                 }
             });
+            mSwipeRefreshLayout.setOnRefreshListener(this);
         }
 
     }
@@ -132,6 +137,9 @@ public class MainActivity extends ActionBarActivity {
 
 
     private void initializeViews() {
+
+        mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefreshLayout);
+
         mCardViewWeather = (CardView) findViewById(R.id.card_view_weather);
         mCardViewTodo = (CardView) findViewById(R.id.card_view_todo);
         mCardViewStock = (CardView) findViewById(R.id.card_view_stock);
@@ -179,6 +187,14 @@ public class MainActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
+
+    @Override
+    // when the user pull to refresh, following will be executed to refresh cards.
+    public void onRefresh() {
+        fetchDataFromSharedPreferences();
+        new StockTask().execute(stockList);
+    }
+
     private class StockTask extends AsyncTask<Set<String>, Void, List<Stock>> {
 
         @Override
@@ -210,7 +226,7 @@ public class MainActivity extends ActionBarActivity {
             mTextViewStockUpdate.setText("Last Update : " + new SimpleDateFormat("HH:mm").format(new Date()));
             stockAdapter = new NoScrollAdapter<>(MainActivity.this, mParentLayoutStock, R.layout.list_item_stock);
             stockAdapter.addStockViews(stocks);
-
+            mSwipeRefreshLayout.setRefreshing(false);
         }
     }
 }
