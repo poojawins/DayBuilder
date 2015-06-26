@@ -20,13 +20,7 @@
             </intent-filter>
         </activity>
 
-        <activity
-            android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.Holo.Light.Dialog"
-            android:name=".StockDialogActivity"
-            android:label="@string/title_dialog" >
-
-        </activity>
+      
     </application>
 
 </manifest>

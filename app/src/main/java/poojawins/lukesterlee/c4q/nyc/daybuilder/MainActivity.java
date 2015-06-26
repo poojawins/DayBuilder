@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Handler;
-import android.preference.PreferenceManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -21,7 +20,6 @@ import android.widget.TextView;
 import org.json.JSONException;
 
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -56,7 +54,7 @@ import java.util.TreeSet;
  * TODO : prepare Demo Day
  */
 
-public class MainActivity extends ActionBarActivity implements SwipeRefreshLayout.OnRefreshListener {
+public class MainActivity extends ActionBarActivity implements SwipeRefreshLayout.OnRefreshListener, AddStockDialogFragment.AddStockListener {
 
     private CardView mCardViewWeather;
     private CardView mCardViewTodo;
@@ -65,6 +63,9 @@ public class MainActivity extends ActionBarActivity implements SwipeRefreshLayou
     private static final String JSON_STOCK_ENDPOINT = "http://finance.google.com/finance/info?client=ig&q=GOOGL";
     private static final String SHARED_PREFERENCES_STOCK_KEY = "stock";
     private static final String SHARED_PREFERENCES_TODO_KEY = "todo";
+
+    LayoutInflater inflater;
+
 
     private SwipeRefreshLayout mSwipeRefreshLayout;
 
@@ -84,6 +85,7 @@ public class MainActivity extends ActionBarActivity implements SwipeRefreshLayou
     private List<Stock> mRestOfStocks = null;
     private NoScrollAdapter<Stock> stockAdapter;
     private boolean isShowMore;
+    private boolean isFromDialog;
     Date lastUpdated;
     final Handler mHandler = new Handler();
     Runnable postTimeRunnable = new Runnable() {
@@ -99,7 +101,7 @@ public class MainActivity extends ActionBarActivity implements SwipeRefreshLayou
         }
     };
 
-    LayoutInflater inflater;
+
 
 
     @Override
@@ -107,7 +109,9 @@ public class MainActivity extends ActionBarActivity implements SwipeRefreshLayou
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
         isShowMore = false;
+        isFromDialog = false;
         inflater = (LayoutInflater) MainActivity.this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         initializeViews();
@@ -133,9 +137,7 @@ public class MainActivity extends ActionBarActivity implements SwipeRefreshLayou
                         mButtonStockFooter.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_add_white_18dp, 0, 0, 0);
                         isShowMore = false;
                     } else {
-                        Intent intent = new Intent(MainActivity.this, StockDialogActivity.class);
-                        startActivityForResult(intent, );
-                        startActivity(intent);
+                        new AddStockDialogFragment().show(getFragmentManager(), "AddStockDialogFragment");
                     }
 
                 }
@@ -148,7 +150,10 @@ public class MainActivity extends ActionBarActivity implements SwipeRefreshLayou
     }
 
     private void fetchDataFromSharedPreferences() {
-        SharedPreferences sp = MainActivity.this.getSharedPreferences("stock", Context.MODE_PRIVATE);
+        SharedPreferences sp = MainActivity.this.getPreferences(Context.MODE_PRIVATE);
+        if (stockNameSet != null) {
+            stockNameSet.clear();
+        }
         stockNameSet = sp.getStringSet(SHARED_PREFERENCES_STOCK_KEY, new TreeSet<String>());
     }
 
@@ -219,6 +224,24 @@ public class MainActivity extends ActionBarActivity implements SwipeRefreshLayou
         new StockTask().execute(stockNameSet);
     }
 
+    @Override
+    public void addStockClicked(AddStockDialogFragment dialog, String stock) {
+        SharedPreferences sp = MainActivity.this.getPreferences(Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sp.edit();
+        Set<String> list = sp.getStringSet(SHARED_PREFERENCES_STOCK_KEY, new TreeSet<String>());
+        Set<String> newList = new TreeSet<>();
+        newList.addAll(list);
+        newList.add(stock);
+        editor.putStringSet(SHARED_PREFERENCES_STOCK_KEY, newList);
+        editor.apply();
+
+        dialog.dismiss();
+
+        fetchDataFromSharedPreferences();
+        isFromDialog = true;
+        new StockTask().execute(stockNameSet);
+    }
+
     private class StockTask extends AsyncTask<Set<String>, Void, List<Stock>> {
 
         @Override
@@ -253,17 +276,25 @@ public class MainActivity extends ActionBarActivity implements SwipeRefreshLayou
             mTextViewStockUpdate.setText("Just updated");
             //mTextViewStockUpdate.setText("Last Update : " + new SimpleDateFormat("HH:mm").format(lastUpdated));
             stockAdapter = new NoScrollAdapter<>(MainActivity.this, mParentLayoutStock, R.layout.list_item_stock);
-            if (stocks.size() > 4) {
-                isShowMore = true;
-                mButtonStockFooter.setText("Show more");
-                mButtonStockFooter.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_keyboard_arrow_down_white_18dp,0,0,0);
-                List<Stock> firstFour = stocks.subList(0,4);
-                mRestOfStocks = stocks.subList(4, stocks.size());
-                stockAdapter.addStockViews(firstFour,false);
 
-            } else {
+            if (isFromDialog) {
+                isShowMore = false;
                 stockAdapter.addStockViews(stocks, false);
+            } else {
+                if (stocks.size() > 4) {
+                    isShowMore = true;
+                    mButtonStockFooter.setText("Show more");
+                    mButtonStockFooter.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_keyboard_arrow_down_white_18dp,0,0,0);
+                    List<Stock> firstFour = stocks.subList(0,4);
+                    mRestOfStocks = stocks.subList(4, stocks.size());
+                    stockAdapter.addStockViews(firstFour,false);
+
+                } else {
+                    stockAdapter.addStockViews(stocks, false);
+                }
             }
+
+            isFromDialog = false;
             mSwipeRefreshLayout.setRefreshing(false);
         }
     }

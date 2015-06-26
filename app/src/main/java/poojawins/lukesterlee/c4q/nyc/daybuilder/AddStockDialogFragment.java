@@ -1,15 +1,17 @@
 package poojawins.lukesterlee.c4q.nyc.daybuilder;
 
 import android.app.Activity;
+import android.app.Dialog;
+import android.app.DialogFragment;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
-import android.preference.PreferenceManager;
+import android.support.v7.app.AlertDialog;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -21,18 +23,19 @@ import java.util.Set;
 import java.util.TreeSet;
 
 /**
- * Created by Luke on 6/22/2015.
+ * Created by Luke on 6/26/2015.
  */
-public class StockDialogActivity extends Activity {
+public class AddStockDialogFragment extends DialogFragment {
 
+    View dialog;
     EditText mEditText;
     ListView mListView;
     ArrayAdapter<String> adapter;
 
     String userSearchInput = "";
 
+    AddStockListener mListener;
     private static final String SHARED_PREFERENCES_STOCK_KEY = "stock";
-
 
     private Runnable runnable = new Runnable() {
         @Override
@@ -44,14 +47,22 @@ public class StockDialogActivity extends Activity {
 
     private static final Handler handler = new Handler();
 
+    @Override
+    public Dialog onCreateDialog(Bundle savedInstanceState) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+
+        LayoutInflater inflater = getActivity().getLayoutInflater();
+        dialog = inflater.inflate(R.layout.dialog_add_stock, null);
+        mEditText = (EditText) dialog.findViewById(R.id.editText_stock);
+        mListView = (ListView) dialog.findViewById(R.id.listView_dialog_stock);
+        builder.setView(dialog);
+
+        return builder.create();
+    }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_dialog_stock);
-
-        mEditText = (EditText) findViewById(R.id.editText_stock);
-        mListView = (ListView) findViewById(R.id.listView_dialog_stock);
+    public void onResume() {
+        super.onResume();
 
         TextWatcher textWatcher = new TextWatcher() {
             @Override
@@ -74,39 +85,40 @@ public class StockDialogActivity extends Activity {
         mEditText.addTextChangedListener(textWatcher);
 
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String stock = adapter.getItem(position);
-                SharedPreferences sp = StockDialogActivity.this.getSharedPreferences("stock", Context.MODE_PRIVATE);
-                SharedPreferences.Editor editor = sp.edit();
-                Set<String> list = sp.getStringSet(SHARED_PREFERENCES_STOCK_KEY, new TreeSet<String>());
-                list.add(stock);
-                editor.putStringSet(SHARED_PREFERENCES_STOCK_KEY, list);
-                editor.apply();
+           @Override
+           public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-                Intent intent = new Intent(StockDialogActivity.this, MainActivity.class);
-                startActivity(intent);
-            }
+               String stock = adapter.getItem(position);
+               mListener.addStockClicked(AddStockDialogFragment.this, stock);
+
+           }
         });
 
+
+
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        mListener = (AddStockListener) activity;
     }
 
     private class StockSearchTask extends AsyncTask<String, Void, List<String>> {
 
         @Override
         protected List<String> doInBackground(String... params) {
-
-            return new CSVGetter(StockDialogActivity.this, params[0]).getLines();
+            return new CSVGetter(getActivity(), params[0]).getLines();
         }
 
         @Override
         protected void onPostExecute(List<String> strings) {
-            adapter = new ArrayAdapter<String>(StockDialogActivity.this, android.R.layout.simple_list_item_1, strings);
+            adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, strings);
             mListView.setAdapter(adapter);
         }
     }
 
     public interface AddStockListener {
-        public void addStockClicked(String stock);
+        public void addStockClicked(AddStockDialogFragment dialog, String stock);
     }
 }
