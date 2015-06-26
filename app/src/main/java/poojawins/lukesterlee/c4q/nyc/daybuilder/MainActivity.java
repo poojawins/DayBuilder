@@ -66,14 +66,20 @@ public class MainActivity extends ActionBarActivity {
 
 
     // to do view stuffs
+    LinearLayout mParentLayoutTodo;
+    Button mButtonTodoShowMore;
+    Button mButtonTodoAdd;
+    Set<String> todoList;
+    NoScrollAdapter<String> todoAdapter;
 
 
     // Stock view stuffs
     LinearLayout mParentLayoutStock;
     TextView mTextViewStockUpdate;
+    Button mButtonStockShowMore;
     Button mButtonStockRefresh;
     Button mButtonStockAdd;
-    private static Set<String> stocksList;
+    Set<String> stockList;
     NoScrollAdapter<Stock> stockAdapter;
 
 
@@ -83,6 +89,7 @@ public class MainActivity extends ActionBarActivity {
         setContentView(R.layout.activity_main);
 
         initializeViews();
+        initializeTodoViews();
 
 
     }
@@ -96,7 +103,7 @@ public class MainActivity extends ActionBarActivity {
                 @Override
                 public void onClick(View v) {
                     fetchDataFromSharedPreferences();
-                    new StockTask().execute(stocksList);
+                    new StockTask().execute(stockList);
 
                 }
             });
@@ -113,8 +120,14 @@ public class MainActivity extends ActionBarActivity {
 
     private void fetchDataFromSharedPreferences() {
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        stocksList = sp.getStringSet(SHARED_PREFERENCES_STOCK_KEY, new TreeSet<String>());
+        stockList = sp.getStringSet(SHARED_PREFERENCES_STOCK_KEY, new TreeSet<String>());
 
+    }
+
+    private void initializeTodoViews() {
+        mParentLayoutTodo = (LinearLayout) findViewById(R.id.todo_list_parent);
+        mButtonTodoShowMore = (Button) findViewById(R.id.button_todo_show_more);
+        mButtonTodoAdd = (Button) findViewById(R.id.button_todo_add);
     }
 
 
@@ -140,7 +153,7 @@ public class MainActivity extends ActionBarActivity {
     protected void onResume() {
         super.onResume();
         fetchDataFromSharedPreferences();
-        new StockTask().execute(stocksList);
+        new StockTask().execute(stockList);
         setUpListeners(true);
     }
 

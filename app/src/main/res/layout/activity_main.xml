@@ -45,10 +45,26 @@
                     android:textSize="40sp"
                     android:id="@+id/textView_todo_title"/>
 
-                <ListView
+                <LinearLayout
+                    android:orientation="vertical"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:id="@+id/listView_todo"/>
+                    android:id="@+id/todo_list_parent">
+
+
+                </LinearLayout>
+
+                <Button
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Show more"
+                    android:id="@+id/button_todo_show_more"/>
+
+                <Button
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Add"
+                    android:id="@+id/button_todo_add"/>
 
 
             </LinearLayout>
@@ -109,14 +125,19 @@
 
 
                 <LinearLayout
-                    android:orientation="horizontal"
+                    android:orientation="vertical"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
                     <Button
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
+                        android:id="@+id/button_stock_show_more"
+                        android:text="Show more"/>
+
+                    <Button
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
                         android:id="@+id/button_stock_refresh"
                         android:textColor="@color/white"
                         android:text="@string/stock_refresh"
@@ -124,9 +145,8 @@
                         android:drawableLeft="@drawable/ic_action_refresh"/>
 
                     <Button
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
                         android:id="@+id/button_stock_add"
                         android:textColor="@color/white"
                         android:text="@string/stock_add"
