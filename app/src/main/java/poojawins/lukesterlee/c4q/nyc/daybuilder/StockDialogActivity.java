@@ -1,6 +1,7 @@
 package poojawins.lukesterlee.c4q.nyc.daybuilder;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
@@ -76,12 +77,12 @@ public class StockDialogActivity extends Activity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 String stock = adapter.getItem(position);
-                SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                SharedPreferences sp = StockDialogActivity.this.getSharedPreferences("stock", Context.MODE_PRIVATE);
                 SharedPreferences.Editor editor = sp.edit();
                 Set<String> list = sp.getStringSet(SHARED_PREFERENCES_STOCK_KEY, new TreeSet<String>());
                 list.add(stock);
                 editor.putStringSet(SHARED_PREFERENCES_STOCK_KEY, list);
-                editor.commit();
+                editor.apply();
 
                 Intent intent = new Intent(StockDialogActivity.this, MainActivity.class);
                 startActivity(intent);

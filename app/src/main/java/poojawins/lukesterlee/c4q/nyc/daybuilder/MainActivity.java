@@ -134,19 +134,21 @@ public class MainActivity extends ActionBarActivity implements SwipeRefreshLayou
                         isShowMore = false;
                     } else {
                         Intent intent = new Intent(MainActivity.this, StockDialogActivity.class);
+                        startActivityForResult(intent, );
                         startActivity(intent);
                     }
 
                 }
             });
             mSwipeRefreshLayout.setOnRefreshListener(this);
-
+            mSwipeRefreshLayout.setProgressBackgroundColorSchemeResource(R.color.green);
+            //mSwipeRefreshLayout.setColorSchemeResources(R.color.green, R.color.red, R.color.blue);
         }
 
     }
 
     private void fetchDataFromSharedPreferences() {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        SharedPreferences sp = MainActivity.this.getSharedPreferences("stock", Context.MODE_PRIVATE);
         stockNameSet = sp.getStringSet(SHARED_PREFERENCES_STOCK_KEY, new TreeSet<String>());
     }
 
