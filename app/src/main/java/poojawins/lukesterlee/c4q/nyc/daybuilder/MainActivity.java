@@ -15,14 +15,21 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import org.json.JSONException;
+import org.json.JSONObject;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
+import java.lang.Math;
 
 /*
  * C4Q Access Code 2.1 Unit 2 Final Project
@@ -63,6 +70,7 @@ public class MainActivity extends ActionBarActivity {
     private static final String JSON_STOCK_ENDPOINT = "http://finance.google.com/finance/info?client=ig&q=GOOGL";
     private static final String SHARED_PREFERENCES_STOCK_KEY = "stock";
     private static final String SHARED_PREFERENCES_TODO_KEY = "todo";
+    private static final String JSON_WEATHER = "http://api.openweathermap.org/data/2.5/weather?zip=";
 
 
     // to do view stuffs
@@ -75,7 +83,9 @@ public class MainActivity extends ActionBarActivity {
     Button mButtonStockAdd;
     private static Set<String> stocksList;
     NoScrollAdapter<Stock> stockAdapter;
-
+    TextView mTextViewTemperature;
+    TextView mTextViewLocation;
+    WeatherTask weather;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,7 +93,6 @@ public class MainActivity extends ActionBarActivity {
         setContentView(R.layout.activity_main);
 
         initializeViews();
-
 
     }
 
@@ -126,6 +135,8 @@ public class MainActivity extends ActionBarActivity {
         mButtonStockRefresh = (Button) findViewById(R.id.button_stock_refresh);
         mParentLayoutStock = (LinearLayout) findViewById(R.id.stock_list_parent);
         mTextViewStockUpdate = (TextView) findViewById(R.id.stock_update);
+        mTextViewTemperature = (TextView) findViewById(R.id.temperature);
+        mTextViewLocation = (TextView) findViewById(R.id.location);
     }
 
 
@@ -141,6 +152,8 @@ public class MainActivity extends ActionBarActivity {
         super.onResume();
         fetchDataFromSharedPreferences();
         new StockTask().execute(stocksList);
+        weather = new WeatherTask();
+        weather.execute();
         setUpListeners(true);
     }
 
@@ -200,4 +213,48 @@ public class MainActivity extends ActionBarActivity {
 
         }
     }
+
+    private class WeatherTask extends AsyncTask<Void, Void, String> {
+        @Override
+        protected String doInBackground(Void...voids) {
+            try {
+                URL url = new URL(JSON_WEATHER + "11206");
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.connect();
+                InputStream in = conn.getInputStream();
+                StringBuilder stringBuilder = new StringBuilder();
+                BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    stringBuilder.append(line);
+                }
+                return stringBuilder.toString();
+            } catch (Exception e) {
+                return "null";
+            }
+        }
+
+        @Override
+        protected void onPostExecute(String output) {
+            if (output != null) {
+                try {
+                    JSONObject jObject = new JSONObject(output);
+
+                    JSONObject main = jObject.getJSONObject("main");
+                    String temp = main.getString("temp");
+                    String location = jObject.getString("name");
+                    double tempKelvin = Double.parseDouble(temp);
+                    double fah = ((tempKelvin - 273.15) * 1.8) + 32.0;
+                    int fahRounded = (int) Math.round(fah);
+                    String tempFahrenheit = Integer.toString(fahRounded);
+
+                    mTextViewLocation.setText(location);
+                    mTextViewTemperature.setText(tempFahrenheit);
+                } catch(Exception e) {
+                    // blah
+                }
+            }
+        }
+    }
+
 }
