@@ -24,6 +24,7 @@ public class SwipeActionListener implements View.OnTouchListener {
 
     @Override
     public boolean onTouch(View v, MotionEvent event) {
+
         return mDetector.onTouchEvent(event);
     }
 

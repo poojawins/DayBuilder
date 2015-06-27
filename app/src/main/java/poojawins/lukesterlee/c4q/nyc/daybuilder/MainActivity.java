@@ -131,6 +131,12 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
             mSwipeRefreshLayout.setOnRefreshListener(this);
             mSwipeRefreshLayout.setProgressBackgroundColorSchemeResource(R.color.green);
 
+            mButtonTodoAdd.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    new AddTaskDialogFragment().show(getFragmentManager(), "AddTaskDialogFragment");
+                }
+            });
 
 
         }
