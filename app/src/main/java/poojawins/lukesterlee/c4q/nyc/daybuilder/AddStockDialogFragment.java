@@ -27,7 +27,7 @@ import java.util.TreeSet;
  */
 public class AddStockDialogFragment extends DialogFragment {
 
-    View dialog;
+    View mDialogView;
     EditText mEditText;
     ListView mListView;
     ArrayAdapter<String> adapter;
@@ -52,10 +52,10 @@ public class AddStockDialogFragment extends DialogFragment {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
         LayoutInflater inflater = getActivity().getLayoutInflater();
-        dialog = inflater.inflate(R.layout.dialog_add_stock, null);
-        mEditText = (EditText) dialog.findViewById(R.id.editText_stock);
-        mListView = (ListView) dialog.findViewById(R.id.listView_dialog_stock);
-        builder.setView(dialog);
+        mDialogView = inflater.inflate(R.layout.dialog_add_stock, null);
+        mEditText = (EditText) mDialogView.findViewById(R.id.editText_stock);
+        mListView = (ListView) mDialogView.findViewById(R.id.listView_dialog_stock);
+        builder.setView(mDialogView);
 
         return builder.create();
     }
