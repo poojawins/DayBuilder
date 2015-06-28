@@ -23,7 +23,6 @@ public class NoScrollAdapter<T> {
 
     List<View> mChildViews;
 
-    boolean isOverFour;
 
     public NoScrollAdapter(Context mContext, LinearLayout mParentLayout, int mLayoutResource) {
         this.mContext = mContext;

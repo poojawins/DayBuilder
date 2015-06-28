@@ -25,9 +25,12 @@ public class MyDrawingView extends View {
         float currentY = event.getY();
 
         switch (action) {
+
             case MotionEvent.ACTION_DOWN:
                 setStartingPoint(currentX, currentY);
                 result = true;
+                break;
+            case MotionEvent.ACTION_UP:
                 break;
             case MotionEvent.ACTION_MOVE:
                 drawTo(currentX, currentY);

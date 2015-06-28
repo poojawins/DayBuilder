@@ -68,26 +68,22 @@
                             android:textSize="40sp"
                             android:id="@+id/textView_todo_title"/>
 
-                        <LinearLayout
-                            android:orientation="vertical"
+
+                        <RecyclerView
+                            android:id="@+id/recyclerView_todo"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:id="@+id/todo_list_parent">
+                            android:layout_height="wrap_content">
 
 
-                        </LinearLayout>
 
-                        <Button
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="Show more"
-                            android:id="@+id/button_todo_show_more"/>
+                        </RecyclerView>
+
 
                         <Button
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="Add"
-                            android:id="@+id/button_todo_add"/>
+                            android:id="@+id/button_todo_footer"/>
 
 
                     </LinearLayout>

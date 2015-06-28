@@ -9,4 +9,10 @@
     <string name="stock_refresh">refresh</string>
     <string name="title_dialog">Add a stock</string>
     <string name="title_todo">Things to do</string>
+
+    <string-array name="priority_array">
+        <item>High</item>
+        <item>Medium</item>
+        <item>Low</item>
+    </string-array>
 </resources>

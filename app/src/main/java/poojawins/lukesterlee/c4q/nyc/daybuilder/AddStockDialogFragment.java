@@ -34,7 +34,8 @@ public class AddStockDialogFragment extends DialogFragment {
 
     String userSearchInput = "";
 
-    AddStockListener mListener;
+    AddDialogListener mListener;
+    private static final int REQUEST_CODE_STOCK = 2;
     private static final String SHARED_PREFERENCES_STOCK_KEY = "stock";
 
     private Runnable runnable = new Runnable() {
@@ -89,7 +90,8 @@ public class AddStockDialogFragment extends DialogFragment {
            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
                String stock = adapter.getItem(position);
-               mListener.addStockClicked(AddStockDialogFragment.this, stock);
+               mListener.addDialogClicked(AddStockDialogFragment.this, REQUEST_CODE_STOCK, stock);
+
 
            }
         });
@@ -101,7 +103,7 @@ public class AddStockDialogFragment extends DialogFragment {
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        mListener = (AddStockListener) activity;
+        mListener = (AddDialogListener) activity;
     }
 
     private class StockSearchTask extends AsyncTask<String, Void, List<String>> {
@@ -118,7 +120,5 @@ public class AddStockDialogFragment extends DialogFragment {
         }
     }
 
-    public interface AddStockListener {
-        public void addStockClicked(AddStockDialogFragment dialog, String stock);
-    }
+
 }
