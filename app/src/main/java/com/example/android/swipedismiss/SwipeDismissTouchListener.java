@@ -78,6 +78,10 @@ public class SwipeDismissTouchListener implements View.OnTouchListener {
     private VelocityTracker mVelocityTracker;
     private float mTranslationX;
 
+    private boolean isLeft;
+
+
+
     /**
      * The callback interface used by {@link SwipeDismissTouchListener} to inform its client
      * about a successful dismissal of the view for which it was created.
@@ -94,7 +98,7 @@ public class SwipeDismissTouchListener implements View.OnTouchListener {
          * @param view  The originating {@link View} to be dismissed.
          * @param token The optional token passed to this object's constructor.
          */
-        void onDismiss(View view, Object token);
+        void onDismiss(View view, Object token, boolean isRight);
     }
 
     /**
@@ -160,6 +164,7 @@ public class SwipeDismissTouchListener implements View.OnTouchListener {
                     // dismiss only if flinging in the same direction as dragging
                     dismiss = (velocityX < 0) == (deltaX < 0);
                     dismissRight = mVelocityTracker.getXVelocity() > 0;
+                    isLeft = !dismissRight;
                 }
                 if (dismiss) {
                     // dismiss
@@ -258,7 +263,7 @@ public class SwipeDismissTouchListener implements View.OnTouchListener {
         animator.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(Animator animation) {
-                mCallbacks.onDismiss(mView, mToken);
+                mCallbacks.onDismiss(mView, mToken, isLeft);
                 // Reset view presentation
                 mView.setAlpha(1f);
                 mView.setTranslationX(0);

@@ -1,12 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:focusableInTouchMode="true"
+    android:clickable="true"
+    android:focusable="true">
 
     <TextView
         android:text="Add a task"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center" />
 
     <EditText
         android:id="@+id/editText_dialog_task"
@@ -18,12 +23,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
-    <Spinner
+    <ListView
+        android:id="@+id/listView_dialog_task"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/spinner_dialog_task"
-        android:layout_gravity="center_horizontal"
-        android:spinnerMode="dropdown" />
+        android:layout_height="wrap_content">
+
+
+        </ListView>
 
 
 </LinearLayout>

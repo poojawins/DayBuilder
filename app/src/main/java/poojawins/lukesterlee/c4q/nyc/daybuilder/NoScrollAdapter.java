@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -84,10 +85,41 @@ public class NoScrollAdapter<T> {
 
 
             mChildViews.add(row);
-            mParentLayout.addView(row, i);
+            mParentLayout.addView(row,i);
 
         }
 
+    }
+
+    public void addTaskViews(List<T> mList, boolean isRest) {
+        this.mList = mList;
+        if (!isRest) {
+            mChildViews.clear();
+            mParentLayout.removeAllViews();
+        }
+
+
+        for (int i = 0; i < mList.size(); i++) {
+            final View row = inflater.inflate(mLayoutResource, null);
+
+
+            Button priority = (Button) row.findViewById(R.id.button_todo);
+            TextView title = (TextView) row.findViewById(R.id.textView_todo);
+
+
+            String task = (String) mList.get(i);
+
+            String firstLetter = task.substring(0, 1);
+            String sentence = task.substring(1);
+
+            priority.setText(firstLetter);
+            title.setText(sentence);
+
+
+            mChildViews.add(row);
+            mParentLayout.addView(row,i);
+
+        }
     }
 
 

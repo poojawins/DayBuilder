@@ -12,7 +12,6 @@ import android.os.Handler;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.os.Bundle;
 import android.support.v7.widget.CardView;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -20,10 +19,12 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.android.swipedismiss.SwipeDismissTouchListener;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONException;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -35,8 +36,6 @@ import java.util.TreeSet;
  */
 
 
-// https://github.com/krossovochkin/Android-SwipeToDismiss-RecyclerView
-
 public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefreshListener, AddDialogListener {
 
     private CardView mCardViewWeather;
@@ -44,6 +43,7 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
     private CardView mCardViewStock;
 
     private SharedPreferences mSharedPreferences;
+    private SharedPreferences.Editor editor;
 
     private static final String JSON_STOCK_ENDPOINT = "http://finance.google.com/finance/info?client=ig&q=GOOGL";
     private static final String SHARED_PREFERENCES_STOCK_KEY = "stock";
@@ -61,16 +61,16 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
     private TextView mTextViewTitle;
 
     // to do view stuffs
-    private RecyclerView mRecyclerViewTodo;
+    private LinearLayout mParentLayoutTodo;
     private Button mButtonTodoFooter;
     private Set<String> todoSet;
     private NoScrollAdapter<String> todoAdapter;
+    private List<String> mRestOfTodos = null;
     private boolean isShowMoreTodo;
     private boolean isFromDialogTodo;
 
 
     // Stock view stuffs
-    private final static int INTERVAL = 1000 * 60;
     private LinearLayout mParentLayoutStock;
     private TextView mTextViewStockUpdate;
     private Button mButtonStockFooter;
@@ -81,6 +81,7 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
     private boolean isFromDialogStock;
     Date lastUpdated;
     final Handler mHandler = new Handler();
+    private final static int INTERVAL = 1000 * 60;
     Runnable postTimeRunnable = new Runnable() {
         @Override
         public void run() {
@@ -104,12 +105,14 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
     };
 
 
+
+
     private void initializeWeatherViews() {
 
     }
 
     private void initializeTodoViews() {
-        mRecyclerViewTodo = (RecyclerView) findViewById(R.id.recyclerView_todo);
+        mParentLayoutTodo = (LinearLayout) findViewById(R.id.todo_list_parent);
         mButtonTodoFooter = (Button) findViewById(R.id.button_todo_footer);
     }
 
@@ -145,6 +148,7 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
         isFromDialogTodo = false;
 
         mSharedPreferences = MainActivity.this.getPreferences(Context.MODE_PRIVATE);
+        editor = mSharedPreferences.edit();
         inflater = (LayoutInflater) MainActivity.this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
 
@@ -158,21 +162,15 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
         isConnected = (activeNetwork != null) && (activeNetwork.isConnectedOrConnecting());
 
         fetchDataFromSharedPreferences();
-        new TodoTask().execute(todoSet);
-        mHandler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                new StockTask().execute(stockNameSet);
-            }
-        }, 1000);
-
-
+        fetchTask();
+        new StockTask().execute(stockNameSet);
 
 
     }
 
     private void setUpListeners(boolean isResumed) {
         if (!isResumed) {
+            mButtonTodoFooter.setOnClickListener(null);
             mButtonStockFooter.setOnClickListener(null);
             mSwipeRefreshLayout.setOnRefreshListener(null);
         } else {
@@ -181,6 +179,7 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
                 public void onClick(View v) {
                     if (isShowMoreStock) {
                         stockAdapter.addStockViews(mRestOfStocks, true);
+                        addStockTouchListener();
                         mButtonStockFooter.setText("Add a stock");
                         mButtonStockFooter.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_add_white_18dp, 0, 0, 0);
                         isShowMoreStock = false;
@@ -197,7 +196,11 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
                 @Override
                 public void onClick(View v) {
                     if (isShowMoreTodo) {
-
+                        todoAdapter.addTaskViews(mRestOfTodos, true);
+                        addTaskTouchListener();
+                        mButtonTodoFooter.setText("Add a task");
+                        mButtonTodoFooter.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_add_white_18dp, 0, 0, 0);
+                        isShowMoreTodo = false;
                     } else {
                         new AddTaskDialogFragment().show(getFragmentManager(), "AddTaskDialogFragment");
                     }
@@ -212,6 +215,7 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
     private void fetchDataFromSharedPreferences() {
         stockNameSet = mSharedPreferences.getStringSet(SHARED_PREFERENCES_STOCK_KEY, new TreeSet<String>());
         todoSet = mSharedPreferences.getStringSet(SHARED_PREFERENCES_TODO_KEY, new TreeSet<String>());
+
     }
 
 
@@ -235,21 +239,16 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
     public void onRefresh() {
 
         fetchDataFromSharedPreferences();
-        new TodoTask().execute(todoSet);
+        fetchTask();
+        new StockTask().execute(stockNameSet);
 
-        mHandler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                new StockTask().execute(stockNameSet);
-            }
-        }, 1000);
     }
 
 
 
     @Override
     public void addDialogClicked(DialogFragment dialog, int requestCode, String data) {
-        SharedPreferences.Editor editor = mSharedPreferences.edit();
+
 
         switch (requestCode) {
             case REQUEST_CODE_TODO:
@@ -263,7 +262,8 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
                 dialog.dismiss();
 
                 isFromDialogTodo = true;
-                new TodoTask().execute(newTodoList);
+                fetchDataFromSharedPreferences();
+                fetchTask();
                 break;
             case REQUEST_CODE_STOCK:
                 Set<String> list = mSharedPreferences.getStringSet(SHARED_PREFERENCES_STOCK_KEY, new TreeSet<String>());
@@ -280,6 +280,22 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
                 new StockTask().execute(newStockList);
                 break;
         }
+
+    }
+
+
+
+    public void deleteStock() {
+        Set<String> list = mSharedPreferences.getStringSet(SHARED_PREFERENCES_STOCK_KEY, new TreeSet<String>());
+        Set<String> newStockList = new TreeSet<>();
+        newStockList.addAll(list);
+        newStockList.add(data);
+        editor.putStringSet(SHARED_PREFERENCES_STOCK_KEY, newStockList);
+        editor.apply();
+
+    }
+
+    public void deleteTodo() {
 
     }
 
@@ -311,7 +327,6 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
 
         @Override
         protected void onPostExecute(List<Stock> stocks) {
-
             lastUpdated = new Date();
             mHandler.removeCallbacks(postTimeRunnable);
             postTimeRunnable.run();
@@ -329,50 +344,85 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
                     List<Stock> firstFour = stocks.subList(0,4);
                     mRestOfStocks = stocks.subList(4, stocks.size());
                     stockAdapter.addStockViews(firstFour,false);
-
                 } else {
                     stockAdapter.addStockViews(stocks, false);
-
                 }
             }
-
-
             isFromDialogStock = false;
             mSwipeRefreshLayout.setRefreshing(false);
-
-            for (View row : stockAdapter.getChildViews()) {
-
-                row.setOnTouchListener(new SwipeDismissTouchListener(row, null, new SwipeDismissTouchListener.DismissCallbacks() {
-                    @Override
-                    public boolean canDismiss(Object token) {
-                        return true;
-                    }
-
-                    @Override
-                    public void onDismiss(View view, Object token) {
-                        mParentLayoutStock.removeView(view);
-
-                    }
-                }));
-            }
-
-
-
-
+            addStockTouchListener();
         }
     }
 
-    private class TodoTask extends AsyncTask<Set<String>, Void, List<String>> {
-
-        @Override
-        protected List<String> doInBackground(Set<String>... params) {
-            Set<String> mList = params[0];
-            return null;
+    private void fetchTask() {
+        todoAdapter = new NoScrollAdapter<>(MainActivity.this, mParentLayoutTodo, R.layout.list_item_todo);
+        List<String> list = new ArrayList<>();
+        for (String sentence : todoSet) {
+            list.add(sentence);
+        }
+        if (isFromDialogTodo) {
+            isShowMoreTodo = false;
+            todoAdapter.addTaskViews(list, false);
+        } else {
+            if (list.size() > 4) {
+                isShowMoreTodo = true;
+                mButtonTodoFooter.setText("Show more");
+                mButtonTodoFooter.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_keyboard_arrow_down_white_18dp, 0, 0, 0);
+                List<String> firstFour = list.subList(0,4);
+                mRestOfTodos = list.subList(4, list.size());
+                todoAdapter.addTaskViews(firstFour, false);
+            } else {
+                todoAdapter.addTaskViews(list, false);
+            }
         }
 
-        @Override
-        protected void onPostExecute(List<String> strings) {
-            super.onPostExecute(strings);
+        isFromDialogTodo = false;
+        mSwipeRefreshLayout.setRefreshing(false);
+        addTaskTouchListener();
+    }
+
+    private void addStockTouchListener() {
+        for (View row : stockAdapter.getChildViews()) {
+
+            row.setOnTouchListener(new SwipeDismissTouchListener(row, null, new SwipeDismissTouchListener.DismissCallbacks() {
+                @Override
+                public boolean canDismiss(Object token) {
+                    return true;
+                }
+
+
+                @Override
+                public void onDismiss(View view, Object token, boolean isLeft) {
+                    mParentLayoutStock.removeView(view);
+                    if (isLeft) {
+                        deleteStock();
+                    }
+                }
+            }));
+        }
+    }
+
+    private void addTaskTouchListener() {
+        for (View row : todoAdapter.getChildViews()) {
+
+            row.setOnTouchListener(new SwipeDismissTouchListener(row, null, new SwipeDismissTouchListener.DismissCallbacks() {
+                @Override
+                public boolean canDismiss(Object token) {
+                    return true;
+                }
+
+
+                @Override
+                public void onDismiss(View view, Object token, boolean isLeft) {
+                    mParentLayoutTodo.removeView(view);
+                    if (isLeft) {
+                        deleteTodo();
+                    } else {
+                        // TODO: add to the completed list.
+                    }
+
+                }
+            }));
         }
     }
 
