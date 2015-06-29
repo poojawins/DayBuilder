@@ -17,6 +17,8 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.example.android.swipedismiss.SwipeDismissTouchListener;
+
 import org.json.JSONException;
 
 import java.io.IOException;
@@ -144,9 +146,6 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
 
     private void fetchDataFromSharedPreferences() {
         SharedPreferences sp = MainActivity.this.getPreferences(Context.MODE_PRIVATE);
-//        if (stockNameSet != null) {
-//            stockNameSet.clear();
-//        }
         stockNameSet = sp.getStringSet(SHARED_PREFERENCES_STOCK_KEY, new TreeSet<String>());
     }
 
@@ -192,29 +191,6 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
 
 
     }
-
-//    @Override
-//    public boolean onCreateOptionsMenu(Menu menu) {
-//        // Inflate the menu; this adds items to the action bar if it is present.
-//        getMenuInflater().inflate(R.menu.menu_main, menu);
-//        return true;
-//    }
-//
-//    @Override
-//    public boolean onOptionsItemSelected(MenuItem item) {
-//        // Handle action bar item clicks here. The action bar will
-//        // automatically handle clicks on the Home/Up button, so long
-//        // as you specify a parent activity in AndroidManifest.xml.
-//        int id = item.getItemId();
-//
-//        //noinspection SimplifiableIfStatement
-//        if (id == R.id.action_settings) {
-//            return true;
-//        }
-//
-//        return super.onOptionsItemSelected(item);
-//    }
-
 
     @Override
     // when the user pull to refresh, following will be executed to refresh cards.
@@ -294,13 +270,35 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
 
                 } else {
                     stockAdapter.addStockViews(stocks, false);
+
                 }
             }
+
 
             isFromDialog = false;
             mSwipeRefreshLayout.setRefreshing(false);
 
+            for (View row : stockAdapter.getChildViews()) {
+
+                row.setOnTouchListener(new SwipeDismissTouchListener(row, null, new SwipeDismissTouchListener.DismissCallbacks() {
+                    @Override
+                    public boolean canDismiss(Object token) {
+                        return true;
+                    }
+
+                    @Override
+                    public void onDismiss(View view, Object token) {
+                        mParentLayoutStock.removeView(view);
+
+                    }
+                }));
+            }
+
+
+
 
         }
     }
+
+
 }

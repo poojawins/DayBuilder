@@ -7,6 +7,8 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.example.android.swipedismiss.SwipeDismissTouchListener;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,7 +21,9 @@ public class NoScrollAdapter<T> {
     LayoutInflater inflater;
     LinearLayout mParentLayout;
     List<T> mList;
+
     int mLayoutResource;
+
 
     List<View> mChildViews;
 
@@ -34,6 +38,10 @@ public class NoScrollAdapter<T> {
 
     }
 
+    public List<View> getChildViews() {
+        return mChildViews;
+    }
+
     public int getCount() {
         return mList.size();
     }
@@ -46,12 +54,13 @@ public class NoScrollAdapter<T> {
         this.mList = mList;
 
         if (!isRest) {
+            mChildViews.clear();
             mParentLayout.removeAllViews();
         }
 
 
         for (int i = 0; i < mList.size(); i++) {
-            View row = inflater.inflate(mLayoutResource, null);
+            final View row = inflater.inflate(mLayoutResource, null);
 
 
             TextView company = (TextView) row.findViewById(R.id.stock_company_name);
@@ -75,6 +84,7 @@ public class NoScrollAdapter<T> {
             }
 
 
+            mChildViews.add(row);
             mParentLayout.addView(row, i);
 
         }
