@@ -22,6 +22,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.squareup.picasso.Picasso;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -80,13 +82,9 @@ public class MainActivity extends ActionBarActivity {
     private static final String SHARED_PREFERENCES_STOCK_KEY = "stock";
     private static final String SHARED_PREFERENCES_TODO_KEY = "todo";
 
-    private static final String JSON_WEATHER = "http://api.openweathermap.org/data/2.5/weather?zip=";
-//    String JSON_WEATHER_COORDINATES = "http://api.openweathermap.org/data/2.5/weather?lat=";
-//    String JSON_COORDINATE_END = "&lon=";
     double latitude;
     double longitude;
     private static final String WEATHER_ICON_URL = "http://openweathermap.org/img/w/";
-
 
     // to do view stuffs
 
@@ -246,11 +244,6 @@ public class MainActivity extends ActionBarActivity {
 
         @Override
          protected void onPostExecute(String output) {
-            // ugh i need to stop blocking the UI thread
-            StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-            StrictMode.setThreadPolicy(policy);
-            // ugh i need to stop blocking the UI thread
-
             if (output != null) {
                 try {
                     JSONObject jObject = new JSONObject(output);
@@ -266,20 +259,17 @@ public class MainActivity extends ActionBarActivity {
 //                    JSONArray weather = main.getJSONArray("weather");
 //                    JSONObject JSONWeather = weather.getJSONObject(0);
 //                    String iconID = JSONWeather.getString("icon");
-//                    InputStream in = new URL(WEATHER_ICON_URL + iconID + ".png").openStream();
-
-                    InputStream in = new URL("http://openweathermap.org/img/w/10d.png").openStream();
-
-                    Bitmap icon = BitmapFactory.decodeStream(in);
 
                     mTextViewLocation.setText(location);
                     mTextViewTemperature.setText(tempFahrenheit + "°");
-                    mImageViewWeatherIcon.setImageBitmap(icon);
+//                    Picasso.with(MainActivity.this).load(WEATHER_ICON_URL + iconID + ".png").resize(125,125).centerCrop().into(mImageViewWeatherIcon);
+                    Picasso.with(MainActivity.this).load("http://openweathermap.org/img/w/10d.png").resize(125,125).centerCrop().into(mImageViewWeatherIcon);
                 } catch(Exception e) {
                     Log.println(Log.DEBUG, "pooja", "An Exception Happened");
                 }
             }
         }
     }
+
 
 }
