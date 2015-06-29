@@ -256,14 +256,13 @@ public class MainActivity extends ActionBarActivity {
                     int fahRounded = (int) Math.round(fah);
                     String tempFahrenheit = Integer.toString(fahRounded);
 
-//                    JSONArray weather = main.getJSONArray("weather");
-//                    JSONObject JSONWeather = weather.getJSONObject(0);
-//                    String iconID = JSONWeather.getString("icon");
+                    JSONObject weather = jObject.getJSONArray("weather").getJSONObject(0);
+                    String icon = weather.getString("icon");
 
                     mTextViewLocation.setText(location);
                     mTextViewTemperature.setText(tempFahrenheit + "°");
-//                    Picasso.with(MainActivity.this).load(WEATHER_ICON_URL + iconID + ".png").resize(125,125).centerCrop().into(mImageViewWeatherIcon);
-                    Picasso.with(MainActivity.this).load("http://openweathermap.org/img/w/10d.png").resize(125,125).centerCrop().into(mImageViewWeatherIcon);
+                    Picasso.with(MainActivity.this).load(WEATHER_ICON_URL + icon + ".png")
+                            .resize(125,125).centerCrop().into(mImageViewWeatherIcon);
                 } catch(Exception e) {
                     Log.println(Log.DEBUG, "pooja", "An Exception Happened");
                 }
