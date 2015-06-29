@@ -266,25 +266,17 @@ public class MainActivity extends ActionBarActivity {
 //                    JSONArray weather = main.getJSONArray("weather");
 //                    JSONObject JSONWeather = weather.getJSONObject(0);
 //                    String iconID = JSONWeather.getString("icon");
-
-//                    URL url = new URL("http://openweathermap.org/img/w/10d.png");
-//                    URL url = new URL(WEATHER_ICON_URL + iconID + ".png");
-//                    HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-//                    conn.connect();
-//                    InputStream in = conn.getInputStream();
-//                    Bitmap icon = BitmapFactory.decodeStream(in);
+//                    InputStream in = new URL(WEATHER_ICON_URL + iconID + ".png").openStream();
 
                     InputStream in = new URL("http://openweathermap.org/img/w/10d.png").openStream();
-//                    InputStream in = new URL(WEATHER_ICON_URL + iconID + ".png").openStream();
+
                     Bitmap icon = BitmapFactory.decodeStream(in);
 
                     mTextViewLocation.setText(location);
                     mTextViewTemperature.setText(tempFahrenheit + "°");
                     mImageViewWeatherIcon.setImageBitmap(icon);
                 } catch(Exception e) {
-                    // blah
                     Log.println(Log.DEBUG, "pooja", "An Exception Happened");
-                    Log.wtf("pooja", e);
                 }
             }
         }
