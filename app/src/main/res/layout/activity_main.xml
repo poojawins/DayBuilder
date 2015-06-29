@@ -17,6 +17,7 @@
             android:layout_height="wrap_content">
 
 
+
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -45,9 +46,53 @@
                 <android.support.v7.widget.CardView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:id="@+id/card_view_weather"
+                    android:id="@+id/card_view_weather">
 
-                    />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="8dp">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="LOCATION"
+                            android:fontFamily="sans-serif-thin"
+                            android:textSize="40sp"
+                            android:id="@+id/location"/>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+
+                            <ImageView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:id="@+id/weatherIcon"
+                                android:src="@drawable/placekitten50"
+                                android:scaleType="center"/>
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="sans-serif-thin"
+                                android:text="TEMP"
+                                android:layout_weight="1"
+                                android:textSize="40sp"
+                                android:id="@+id/temperature"/>
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+
+                    </android.support.v7.widget.CardView>
+
+
 
                 <android.support.v7.widget.CardView
                     android:layout_width="match_parent"
@@ -82,6 +127,7 @@
 
 
 
+
                         </LinearLayout>
 
 
@@ -99,9 +145,8 @@
 
 
 
-
-
                 </android.support.v7.widget.CardView>
+
 
 
                 <android.support.v7.widget.CardView
@@ -162,14 +207,10 @@
 
 
 
-
-
-
                     </LinearLayout>
 
 
                 </android.support.v7.widget.CardView>
-
 
 
             </LinearLayout>

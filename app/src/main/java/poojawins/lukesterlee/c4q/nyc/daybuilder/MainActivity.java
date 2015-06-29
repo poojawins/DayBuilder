@@ -13,23 +13,51 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.os.Bundle;
 import android.support.v7.widget.CardView;
 import android.view.LayoutInflater;
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.location.Location;
+import android.location.LocationManager;
+import android.os.AsyncTask;
+import android.os.StrictMode;
+import android.preference.PreferenceManager;
+import android.support.v7.app.ActionBarActivity;
+import android.os.Bundle;
+import android.support.v7.widget.CardView;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.android.swipedismiss.SwipeDismissTouchListener;
 import com.squareup.picasso.Picasso;
 
-import org.json.JSONException;
+import com.squareup.picasso.Picasso;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
+import java.lang.Math;
 
 /*
  * C4Q Access Code 2.1 Unit 2 Final Project
@@ -59,6 +87,11 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
 
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private TextView mTextViewTitle;
+
+    // weather stuffs
+    double latitude;
+    double longitude;
+    private static final String WEATHER_ICON_URL = "http://openweathermap.org/img/w/";
 
     // to do view stuffs
     private LinearLayout mParentLayoutTodo;
@@ -108,7 +141,9 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
 
 
     private void initializeWeatherViews() {
-
+        mTextViewTemperature = (TextView) findViewById(R.id.temperature);
+        mTextViewLocation = (TextView) findViewById(R.id.location);
+        mImageViewWeatherIcon = (ImageView) findViewById(R.id.weatherIcon);
     }
 
     private void initializeTodoViews() {
@@ -135,6 +170,11 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
         mTextViewTitle.setTextColor(getResources().getColor(R.color.blue));
     }
 
+    // Weather view
+    TextView mTextViewTemperature;
+    TextView mTextViewLocation;
+    ImageView mImageViewWeatherIcon;
+    WeatherTask weather;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -164,7 +204,6 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
         fetchDataFromSharedPreferences();
         fetchTask();
         new StockTask().execute(stockNameSet);
-
 
     }
 
@@ -229,15 +268,14 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
     @Override
     protected void onResume() {
         super.onResume();
+        weather = new WeatherTask();
+        weather.execute();
         setUpListeners(true);
-
-
     }
 
     @Override
     // when the user pull to refresh, following will be executed to refresh cards.
     public void onRefresh() {
-
         fetchDataFromSharedPreferences();
         fetchTask();
         new StockTask().execute(stockNameSet);
@@ -285,15 +323,15 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
 
 
 
-    public void deleteStock() {
-        Set<String> list = mSharedPreferences.getStringSet(SHARED_PREFERENCES_STOCK_KEY, new TreeSet<String>());
-        Set<String> newStockList = new TreeSet<>();
-        newStockList.addAll(list);
-        newStockList.add(data);
-        editor.putStringSet(SHARED_PREFERENCES_STOCK_KEY, newStockList);
-        editor.apply();
-
-    }
+//    public void deleteStock() {
+//        Set<String> list = mSharedPreferences.getStringSet(SHARED_PREFERENCES_STOCK_KEY, new TreeSet<String>());
+//        Set<String> newStockList = new TreeSet<>();
+//        newStockList.addAll(list);
+//        newStockList.add(data);
+//        editor.putStringSet(SHARED_PREFERENCES_STOCK_KEY, newStockList);
+//        editor.apply();
+//
+//    }
 
     public void deleteTodo() {
 
@@ -395,7 +433,7 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
                 public void onDismiss(View view, Object token, boolean isLeft) {
                     mParentLayoutStock.removeView(view);
                     if (isLeft) {
-                        deleteStock();
+                        //deleteStock();
                     }
                 }
             }));
@@ -423,6 +461,44 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
 
                 }
             }));
+        }
+    }
+    private class WeatherTask extends AsyncTask<Void, Void, String> {
+        @Override
+        protected String doInBackground(Void...voids) {
+            try {
+                String weatherData = new WeatherGetter().getJSON();
+                return weatherData;
+            } catch (Exception e) {
+                return null;
+            }
+        }
+
+        @Override
+         protected void onPostExecute(String output) {
+            if (output != null) {
+                try {
+                    JSONObject jObject = new JSONObject(output);
+
+                    JSONObject main = jObject.getJSONObject("main");
+                    String temp = main.getString("temp");
+                    String location = jObject.getString("name");
+                    double tempKelvin = Double.parseDouble(temp);
+                    double fah = ((tempKelvin - 273.15) * 1.8) + 32.0;
+                    int fahRounded = (int) Math.round(fah);
+                    String tempFahrenheit = Integer.toString(fahRounded);
+
+                    JSONObject weather = jObject.getJSONArray("weather").getJSONObject(0);
+                    String icon = weather.getString("icon");
+
+                    mTextViewLocation.setText(location);
+                    mTextViewTemperature.setText(tempFahrenheit + "°");
+                    Picasso.with(MainActivity.this).load(WEATHER_ICON_URL + icon + ".png")
+                            .resize(125,125).centerCrop().into(mImageViewWeatherIcon);
+                } catch(Exception e) {
+                    Log.println(Log.DEBUG, "pooja", "An Exception Happened");
+                }
+            }
         }
     }
 
