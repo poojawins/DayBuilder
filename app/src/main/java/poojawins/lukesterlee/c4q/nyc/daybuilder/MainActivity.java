@@ -2,6 +2,8 @@ package poojawins.lukesterlee.c4q.nyc.daybuilder;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBarActivity;
@@ -11,6 +13,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -71,6 +74,7 @@ public class MainActivity extends ActionBarActivity {
     private static final String SHARED_PREFERENCES_STOCK_KEY = "stock";
     private static final String SHARED_PREFERENCES_TODO_KEY = "todo";
     private static final String JSON_WEATHER = "http://api.openweathermap.org/data/2.5/weather?zip=";
+//    private static final String WEATHER_ICON_URL = "http://openweathermap.org/img/w/";
 
 
     // to do view stuffs
@@ -85,6 +89,7 @@ public class MainActivity extends ActionBarActivity {
     NoScrollAdapter<Stock> stockAdapter;
     TextView mTextViewTemperature;
     TextView mTextViewLocation;
+    ImageView mImageViewWeatherIcon;
     WeatherTask weather;
 
     @Override
@@ -137,6 +142,7 @@ public class MainActivity extends ActionBarActivity {
         mTextViewStockUpdate = (TextView) findViewById(R.id.stock_update);
         mTextViewTemperature = (TextView) findViewById(R.id.temperature);
         mTextViewLocation = (TextView) findViewById(R.id.location);
+        mImageViewWeatherIcon = (ImageView) findViewById(R.id.weatherIcon);
     }
 
 
@@ -230,7 +236,7 @@ public class MainActivity extends ActionBarActivity {
                 }
                 return stringBuilder.toString();
             } catch (Exception e) {
-                return "null";
+                return null;
             }
         }
 
@@ -248,8 +254,21 @@ public class MainActivity extends ActionBarActivity {
                     int fahRounded = (int) Math.round(fah);
                     String tempFahrenheit = Integer.toString(fahRounded);
 
+//                    JSONObject weather = main.getJSONObject("weather");
+//                    String iconID = weather.getString("icon");
+
+//                    URL url = new URL(WEATHER_ICON_URL + iconID + ".png");
+//                    HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+//                    conn.connect();
+//                    InputStream in = conn.getInputStream();
+//                    Bitmap icon = BitmapFactory.decodeStream(in);
+
+//                    InputStream in = new java.net.URL(WEATHER_ICON_URL + iconID + ".png").openStream();
+//                    Bitmap icon = BitmapFactory.decodeStream(in);
+
                     mTextViewLocation.setText(location);
-                    mTextViewTemperature.setText(tempFahrenheit);
+                    mTextViewTemperature.setText(tempFahrenheit + "°");
+//                    mImageViewWeatherIcon.setImageBitmap(icon);
                 } catch(Exception e) {
                     // blah
                 }
