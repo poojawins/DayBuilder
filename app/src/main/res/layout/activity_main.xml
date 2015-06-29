@@ -46,7 +46,8 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:id="@+id/weatherIcon"
-                        android:src="@drawable/placekitten50"/>
+                        android:src="@drawable/placekitten50"
+                        android:scaleType="center"/>
 
                     <TextView
                         android:layout_width="match_parent"

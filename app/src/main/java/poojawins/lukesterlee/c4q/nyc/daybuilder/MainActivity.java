@@ -1,14 +1,19 @@
 package poojawins.lukesterlee.c4q.nyc.daybuilder;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.location.Location;
+import android.location.LocationManager;
 import android.os.AsyncTask;
+import android.os.StrictMode;
 import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.support.v7.widget.CardView;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -17,6 +22,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -73,8 +79,13 @@ public class MainActivity extends ActionBarActivity {
     private static final String JSON_STOCK_ENDPOINT = "http://finance.google.com/finance/info?client=ig&q=GOOGL";
     private static final String SHARED_PREFERENCES_STOCK_KEY = "stock";
     private static final String SHARED_PREFERENCES_TODO_KEY = "todo";
+
     private static final String JSON_WEATHER = "http://api.openweathermap.org/data/2.5/weather?zip=";
-//    private static final String WEATHER_ICON_URL = "http://openweathermap.org/img/w/";
+//    String JSON_WEATHER_COORDINATES = "http://api.openweathermap.org/data/2.5/weather?lat=";
+//    String JSON_COORDINATE_END = "&lon=";
+    double latitude;
+    double longitude;
+    private static final String WEATHER_ICON_URL = "http://openweathermap.org/img/w/";
 
 
     // to do view stuffs
@@ -87,6 +98,8 @@ public class MainActivity extends ActionBarActivity {
     Button mButtonStockAdd;
     private static Set<String> stocksList;
     NoScrollAdapter<Stock> stockAdapter;
+
+    // Weather view
     TextView mTextViewTemperature;
     TextView mTextViewLocation;
     ImageView mImageViewWeatherIcon;
@@ -224,24 +237,20 @@ public class MainActivity extends ActionBarActivity {
         @Override
         protected String doInBackground(Void...voids) {
             try {
-                URL url = new URL(JSON_WEATHER + "11206");
-                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                conn.connect();
-                InputStream in = conn.getInputStream();
-                StringBuilder stringBuilder = new StringBuilder();
-                BufferedReader reader = new BufferedReader(new InputStreamReader(in));
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    stringBuilder.append(line);
-                }
-                return stringBuilder.toString();
+                String weatherData = new WeatherGetter().getJSON();
+                return weatherData;
             } catch (Exception e) {
                 return null;
             }
         }
 
         @Override
-        protected void onPostExecute(String output) {
+         protected void onPostExecute(String output) {
+            // ugh i need to stop blocking the UI thread
+            StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+            StrictMode.setThreadPolicy(policy);
+            // ugh i need to stop blocking the UI thread
+
             if (output != null) {
                 try {
                     JSONObject jObject = new JSONObject(output);
@@ -254,23 +263,28 @@ public class MainActivity extends ActionBarActivity {
                     int fahRounded = (int) Math.round(fah);
                     String tempFahrenheit = Integer.toString(fahRounded);
 
-//                    JSONObject weather = main.getJSONObject("weather");
-//                    String iconID = weather.getString("icon");
+//                    JSONArray weather = main.getJSONArray("weather");
+//                    JSONObject JSONWeather = weather.getJSONObject(0);
+//                    String iconID = JSONWeather.getString("icon");
 
+//                    URL url = new URL("http://openweathermap.org/img/w/10d.png");
 //                    URL url = new URL(WEATHER_ICON_URL + iconID + ".png");
 //                    HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 //                    conn.connect();
 //                    InputStream in = conn.getInputStream();
 //                    Bitmap icon = BitmapFactory.decodeStream(in);
 
-//                    InputStream in = new java.net.URL(WEATHER_ICON_URL + iconID + ".png").openStream();
-//                    Bitmap icon = BitmapFactory.decodeStream(in);
+                    InputStream in = new URL("http://openweathermap.org/img/w/10d.png").openStream();
+//                    InputStream in = new URL(WEATHER_ICON_URL + iconID + ".png").openStream();
+                    Bitmap icon = BitmapFactory.decodeStream(in);
 
                     mTextViewLocation.setText(location);
                     mTextViewTemperature.setText(tempFahrenheit + "°");
-//                    mImageViewWeatherIcon.setImageBitmap(icon);
+                    mImageViewWeatherIcon.setImageBitmap(icon);
                 } catch(Exception e) {
                     // blah
+                    Log.println(Log.DEBUG, "pooja", "An Exception Happened");
+                    Log.wtf("pooja", e);
                 }
             }
         }
