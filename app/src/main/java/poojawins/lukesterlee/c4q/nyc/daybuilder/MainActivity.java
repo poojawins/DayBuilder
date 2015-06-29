@@ -4,24 +4,23 @@ import android.app.Activity;
 import android.app.DialogFragment;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.graphics.Typeface;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.os.Bundle;
-import android.support.v7.widget.CardView;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import org.json.JSONException;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -37,9 +36,7 @@ import java.util.TreeSet;
 
 public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefreshListener, AddDialogListener {
 
-    private CardView mCardViewWeather;
-    private CardView mCardViewTodo;
-    private CardView mCardViewStock;
+    private CardAdapter.CardViewHolder mCardViewStock;
 
     private SharedPreferences mSharedPreferences;
 
@@ -48,15 +45,20 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
     private static final String SHARED_PREFERENCES_TODO_KEY = "todo";
     private static final int REQUEST_CODE_TODO = 1;
     private static final int REQUEST_CODE_STOCK = 2;
+    private static final int VIEW_TYPE_TITLE = 0;
+    private static final int VIEW_TYPE_WEATHER = 1;
+    private static final int VIEW_TYPE_TODO = 2;
+    private static final int VIEW_TYPE_STOCK = 3;
 
     LayoutInflater inflater;
+    CardAdapter cardAdapter;
 
     ConnectivityManager connectivityManager;
     NetworkInfo activeNetwork;
     boolean isConnected;
 
     private SwipeRefreshLayout mSwipeRefreshLayout;
-    private TextView mTextViewTitle;
+    private RecyclerView mRecyclerViewCard;
 
     // to do view stuffs
     private RecyclerView mRecyclerViewTodo;
@@ -69,12 +71,15 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
 
     // Stock view stuffs
     private final static int INTERVAL = 1000 * 60;
-    private LinearLayout mParentLayoutStock;
+
     private TextView mTextViewStockUpdate;
-    private Button mButtonStockFooter;
+    private Button mButtonStockAdd;
+    private RecyclerView mRecyclerViewStock;
+
     private Set<String> stockNameSet;
     private List<Stock> mRestOfStocks = null;
-    private NoScrollAdapter<Stock> stockAdapter;
+
+    private StockAdapter stockAdapter;
     private boolean isShowMoreStock;
     private boolean isFromDialogStock;
     Date lastUpdated;
@@ -107,27 +112,37 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
     }
 
     private void initializeTodoViews() {
-        mRecyclerViewTodo = (RecyclerView) findViewById(R.id.recyclerView_todo);
-        mButtonTodoFooter = (Button) findViewById(R.id.button_todo_footer);
     }
 
     private void initializeStockViews() {
-        mButtonStockFooter = (Button) findViewById(R.id.button_stock_footer);
-        mParentLayoutStock = (LinearLayout) findViewById(R.id.stock_list_parent);
-        mTextViewStockUpdate = (TextView) findViewById(R.id.stock_update);
+        mCardViewStock = cardAdapter.onCreateViewHolder(mRecyclerViewCard, VIEW_TYPE_STOCK);
+        mTextViewStockUpdate = mCardViewStock.getmTextViewStockUpdate();
+        //mButtonStockAdd = mCardViewStock.getmButtonAddStock();
+        mRecyclerViewStock = mCardViewStock.getmRecyclerViewStock();
 
     }
 
     private void initializeViews() {
-        mTextViewTitle = (TextView) findViewById(R.id.textView_app_title);
-        mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefreshLayout);
-        mCardViewWeather = (CardView) findViewById(R.id.card_view_weather);
-        mCardViewTodo = (CardView) findViewById(R.id.card_view_todo);
-        mCardViewStock = (CardView) findViewById(R.id.card_view_stock);
 
-        Typeface titleFont = Typeface.createFromAsset(getAssets(), "fonts/kgsummersunshine.ttf");
-        mTextViewTitle.setTypeface(titleFont);
-        mTextViewTitle.setTextColor(getResources().getColor(R.color.blue));
+
+        cardAdapter = new CardAdapter(MainActivity.this);
+
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(MainActivity.this);
+        linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+
+        mRecyclerViewCard = (RecyclerView) findViewById(R.id.recyclerView_card);
+        mRecyclerViewCard.setHasFixedSize(true);
+
+        mRecyclerViewCard.setLayoutManager(linearLayoutManager);
+
+
+
+        mRecyclerViewCard.setAdapter(cardAdapter);
+
+        mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefreshLayout);
+
+
+
     }
 
 
@@ -156,11 +171,12 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
         isConnected = (activeNetwork != null) && (activeNetwork.isConnectedOrConnecting());
 
         fetchDataFromSharedPreferences();
-        new TodoTask().execute(todoSet);
+        //new TodoTask().execute(todoSet);
+        new StockTask().execute(stockNameSet);
         mHandler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                new StockTask().execute(stockNameSet);
+
             }
         }, 1000);
 
@@ -171,37 +187,39 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
 
     private void setUpListeners(boolean isResumed) {
         if (!isResumed) {
-            mButtonStockFooter.setOnClickListener(null);
+            //mButtonStockAdd.setOnClickListener(null);
             mSwipeRefreshLayout.setOnRefreshListener(null);
         } else {
-            mButtonStockFooter.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (isShowMoreStock) {
-                        stockAdapter.addStockViews(mRestOfStocks, true);
-                        mButtonStockFooter.setText("Add a stock");
-                        mButtonStockFooter.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_add_white_18dp, 0, 0, 0);
-                        isShowMoreStock = false;
-                    } else {
-                        new AddStockDialogFragment().show(getFragmentManager(), "AddStockDialogFragment");
-                    }
 
-                }
-            });
+//            mButtonStockAdd.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//                    new AddStockDialogFragment().show(getFragmentManager(), "AddStockDialogFragment");
+//                    if (isShowMoreStock) {
+////                        stockAdapter.addStockViews(mRestOfStocks, true);
+////                        mButtonStockAdd.setText("Add a stock");
+////                        mButtonStockAdd.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_add_white_18dp, 0, 0, 0);
+////                        isShowMoreStock = false;
+//                    } else {
+//                        new AddStockDialogFragment().show(getFragmentManager(), "AddStockDialogFragment");
+//                    }
+//
+//                }
+//            });
             mSwipeRefreshLayout.setOnRefreshListener(this);
             mSwipeRefreshLayout.setProgressBackgroundColorSchemeResource(R.color.green);
 
-            mButtonTodoFooter.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (isShowMoreTodo) {
-
-                    } else {
-                        new AddTaskDialogFragment().show(getFragmentManager(), "AddTaskDialogFragment");
-                    }
-
-                }
-            });
+//            mButtonTodoFooter.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//                    if (isShowMoreTodo) {
+//
+//                    } else {
+//                        new AddTaskDialogFragment().show(getFragmentManager(), "AddTaskDialogFragment");
+//                    }
+//
+//                }
+//            });
 
 
         }
@@ -209,7 +227,7 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
 
     private void fetchDataFromSharedPreferences() {
         stockNameSet = mSharedPreferences.getStringSet(SHARED_PREFERENCES_STOCK_KEY, new TreeSet<String>());
-        todoSet = mSharedPreferences.getStringSet(SHARED_PREFERENCES_TODO_KEY, new TreeSet<String>());
+        //todoSet = mSharedPreferences.getStringSet(SHARED_PREFERENCES_TODO_KEY, new TreeSet<String>());
     }
 
 
@@ -217,7 +235,7 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
     protected void onPause() {
         super.onPause();
         setUpListeners(false);
-        
+
     }
 
     @Override
@@ -234,7 +252,7 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
     public void onRefresh() {
 
         fetchDataFromSharedPreferences();
-        new TodoTask().execute(todoSet);
+        //new TodoTask().execute(todoSet);
 
         mHandler.postDelayed(new Runnable() {
             @Override
@@ -311,30 +329,38 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
         @Override
         protected void onPostExecute(List<Stock> stocks) {
 
+
+
             lastUpdated = new Date();
             mHandler.removeCallbacks(postTimeRunnable);
             postTimeRunnable.run();
             mTextViewStockUpdate.setText("Just updated");
-            stockAdapter = new NoScrollAdapter<>(MainActivity.this, mParentLayoutStock, R.layout.list_item_stock);
 
-            if (isFromDialogStock) {
-                isShowMoreStock = false;
-                stockAdapter.addStockViews(stocks, false);
-            } else {
-                if (stocks.size() > 4) {
-                    isShowMoreStock = true;
-                    mButtonStockFooter.setText("Show more");
-                    mButtonStockFooter.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_keyboard_arrow_down_white_18dp,0,0,0);
-                    List<Stock> firstFour = stocks.subList(0,4);
-                    mRestOfStocks = stocks.subList(4, stocks.size());
-                    stockAdapter.addStockViews(firstFour,false);
 
-                } else {
-                    stockAdapter.addStockViews(stocks, false);
-                }
-            }
 
-            isFromDialogStock = false;
+            stockAdapter = new StockAdapter(MainActivity.this, stocks);
+            mRecyclerViewStock.setAdapter(stockAdapter);
+            mRecyclerViewStock.setLayoutManager(new LinearLayoutManager(MainActivity.this));
+
+
+//            if (isFromDialogStock) {
+//                isShowMoreStock = false;
+//                stockAdapter.addStockViews(stocks, false);
+//            } else {
+//                if (stocks.size() > 4) {
+//                    isShowMoreStock = true;
+//                    mButtonStockFooter.setText("Show more");
+//                    mButtonStockFooter.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_keyboard_arrow_down_white_18dp,0,0,0);
+//                    List<Stock> firstFour = stocks.subList(0,4);
+//                    mRestOfStocks = stocks.subList(4, stocks.size());
+//                    stockAdapter.addStockViews(firstFour,false);
+//
+//                } else {
+//                    stockAdapter.addStockViews(stocks, false);
+//                }
+//            }
+//
+//            isFromDialogStock = false;
             mSwipeRefreshLayout.setRefreshing(false);
 
 

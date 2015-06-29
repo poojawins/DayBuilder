@@ -3,8 +3,6 @@ package poojawins.lukesterlee.c4q.nyc.daybuilder;
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.DialogFragment;
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -19,8 +17,6 @@ import android.widget.EditText;
 import android.widget.ListView;
 
 import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
 
 /**
  * Created by Luke on 6/26/2015.
