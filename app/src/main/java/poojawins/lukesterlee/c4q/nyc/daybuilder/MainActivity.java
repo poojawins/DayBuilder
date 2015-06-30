@@ -13,46 +13,20 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.os.Bundle;
 import android.support.v7.widget.CardView;
 import android.view.LayoutInflater;
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.location.Location;
-import android.location.LocationManager;
-import android.os.AsyncTask;
-import android.os.StrictMode;
-import android.preference.PreferenceManager;
-import android.support.v7.app.ActionBarActivity;
-import android.os.Bundle;
-import android.support.v7.widget.CardView;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.example.android.swipedismiss.SwipeDismissTouchListener;
 import com.squareup.picasso.Picasso;
-
-import com.squareup.picasso.Picasso;
-
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -84,10 +58,9 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
 
     ConnectivityManager connectivityManager;
     NetworkInfo activeNetwork;
-    boolean isConnected;
 
+    private ImageView mImageViewTItle;
     private SwipeRefreshLayout mSwipeRefreshLayout;
-    private TextView mTextViewTitle;
 
     // weather stuffs
     double latitude;
@@ -160,15 +133,13 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
     }
 
     private void initializeViews() {
-        mTextViewTitle = (TextView) findViewById(R.id.textView_app_title);
+        mImageViewTItle = (ImageView) findViewById(R.id.imageView_app_title);
         mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefreshLayout);
         mCardViewWeather = (CardView) findViewById(R.id.card_view_weather);
         mCardViewTodo = (CardView) findViewById(R.id.card_view_todo);
         mCardViewStock = (CardView) findViewById(R.id.card_view_stock);
 
-        Typeface titleFont = Typeface.createFromAsset(getAssets(), "fonts/kgsummersunshine.ttf");
-        mTextViewTitle.setTypeface(titleFont);
-        mTextViewTitle.setTextColor(getResources().getColor(R.color.blue));
+        Picasso.with(MainActivity.this).load(R.drawable.c4qrainbow).resize(400, 400).into(mImageViewTItle);
     }
 
     // Weather view
@@ -181,6 +152,14 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        mHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                new SplashDialogFragment().show(getFragmentManager(), "SplashDialogFragment");
+            }
+        });
+
 
         isShowMoreStock = false;
         isFromDialogStock = false;
@@ -440,9 +419,13 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
             row.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    TextView ticker = (TextView) view.findViewById(R.id.stock_company_name);
-                    Intent intent = new Intent(MainActivity.this, TestActivity.class);
-                    startActivity(intent);
+                    TextView ticker = (TextView) view.findViewById(R.id.stock_category);
+                    WebViewFragment webFragment = new WebViewFragment();
+                    Bundle argument = new Bundle();
+                    argument.putString("ticker", ticker.getText().toString());
+                    webFragment.setArguments(argument);
+                    webFragment.show(getFragmentManager(), "WebViewFragment");
+
 
                 }
             });
