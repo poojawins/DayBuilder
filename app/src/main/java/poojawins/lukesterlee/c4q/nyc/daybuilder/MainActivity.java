@@ -1,7 +1,11 @@
 package poojawins.lukesterlee.c4q.nyc.daybuilder;
 
+
 import android.app.Activity;
 import android.app.DialogFragment;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Typeface;
@@ -10,6 +14,8 @@ import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v4.app.NotificationCompat;
+import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.support.v7.widget.CardView;
 import android.view.LayoutInflater;
@@ -23,6 +29,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 import com.example.android.swipedismiss.SwipeDismissTouchListener;
 import com.squareup.picasso.Picasso;
+
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import java.io.IOException;
@@ -31,6 +39,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.TreeSet;
 import java.lang.Math;
 
@@ -61,9 +71,34 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
     private SwipeRefreshLayout mSwipeRefreshLayout;
 
     // weather stuffs
+    // Location
     double latitude;
     double longitude;
+
+    // Weather Data
     private static final String WEATHER_ICON_URL = "http://openweathermap.org/img/w/";
+    private static final String JSON_WEATHER_URL = "http://api.openweathermap.org/data/2.5/weather?zip=11206";
+//    private static final String JSON_WEATHER_BASE = "http://api.openweathermap.org/data/2.5/weather?lat=";
+//    private static final String JSON_WEATHER_END = "&lon=";
+//    private static final String JSON_WEATHER_URL = JSON_WEATHER_BASE + latitude + JSON_WEATHER_END + longitude;
+
+    // Forecast Data
+    private static final String JSON_FORECAST_URL = "http://api.openweathermap.org/data/2.5/forecast/daily?q=brooklyn,us&cnt=5";
+//    private static final String JSON_FORECAST_BASE = "http://api.openweathermap.org/data/2.5/forecast/daily?lat=";
+//    private static final String JSON_FORECAST_LON = "&lon=";
+//    private static final String JSON_FORECAST_END = "&cnt=5";
+//    private static final String JSON_FORECAST_URL = JSON_FORECAST_BASE + latitude + JSON_FORECAST_LON + longitude + JSON_FORECAST_END;
+    ArrayList<Forecast> forecastData;
+
+    // Dark Sky Notifications
+    private static final String DARK_SKY_API_KEY = "d1dfd9033517c3d793c2b2744cdda637";
+    private static final String lat = "40.7005350"; //bk
+    private static final String lon = "-73.9396370"; //bk
+    private static final String DARK_SKY_URL = "https://api.forecast.io/forecast/"
+            + DARK_SKY_API_KEY + "/" + lat + "," + lon;
+//    private static final String DARK_SKY_BASE = "https://api.darkskyapp.com/v1/forecast/";
+//    private static final String DARK_SKY_URL = DARK_SKY_BASE + DARK_SKY_API_KEY + "/" + latitude + "," + longitude;
+    Handler handler;
 
     // to do view stuffs
     private LinearLayout mParentLayoutTodo;
@@ -116,6 +151,16 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
         mTextViewTemperature = (TextView) findViewById(R.id.temperature);
         mTextViewLocation = (TextView) findViewById(R.id.location);
         mImageViewWeatherIcon = (ImageView) findViewById(R.id.weatherIcon);
+
+
+
+        mTextViewTemperature = (TextView) findViewById(R.id.temperature);
+        mTextViewLocation = (TextView) findViewById(R.id.location);
+        mImageViewWeatherIcon = (ImageView) findViewById(R.id.weatherIcon);
+        mTextViewCondition = (TextView) findViewById(R.id.condition);
+        mTextViewHumidity = (TextView) findViewById(R.id.humidity);
+        mTextViewWindSpeed = (TextView) findViewById(R.id.wind_speed);
+        mParentLayoutForecast = (LinearLayout) findViewById(R.id.forecast_list_parent);
     }
 
     private void initializeTodoViews() {
@@ -141,7 +186,14 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
     TextView mTextViewTemperature;
     TextView mTextViewLocation;
     ImageView mImageViewWeatherIcon;
+    TextView mTextViewCondition;
+    TextView mTextViewHumidity;
+    TextView mTextViewWindSpeed;
+    LinearLayout mParentLayoutForecast;
+    ForecastAdapter forecastAdapter;
+
     WeatherTask weather;
+    ForecastTask forecast;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -176,6 +228,11 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
         doNetworkJob();
 
 
+//        DarkSkyTask darkSkyTask = new DarkSkyTask();
+//        Timer timer = new Timer();
+//        timer.schedule(darkSkyTask, 0, 60000);
+
+        callDarkSkyTask();
     }
 
     private void doNetworkJob() {
@@ -183,6 +240,8 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
             mParentLayoutStock.removeAllViews();
             new StockTask().execute(stockNameSet);
             new WeatherTask().execute();
+            new ForecastTask().execute();
+
         } else {
             stockAdapter.addNetworkWarningMessageView();
         }
@@ -502,10 +561,11 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
     }
 
     private class WeatherTask extends AsyncTask<Void, Void, String> {
+
         @Override
         protected String doInBackground(Void...voids) {
             try {
-                String weatherData = new WeatherGetter().getJSON();
+                String weatherData = new WeatherGetter().getJSON(JSON_WEATHER_URL);
                 return weatherData;
             } catch (Exception e) {
                 return null;
@@ -526,13 +586,19 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
                     int fahRounded = (int) Math.round(fah);
                     String tempFahrenheit = Integer.toString(fahRounded);
 
-                    JSONObject weather = jObject.getJSONArray("weather").getJSONObject(0);
-                    String icon = weather.getString("icon");
+                    String condition = jObject.getJSONArray("weather").getJSONObject(0).getString("main");
+                    String humidity = main.getString("humidity");
+                    String windSpeed = jObject.getJSONObject("wind").getString("speed");
+
+                    String icon = jObject.getJSONArray("weather").getJSONObject(0).getString("icon");
 
                     mTextViewLocation.setText(location);
                     mTextViewTemperature.setText(tempFahrenheit + "°");
+                    mTextViewCondition.setText(condition);
+                    mTextViewHumidity.setText(humidity + "% humidity");
+                    mTextViewWindSpeed.setText("Wind " + windSpeed + "mph");
                     Picasso.with(MainActivity.this).load(WEATHER_ICON_URL + icon + ".png")
-                            .resize(125,125).centerCrop().into(mImageViewWeatherIcon);
+                            .resize(125, 125).centerCrop().into(mImageViewWeatherIcon);
                 } catch(Exception e) {
                     Log.println(Log.DEBUG, "pooja", "An Exception Happened");
                 }
@@ -540,4 +606,125 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
         }
     }
 
+    private class ForecastTask extends AsyncTask<Void, Void, String> {
+
+        @Override
+        protected String doInBackground(Void...voids) {
+            try {
+                String weatherData = new WeatherGetter().getJSON(JSON_FORECAST_URL);
+                return weatherData;
+            } catch (Exception e) {
+                return null;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(String output) {
+            if (output != null) {
+                try {
+                    JSONObject jObject = new JSONObject(output);
+                    JSONArray data = jObject.getJSONArray("list");
+                    setForecastDataArray(data);
+
+//                    forecastAdapter = new ForecastAdapter<>(MainActivity.this, mParentLayoutForecast, R.layout.list_item_forecast);
+//                    forecastAdapter.addForecastViews(forecastData);
+
+                } catch(Exception e) {
+                    Log.println(Log.DEBUG, "pooja", "An Exception Happened");
+                }
+            }
+        }
+    }
+
+    private class DarkSkyTask extends AsyncTask<Void, Void, String> {
+
+        @Override
+        protected String doInBackground(Void...voids) {
+            try {
+                String weatherData = new WeatherGetter().getJSON(DARK_SKY_URL);
+                return weatherData;
+            } catch (Exception e) {
+                return null;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(String output) {
+            if (output != null) {
+                try {
+                    JSONObject jObject = new JSONObject(output);
+                    int precipitating = jObject.getJSONObject("currently").getInt("precipIntensity");
+                    if (precipitating == 0) { //CHANGE TO != WHEN DONE TESTING!!
+                        showNotification();
+                    }
+                } catch(Exception e) {
+                    Log.println(Log.DEBUG, "pooja", "An Exception Happened");
+                }
+            }
+        }
+    }
+
+
+    private void showNotification() {
+        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
+        builder.setContentTitle("Rain Advisory");
+        builder.setContentText("It is Raining!");
+        builder.setSmallIcon(R.drawable.ic_stat_raincloud);
+
+        Notification notification = builder.build();
+        notificationManager.notify(1, notification);
+    }
+
+    public void callDarkSkyTask() {
+        final Handler handler = new Handler();
+        Timer timer = new Timer();
+        int minutes = 15; // execute every 15 minutes
+        int msec = minutes * 60 * 1000;
+
+        TimerTask doAsynchronousTask = new TimerTask() {
+            @Override
+            public void run() {
+                handler.post(new Runnable() {
+                    public void run() {
+                        try {
+                            DarkSkyTask darkSkyTask = new DarkSkyTask();
+                            darkSkyTask.execute();
+                        } catch (Exception e) {
+                            Log.println(Log.DEBUG, "pooja", "An Exception Happened");
+                        }
+                    }
+                });
+            }
+        };
+        timer.schedule(doAsynchronousTask, 0, msec); // execute every 15 minutes
+    }
+
+    public void setForecastDataArray(JSONArray data) {
+        forecastData = new ArrayList<>();
+
+        for (int i = 0; i < 5; i++) {
+            try {
+
+                JSONObject item = data.getJSONObject(i);
+//                int day = item.getInt("dt"); // convert to day (String)
+//                String temp = item.getString("temp");
+//                int highTemp = temp.getInt("max"); // convert to fahrenheit + String
+//                int lowTemp = temp.getInt("min"); // convert to fahrenheit + String
+                String icon = item.getJSONArray("weather").getJSONObject(0).getString("icon");
+
+                Forecast forecast = new Forecast();
+//                forecast.setDay(day);
+//                forecast.setHighTemp(highTemp); // temp must be string
+//                forecast.setLowTemp(lowTemp); // temp must be string
+                forecast.setIcon(icon);
+
+                forecastData.add(forecast);
+            } catch (Exception e){
+                Log.println(Log.DEBUG, "pooja", "An Exception Happened");
+            }
+
+        }
+
+    }
 }

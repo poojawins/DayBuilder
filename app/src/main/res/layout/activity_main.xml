@@ -46,7 +46,6 @@
                     android:layout_height="wrap_content"
                     android:id="@+id/card_view_weather">
 
-
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -59,7 +58,45 @@
                             android:text="LOCATION"
                             android:fontFamily="sans-serif-thin"
                             android:textSize="40sp"
+                            android:layout_marginBottom="8dp"
                             android:id="@+id/location"/>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="sans-serif-thin"
+                                android:text="CONDITION"
+                                android:layout_marginBottom="8dp"
+                                android:layout_weight="1"
+                                android:textSize="16sp"
+                                android:id="@+id/condition"/>
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="sans-serif-thin"
+                                android:text="HUMIDITY"
+                                android:layout_marginBottom="8dp"
+                                android:layout_weight="1"
+                                android:textSize="16sp"
+                                android:id="@+id/humidity"/>
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="sans-serif-thin"
+                                android:text="WINDSPEED"
+                                android:layout_marginBottom="8dp"
+                                android:layout_weight="1"
+                                android:textSize="16sp"
+                                android:id="@+id/wind_speed"/>
+
+                        </LinearLayout>
 
                         <LinearLayout
                             android:layout_width="match_parent"
@@ -71,6 +108,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
                                 android:id="@+id/weatherIcon"
+                                android:layout_marginBottom="8dp"
                                 android:src="@drawable/placekitten50"
                                 android:scaleType="center"/>
 
@@ -79,16 +117,23 @@
                                 android:layout_height="wrap_content"
                                 android:fontFamily="sans-serif-thin"
                                 android:text="TEMP"
+                                android:layout_marginBottom="8dp"
                                 android:layout_weight="1"
                                 android:textSize="40sp"
                                 android:id="@+id/temperature"/>
 
                         </LinearLayout>
 
+                        <LinearLayout
+                            android:id="@+id/forecast_list_parent"
+                            android:orientation="vertical"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+
+                        </LinearLayout>
+
                     </LinearLayout>
-
-
-                    </android.support.v7.widget.CardView>
+                </android.support.v7.widget.CardView>
 
 
 
@@ -123,9 +168,7 @@
                             android:id="@+id/todo_list_parent"
                             android:orientation="vertical"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="16dp"
-                            android:layout_marginLeft="16dp">
+                            android:layout_height="wrap_content">
 
 
 
@@ -136,7 +179,7 @@
 
                         <Button
                             android:layout_width="match_parent"
-                            android:layout_height="45dp"
+                            android:layout_height="50dp"
                             android:textColor="@color/white"
                             android:text="Add a task"
                             android:background="@color/blue"
@@ -200,7 +243,7 @@
 
                         <Button
                             android:layout_width="match_parent"
-                            android:layout_height="45dp"
+                            android:layout_height="50dp"
                             android:id="@+id/button_stock_footer"
                             android:textColor="@color/white"
                             android:text="@string/stock_add"
