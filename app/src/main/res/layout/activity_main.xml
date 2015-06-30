@@ -103,7 +103,6 @@
 
                     <LinearLayout
                         android:orientation="vertical"
-                        android:padding="8dp"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
 
@@ -111,6 +110,7 @@
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:paddingLeft="16dp"
                             android:text="@string/title_todo"
                             android:fontFamily="sans-serif-thin"
                             android:textSize="40sp"
@@ -121,7 +121,9 @@
                             android:id="@+id/todo_list_parent"
                             android:orientation="vertical"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content">
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="16dp"
+                            android:layout_marginLeft="16dp">
 
 
 
@@ -132,9 +134,9 @@
 
                         <Button
                             android:layout_width="match_parent"
-                            android:layout_height="40dp"
+                            android:layout_height="45dp"
                             android:textColor="@color/white"
-                            android:text="@string/stock_add"
+                            android:text="Add a task"
                             android:background="@color/blue"
                             android:id="@+id/button_todo_footer"/>
 
@@ -157,8 +159,7 @@
                         android:orientation="vertical"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:id="@+id/stock_parent"
-                        android:padding="8dp">
+                        android:id="@+id/stock_parent">
 
                         <LinearLayout
                             android:orientation="vertical"
@@ -196,7 +197,7 @@
 
                         <Button
                             android:layout_width="match_parent"
-                            android:layout_height="40dp"
+                            android:layout_height="45dp"
                             android:id="@+id/button_stock_footer"
                             android:textColor="@color/white"
                             android:text="@string/stock_add"

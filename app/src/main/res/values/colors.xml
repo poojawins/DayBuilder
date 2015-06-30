@@ -19,6 +19,8 @@
     <drawable name="pressed_gray">#0c000000</drawable>
     <drawable name="selected_gray">#2c000000</drawable>
 
+    <color name="grey">#2c000000</color>
+
     <color name="black_semi_transparent">#B2000000</color>
     <color name="background">#e5e5e5</color>
     <color name="blue">#1976D2</color>

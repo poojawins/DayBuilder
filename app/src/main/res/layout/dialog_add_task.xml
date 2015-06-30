@@ -3,11 +3,14 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:focusableInTouchMode="true"
+    android:padding="16dp"
     android:clickable="true"
     android:focusable="true">
 
     <TextView
         android:text="Add a task"
+        android:textSize="35sp"
+        android:fontFamily="sans-serif-thin"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
@@ -20,6 +23,8 @@
 
     <TextView
         android:text="priority"
+        android:textSize="20sp"
+        android:fontFamily="sans-serif-thin"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 

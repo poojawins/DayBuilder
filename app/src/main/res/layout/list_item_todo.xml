@@ -3,6 +3,7 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:focusableInTouchMode="true"
+    android:paddingBottom="16dp"
     android:clickable="true"
     android:focusable="true">
 
@@ -12,14 +13,19 @@
         android:layout_height="wrap_content">
 
         <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:fontFamily="sans-serif"
+            android:textSize="20sp"
             android:background="@drawable/button_white"
             android:id="@+id/button_todo"/>
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-thin"
+            android:paddingLeft="16dp"
+            android:textSize="25sp"
             android:id="@+id/textView_todo"/>
 
 

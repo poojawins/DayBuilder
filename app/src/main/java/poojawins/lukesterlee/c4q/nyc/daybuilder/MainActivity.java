@@ -41,9 +41,7 @@ import java.lang.Math;
 
 public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefreshListener, AddDialogListener {
 
-    private CardView mCardViewWeather;
-    private CardView mCardViewTodo;
-    private CardView mCardViewStock;
+
 
     private SharedPreferences mSharedPreferences;
     private SharedPreferences.Editor editor;
@@ -135,11 +133,8 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
     private void initializeViews() {
         mImageViewTItle = (ImageView) findViewById(R.id.imageView_app_title);
         mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefreshLayout);
-        mCardViewWeather = (CardView) findViewById(R.id.card_view_weather);
-        mCardViewTodo = (CardView) findViewById(R.id.card_view_todo);
-        mCardViewStock = (CardView) findViewById(R.id.card_view_stock);
 
-        Picasso.with(MainActivity.this).load(R.drawable.c4qrainbow).resize(400, 400).into(mImageViewTItle);
+        Picasso.with(MainActivity.this).load(R.drawable.c4qrainbow).resize(800, 800).into(mImageViewTItle);
     }
 
     // Weather view
@@ -153,12 +148,6 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mHandler.post(new Runnable() {
-            @Override
-            public void run() {
-                new SplashDialogFragment().show(getFragmentManager(), "SplashDialogFragment");
-            }
-        });
 
 
         isShowMoreStock = false;
@@ -311,6 +300,7 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
                 dialog.dismiss();
 
                 isFromDialogStock = true;
+                fetchDataFromSharedPreferences();
                 doNetworkJob();
                 break;
         }
