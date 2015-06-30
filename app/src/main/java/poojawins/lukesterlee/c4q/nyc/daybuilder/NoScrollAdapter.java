@@ -1,14 +1,11 @@
 package poojawins.lukesterlee.c4q.nyc.daybuilder;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
-import com.example.android.swipedismiss.SwipeDismissTouchListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -124,6 +121,22 @@ public class NoScrollAdapter<T> {
 
         }
     }
+
+    public void addEmptyMessageView() {
+        mParentLayout.removeAllViews();
+        View empty = inflater.inflate(R.layout.message_empty, null);
+        mParentLayout.addView(empty, 0);
+    }
+
+
+    public void addNetworkWarningMessageView() {
+        mParentLayout.removeAllViews(); // TODO: find a better way
+        View network = inflater.inflate(R.layout.message_network, null);
+        mParentLayout.addView(network, 0);
+
+    }
+
+
 
 
 }

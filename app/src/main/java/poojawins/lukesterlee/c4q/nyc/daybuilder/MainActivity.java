@@ -156,7 +156,7 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
         mButtonStockFooter = (Button) findViewById(R.id.button_stock_footer);
         mParentLayoutStock = (LinearLayout) findViewById(R.id.stock_list_parent);
         mTextViewStockUpdate = (TextView) findViewById(R.id.stock_update);
-
+        stockAdapter = new NoScrollAdapter<>(MainActivity.this, mParentLayoutStock, R.layout.list_item_stock);
     }
 
     private void initializeViews() {
@@ -192,20 +192,37 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
         editor = mSharedPreferences.edit();
         inflater = (LayoutInflater) MainActivity.this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
+        connectivityManager = (ConnectivityManager) MainActivity.this.getSystemService(Context.CONNECTIVITY_SERVICE);
+
+
 
         initializeViews();
         initializeWeatherViews();
         initializeStockViews();
         initializeTodoViews();
 
-        connectivityManager = (ConnectivityManager) MainActivity.this.getSystemService(Context.CONNECTIVITY_SERVICE);
-        activeNetwork = connectivityManager.getActiveNetworkInfo();
-        isConnected = (activeNetwork != null) && (activeNetwork.isConnectedOrConnecting());
+
 
         fetchDataFromSharedPreferences();
         fetchTask();
-        new StockTask().execute(stockNameSet);
+        doNetworkJob();
 
+
+    }
+
+    private void doNetworkJob() {
+        if (hasNetwork()) {
+            mParentLayoutStock.removeAllViews();
+            new StockTask().execute(stockNameSet);
+            new WeatherTask().execute();
+        } else {
+            stockAdapter.addNetworkWarningMessageView();
+        }
+    }
+
+    private boolean hasNetwork() {
+        activeNetwork = connectivityManager.getActiveNetworkInfo();
+        return (activeNetwork != null) && (activeNetwork.isConnectedOrConnecting());
     }
 
     private void setUpListeners(boolean isResumed) {
@@ -269,8 +286,6 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
     @Override
     protected void onResume() {
         super.onResume();
-        weather = new WeatherTask();
-        weather.execute();
         setUpListeners(true);
     }
 
@@ -279,8 +294,7 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
     public void onRefresh() {
         fetchDataFromSharedPreferences();
         fetchTask();
-        new StockTask().execute(stockNameSet);
-
+        doNetworkJob();
     }
 
 
@@ -288,10 +302,13 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
     @Override
     public void addDialogClicked(DialogFragment dialog, int requestCode, String data) {
 
-
         switch (requestCode) {
             case REQUEST_CODE_TODO:
                 Set<String> todoList = mSharedPreferences.getStringSet(SHARED_PREFERENCES_TODO_KEY, new TreeSet<String>());
+                if (todoList.size() == 0) {
+                    mParentLayoutTodo.removeAllViews();
+                }
+
                 Set<String> newTodoList = new TreeSet<>();
                 newTodoList.addAll(todoList);
                 newTodoList.add(data);
@@ -314,9 +331,8 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
 
                 dialog.dismiss();
 
-
                 isFromDialogStock = true;
-                new StockTask().execute(newStockList);
+                doNetworkJob();
                 break;
         }
 
@@ -338,10 +354,14 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
         editor.putStringSet(SHARED_PREFERENCES_STOCK_KEY, newStockList);
         editor.apply();
         if (companyName.contains("Google")) {
-            Toast.makeText(MainActivity.this, "You can't do this to me :)", Toast.LENGTH_SHORT).show();
+            Toast.makeText(MainActivity.this, "You can't get rid of me :)", Toast.LENGTH_SHORT).show();
         } else {
             Toast.makeText(MainActivity.this, "Deleted!", Toast.LENGTH_SHORT).show();
         }
+
+    }
+
+    public void addToCompletedList() {
 
     }
 
@@ -356,7 +376,7 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
                 break;
             }
         }
-        editor.putStringSet(SHARED_PREFERENCES_STOCK_KEY, newTodoList);
+        editor.putStringSet(SHARED_PREFERENCES_TODO_KEY, newTodoList);
         editor.apply();
         Toast.makeText(MainActivity.this, "Deleted!", Toast.LENGTH_SHORT).show();
 
@@ -368,25 +388,30 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
         for (String sentence : todoSet) {
             list.add(sentence);
         }
-        if (isFromDialogTodo) {
-            isShowMoreTodo = false;
-            todoAdapter.addTaskViews(list, false);
-        } else {
-            if (list.size() > 4) {
-                isShowMoreTodo = true;
-                mButtonTodoFooter.setText("Show more");
-                mButtonTodoFooter.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_keyboard_arrow_down_white_18dp, 0, 0, 0);
-                List<String> firstFour = list.subList(0,4);
-                mRestOfTodos = list.subList(4, list.size());
-                todoAdapter.addTaskViews(firstFour, false);
-            } else {
-                todoAdapter.addTaskViews(list, false);
-            }
-        }
 
-        isFromDialogTodo = false;
+
+        if (list.size() == 0) {
+            todoAdapter.addEmptyMessageView();
+        } else {
+            if (isFromDialogTodo) {
+                isShowMoreTodo = false;
+                todoAdapter.addTaskViews(list, false);
+            } else {
+                if (list.size() > 4) {
+                    isShowMoreTodo = true;
+                    mButtonTodoFooter.setText("Show more");
+                    mButtonTodoFooter.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_keyboard_arrow_down_white_18dp, 0, 0, 0);
+                    List<String> firstFour = list.subList(0,4);
+                    mRestOfTodos = list.subList(4, list.size());
+                    todoAdapter.addTaskViews(firstFour, false);
+                } else {
+                    todoAdapter.addTaskViews(list, false);
+                }
+            }
+            isFromDialogTodo = false;
+            addTaskTouchListener();
+        }
         mSwipeRefreshLayout.setRefreshing(false);
-        addTaskTouchListener();
     }
 
     private void addStockTouchListener() {
@@ -412,6 +437,15 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
                     }
                 }
             }));
+            row.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    TextView ticker = (TextView) view.findViewById(R.id.stock_company_name);
+                    Intent intent = new Intent(MainActivity.this, TestActivity.class);
+                    startActivity(intent);
+
+                }
+            });
         }
     }
 
@@ -424,7 +458,6 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
                     return true;
                 }
 
-
                 @Override
                 public void onDismiss(View view, Object token, boolean isLeft) {
                     mParentLayoutTodo.removeView(view);
@@ -432,7 +465,8 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
                         TextView task = (TextView) view.findViewById(R.id.textView_todo);
                         deleteTodo(task.getText().toString());
                     } else {
-                        // TODO: add to the completed list.
+                        addToCompletedList();
+                        Toast.makeText(MainActivity.this, "Dismissed!", Toast.LENGTH_SHORT).show();
                     }
 
                 }
@@ -472,7 +506,6 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
             mHandler.removeCallbacks(postTimeRunnable);
             postTimeRunnable.run();
             mTextViewStockUpdate.setText("Just updated");
-            stockAdapter = new NoScrollAdapter<>(MainActivity.this, mParentLayoutStock, R.layout.list_item_stock);
 
             if (isFromDialogStock) {
                 isShowMoreStock = false;
