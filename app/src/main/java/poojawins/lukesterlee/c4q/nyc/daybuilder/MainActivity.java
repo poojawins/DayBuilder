@@ -40,6 +40,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -93,13 +94,20 @@ public class MainActivity extends ActionBarActivity {
     double latitude;
     double longitude;
 
-    // Weather + Forecast Data
+    // Weather Data
     private static final String WEATHER_ICON_URL = "http://openweathermap.org/img/w/";
     private static final String JSON_WEATHER_URL = "http://api.openweathermap.org/data/2.5/weather?zip=11206";
-    private static final String JSON_FORECAST_URL = "http://api.openweathermap.org/data/2.5/forecast/daily?q=brooklyn,us&cnt=5";
-//    private static final String JSON_WEATHER_LATLON = "http://api.openweathermap.org/data/2.5/weather?lat=";
+//    private static final String JSON_WEATHER_BASE = "http://api.openweathermap.org/data/2.5/weather?lat=";
 //    private static final String JSON_Weather_END = "&lon=";
-//    private static final String JSON_WEATHER_URL = JSON_WEATHER_LATLON + latitude + JSON_WEATHER_END + longitude;
+//    private static final String JSON_WEATHER_URL = JSON_WEATHER_BASE + latitude + JSON_WEATHER_END + longitude;
+
+    // Forecast Data
+    private static final String JSON_FORECAST_URL = "http://api.openweathermap.org/data/2.5/forecast/daily?q=brooklyn,us&cnt=5";
+//    private static final String JSON_FORECAST_BASE = "http://api.openweathermap.org/data/2.5/forecast/daily?lat=";
+//    private static final String JSON_FORECAST_LON = "&lon=";
+//    private static final String JSON_FORECAST_END = "&cnt=5";
+//    private static final String JSON_FORECAST_URL = JSON_FORECAST_BASE + latitude + JSON_FORECAST_LON + longitude + JSON_FORECAST_END;
+    ArrayList<Forecast> forecastData;
 
     // Dark Sky Notifications
     private static final String DARK_SKY_API_KEY = "d1dfd9033517c3d793c2b2744cdda637";
@@ -110,6 +118,7 @@ public class MainActivity extends ActionBarActivity {
 //    private static final String DARK_SKY_BASE = "https://api.darkskyapp.com/v1/forecast/";
 //    private static final String DARK_SKY_URL = DARK_SKY_BASE + DARK_SKY_API_KEY + "/" + latitude + "," + longitude;
     Handler handler;
+
     // to do view stuffs
 
 
@@ -332,7 +341,26 @@ public class MainActivity extends ActionBarActivity {
         protected void onPostExecute(String output) {
             if (output != null) {
                 try {
+                    JSONObject jObject = new JSONObject(output);
+                    JSONArray forecastData = jObject.getJSONArray("list");
 
+//                    something like this...
+//                    forecastData = new ArrayList<Forecast>();
+//
+//                    for (i = 0; i < forecastData.length(); i++) {
+//                        int day = forecastData.get(i).getInt("dt");
+//                        int highTemp = jObject.getString("temp").getInt("max"); // convert to fahrenheit + String
+//                        int lowTemp = jObject.getString("temp").getInt("min"); // convert to fahrenheit + String
+//                        String icon = jObject.getJSONArray("weather").getJSONObject(0).getString("icon");
+//
+//                        Forecast forecast = new Forecast();
+//                        forecast.setDay(day);
+//                        forecast.setHighTemp(highTemp); // temp must be string
+//                        forecast.setLowTemp(lowTemp); // temp must be string
+//                        forecast.setIcon(icon);
+//
+//                        forecastData.add(forecast);
+//                    }
 
                 } catch(Exception e) {
                     Log.println(Log.DEBUG, "pooja", "An Exception Happened");
