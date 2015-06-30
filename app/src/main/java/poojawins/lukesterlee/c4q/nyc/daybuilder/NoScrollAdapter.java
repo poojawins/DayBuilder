@@ -50,6 +50,8 @@ public class NoScrollAdapter<T> {
         return mList.get(position);
     }
 
+
+
     public void addStockViews(List<T> mList, boolean isRest) {
         this.mList = mList;
 
@@ -90,6 +92,7 @@ public class NoScrollAdapter<T> {
         }
 
     }
+
 
     public void addTaskViews(List<T> mList, boolean isRest) {
         this.mList = mList;

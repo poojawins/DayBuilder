@@ -34,6 +34,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.android.swipedismiss.SwipeDismissTouchListener;
 import com.squareup.picasso.Picasso;
@@ -323,18 +324,120 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
 
 
 
-//    public void deleteStock() {
-//        Set<String> list = mSharedPreferences.getStringSet(SHARED_PREFERENCES_STOCK_KEY, new TreeSet<String>());
-//        Set<String> newStockList = new TreeSet<>();
-//        newStockList.addAll(list);
-//        newStockList.add(data);
-//        editor.putStringSet(SHARED_PREFERENCES_STOCK_KEY, newStockList);
-//        editor.apply();
-//
-//    }
+    public void deleteStock(String companyName) {
+        Set<String> list = mSharedPreferences.getStringSet(SHARED_PREFERENCES_STOCK_KEY, new TreeSet<String>());
+        Set<String> newStockList = new TreeSet<>();
+        newStockList.addAll(list);
 
-    public void deleteTodo() {
+        for (String stock : newStockList) {
+            if (stock.contains(companyName)) {
+                newStockList.remove(stock);
+                break;
+            }
+        }
+        editor.putStringSet(SHARED_PREFERENCES_STOCK_KEY, newStockList);
+        editor.apply();
+        if (companyName.contains("Google")) {
+            Toast.makeText(MainActivity.this, "You can't do this to me :)", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(MainActivity.this, "Deleted!", Toast.LENGTH_SHORT).show();
+        }
 
+    }
+
+    public void deleteTodo(String todo) {
+        Set<String> list = mSharedPreferences.getStringSet(SHARED_PREFERENCES_TODO_KEY, new TreeSet<String>());
+        Set<String> newTodoList = new TreeSet<>();
+        newTodoList.addAll(list);
+
+        for (String task : newTodoList) {
+            if (task.contains(todo)) {
+                newTodoList.remove(task);
+                break;
+            }
+        }
+        editor.putStringSet(SHARED_PREFERENCES_STOCK_KEY, newTodoList);
+        editor.apply();
+        Toast.makeText(MainActivity.this, "Deleted!", Toast.LENGTH_SHORT).show();
+
+    }
+
+    private void fetchTask() {
+        todoAdapter = new NoScrollAdapter<>(MainActivity.this, mParentLayoutTodo, R.layout.list_item_todo);
+        List<String> list = new ArrayList<>();
+        for (String sentence : todoSet) {
+            list.add(sentence);
+        }
+        if (isFromDialogTodo) {
+            isShowMoreTodo = false;
+            todoAdapter.addTaskViews(list, false);
+        } else {
+            if (list.size() > 4) {
+                isShowMoreTodo = true;
+                mButtonTodoFooter.setText("Show more");
+                mButtonTodoFooter.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_keyboard_arrow_down_white_18dp, 0, 0, 0);
+                List<String> firstFour = list.subList(0,4);
+                mRestOfTodos = list.subList(4, list.size());
+                todoAdapter.addTaskViews(firstFour, false);
+            } else {
+                todoAdapter.addTaskViews(list, false);
+            }
+        }
+
+        isFromDialogTodo = false;
+        mSwipeRefreshLayout.setRefreshing(false);
+        addTaskTouchListener();
+    }
+
+    private void addStockTouchListener() {
+        for (View row : stockAdapter.getChildViews()) {
+
+            row.setOnTouchListener(new SwipeDismissTouchListener(row, null, new SwipeDismissTouchListener.DismissCallbacks() {
+                @Override
+                public boolean canDismiss(Object token) {
+                    return true;
+                }
+
+
+                @Override
+                public void onDismiss(View view, Object token, boolean isLeft) {
+                    mParentLayoutStock.removeView(view);
+
+                    if (isLeft) {
+                        // this is not a good way but I can't find any other way.
+                        TextView ticker = (TextView) view.findViewById(R.id.stock_company_name);
+                        deleteStock(ticker.getText().toString());
+                    } else {
+                        Toast.makeText(MainActivity.this, "Dismissed!", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }));
+        }
+    }
+
+    private void addTaskTouchListener() {
+        for (View row : todoAdapter.getChildViews()) {
+
+            row.setOnTouchListener(new SwipeDismissTouchListener(row, null, new SwipeDismissTouchListener.DismissCallbacks() {
+                @Override
+                public boolean canDismiss(Object token) {
+                    return true;
+                }
+
+
+                @Override
+                public void onDismiss(View view, Object token, boolean isLeft) {
+                    mParentLayoutTodo.removeView(view);
+                    if (isLeft) {
+                        TextView task = (TextView) view.findViewById(R.id.textView_todo);
+                        deleteTodo(task.getText().toString());
+                    } else {
+                        // TODO: add to the completed list.
+                    }
+
+                }
+            }));
+        }
     }
 
     private class StockTask extends AsyncTask<Set<String>, Void, List<Stock>> {
@@ -392,77 +495,6 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
         }
     }
 
-    private void fetchTask() {
-        todoAdapter = new NoScrollAdapter<>(MainActivity.this, mParentLayoutTodo, R.layout.list_item_todo);
-        List<String> list = new ArrayList<>();
-        for (String sentence : todoSet) {
-            list.add(sentence);
-        }
-        if (isFromDialogTodo) {
-            isShowMoreTodo = false;
-            todoAdapter.addTaskViews(list, false);
-        } else {
-            if (list.size() > 4) {
-                isShowMoreTodo = true;
-                mButtonTodoFooter.setText("Show more");
-                mButtonTodoFooter.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_keyboard_arrow_down_white_18dp, 0, 0, 0);
-                List<String> firstFour = list.subList(0,4);
-                mRestOfTodos = list.subList(4, list.size());
-                todoAdapter.addTaskViews(firstFour, false);
-            } else {
-                todoAdapter.addTaskViews(list, false);
-            }
-        }
-
-        isFromDialogTodo = false;
-        mSwipeRefreshLayout.setRefreshing(false);
-        addTaskTouchListener();
-    }
-
-    private void addStockTouchListener() {
-        for (View row : stockAdapter.getChildViews()) {
-
-            row.setOnTouchListener(new SwipeDismissTouchListener(row, null, new SwipeDismissTouchListener.DismissCallbacks() {
-                @Override
-                public boolean canDismiss(Object token) {
-                    return true;
-                }
-
-
-                @Override
-                public void onDismiss(View view, Object token, boolean isLeft) {
-                    mParentLayoutStock.removeView(view);
-                    if (isLeft) {
-                        //deleteStock();
-                    }
-                }
-            }));
-        }
-    }
-
-    private void addTaskTouchListener() {
-        for (View row : todoAdapter.getChildViews()) {
-
-            row.setOnTouchListener(new SwipeDismissTouchListener(row, null, new SwipeDismissTouchListener.DismissCallbacks() {
-                @Override
-                public boolean canDismiss(Object token) {
-                    return true;
-                }
-
-
-                @Override
-                public void onDismiss(View view, Object token, boolean isLeft) {
-                    mParentLayoutTodo.removeView(view);
-                    if (isLeft) {
-                        deleteTodo();
-                    } else {
-                        // TODO: add to the completed list.
-                    }
-
-                }
-            }));
-        }
-    }
     private class WeatherTask extends AsyncTask<Void, Void, String> {
         @Override
         protected String doInBackground(Void...voids) {
