@@ -1,7 +1,6 @@
 package poojawins.lukesterlee.c4q.nyc.daybuilder;
 
 import android.content.Context;
-import android.text.Layout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,7 +37,7 @@ public class ForecastAdapter extends ArrayAdapter<Forecast> {
             TextView day = (TextView) v.findViewById(R.id.day);
             TextView high = (TextView) v.findViewById(R.id.high_temp);
             TextView low = (TextView) v.findViewById(R.id.low_temp);
-//            ImageView image = (ImageView) v.findViewById(R.id.image);
+            ImageView image = (ImageView) v.findViewById(R.id.image);
 
             if (day != null) {
                 day.setText(i.getDay());
@@ -52,10 +51,10 @@ public class ForecastAdapter extends ArrayAdapter<Forecast> {
                 low.setText(i.getLowTemp());
             }
 
-//            if (image != null) {
-//                Picasso.with(MainActivity).load("http://openweathermap.org/img/w/" + i.getIcon() + ".png")
-//                        .resize(125, 125).centerCrop().into(image);
-//            }
+            if (image != null) {
+                Picasso.with(this.getContext()).load("http://openweathermap.org/img/w/" + i.getIcon() + ".png")
+                        .resize(125, 125).centerCrop().into(image);
+            }
 
         }
 
