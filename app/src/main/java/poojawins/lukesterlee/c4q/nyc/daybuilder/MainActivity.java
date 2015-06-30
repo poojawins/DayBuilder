@@ -1,5 +1,8 @@
 package poojawins.lukesterlee.c4q.nyc.daybuilder;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -8,8 +11,10 @@ import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.AsyncTask;
+import android.os.Handler;
 import android.os.StrictMode;
 import android.preference.PreferenceManager;
+import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.support.v7.widget.CardView;
@@ -39,6 +44,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.TreeSet;
 import java.lang.Math;
 
@@ -82,14 +89,27 @@ public class MainActivity extends ActionBarActivity {
     private static final String SHARED_PREFERENCES_STOCK_KEY = "stock";
     private static final String SHARED_PREFERENCES_TODO_KEY = "todo";
 
+    // Location
     double latitude;
     double longitude;
+
+    // Weather + Forecast Data
     private static final String WEATHER_ICON_URL = "http://openweathermap.org/img/w/";
     private static final String JSON_WEATHER_URL = "http://api.openweathermap.org/data/2.5/weather?zip=11206";
     private static final String JSON_FORECAST_URL = "http://api.openweathermap.org/data/2.5/forecast/daily?q=brooklyn,us&cnt=5";
 //    private static final String JSON_WEATHER_LATLON = "http://api.openweathermap.org/data/2.5/weather?lat=";
 //    private static final String JSON_Weather_END = "&lon=";
+//    private static final String JSON_WEATHER_URL = JSON_WEATHER_LATLON + latitude + JSON_WEATHER_END + longitude;
 
+    // Dark Sky Notifications
+    private static final String DARK_SKY_API_KEY = "d1dfd9033517c3d793c2b2744cdda637";
+    private static final String lat = "40.7005350"; //bk
+    private static final String lon = "-73.9396370"; //bk
+    private static final String DARK_SKY_URL = "https://api.forecast.io/forecast/"
+            + DARK_SKY_API_KEY + "/" + lat + "," + lon;
+//    private static final String DARK_SKY_BASE = "https://api.darkskyapp.com/v1/forecast/";
+//    private static final String DARK_SKY_URL = DARK_SKY_BASE + DARK_SKY_API_KEY + "/" + latitude + "," + longitude;
+    Handler handler;
     // to do view stuffs
 
 
@@ -119,6 +139,11 @@ public class MainActivity extends ActionBarActivity {
 
         initializeViews();
 
+//        DarkSkyTask darkSkyTask = new DarkSkyTask();
+//        Timer timer = new Timer();
+//        timer.schedule(darkSkyTask, 0, 60000);
+
+        callDarkSkyTask();
     }
 
     private void setUpListeners(boolean isResumed) {
@@ -316,4 +341,66 @@ public class MainActivity extends ActionBarActivity {
         }
     }
 
+    private class DarkSkyTask extends AsyncTask<Void, Void, String> {
+
+        @Override
+        protected String doInBackground(Void...voids) {
+            try {
+                String weatherData = new WeatherGetter().getJSON(DARK_SKY_URL);
+                return weatherData;
+            } catch (Exception e) {
+                return null;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(String output) {
+            if (output != null) {
+                try {
+                    JSONObject jObject = new JSONObject(output);
+                    int precipitating = jObject.getJSONObject("currently").getInt("precipIntensity");
+                    if (precipitating == 0) { //CHANGE TO != WHEN DONE TESTING!!
+                        showNotification();
+                    }
+                } catch(Exception e) {
+                    Log.println(Log.DEBUG, "pooja", "An Exception Happened");
+                }
+            }
+        }
+    }
+
+    private void showNotification() {
+        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
+        builder.setContentTitle("Rain Advisory");
+        builder.setContentText("It is Raining!");
+        builder.setSmallIcon(R.drawable.ic_stat_raincloud);
+
+        Notification notification = builder.build();
+        notificationManager.notify(1, notification);
+    }
+
+    public void callDarkSkyTask() {
+        final Handler handler = new Handler();
+        Timer timer = new Timer();
+        int minutes = 15; // execute every 15 minutes
+        int msec = minutes * 60 * 1000;
+
+        TimerTask doAsynchronousTask = new TimerTask() {
+            @Override
+            public void run() {
+                handler.post(new Runnable() {
+                    public void run() {
+                        try {
+                            DarkSkyTask darkSkyTask = new DarkSkyTask();
+                            darkSkyTask.execute();
+                        } catch (Exception e) {
+                            Log.println(Log.DEBUG, "pooja", "An Exception Happened");
+                        }
+                    }
+                });
+            }
+        };
+        timer.schedule(doAsynchronousTask, 0, msec); // execute every 15 minutes
+    }
 }
