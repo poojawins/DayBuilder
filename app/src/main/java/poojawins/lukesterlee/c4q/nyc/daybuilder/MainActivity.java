@@ -105,6 +105,10 @@ public class MainActivity extends ActionBarActivity {
     TextView mTextViewTemperature;
     TextView mTextViewLocation;
     ImageView mImageViewWeatherIcon;
+    TextView mTextViewCondition;
+    TextView mTextViewHumidity;
+    TextView mTextViewWindSpeed;
+
     WeatherTask weather;
     ForecastTask forecast;
 
@@ -159,6 +163,9 @@ public class MainActivity extends ActionBarActivity {
         mTextViewTemperature = (TextView) findViewById(R.id.temperature);
         mTextViewLocation = (TextView) findViewById(R.id.location);
         mImageViewWeatherIcon = (ImageView) findViewById(R.id.weatherIcon);
+        mTextViewCondition = (TextView) findViewById(R.id.condition);
+        mTextViewHumidity = (TextView) findViewById(R.id.humidity);
+        mTextViewWindSpeed = (TextView) findViewById(R.id.wind_speed);
     }
 
 
@@ -239,6 +246,7 @@ public class MainActivity extends ActionBarActivity {
     }
 
     private class WeatherTask extends AsyncTask<Void, Void, String> {
+
         @Override
         protected String doInBackground(Void...voids) {
             try {
@@ -263,11 +271,17 @@ public class MainActivity extends ActionBarActivity {
                     int fahRounded = (int) Math.round(fah);
                     String tempFahrenheit = Integer.toString(fahRounded);
 
-                    JSONObject weather = jObject.getJSONArray("weather").getJSONObject(0);
-                    String icon = weather.getString("icon");
+                    String condition = jObject.getJSONArray("weather").getJSONObject(0).getString("main");
+                    String humidity = main.getString("humidity");
+                    String windSpeed = jObject.getJSONObject("wind").getString("speed");
+
+                    String icon = jObject.getJSONArray("weather").getJSONObject(0).getString("icon");
 
                     mTextViewLocation.setText(location);
                     mTextViewTemperature.setText(tempFahrenheit + "°");
+                    mTextViewCondition.setText(condition);
+                    mTextViewHumidity.setText(humidity + "% humidity");
+                    mTextViewWindSpeed.setText("Wind " + windSpeed + "mph");
                     Picasso.with(MainActivity.this).load(WEATHER_ICON_URL + icon + ".png")
                             .resize(125, 125).centerCrop().into(mImageViewWeatherIcon);
                 } catch(Exception e) {
@@ -278,6 +292,7 @@ public class MainActivity extends ActionBarActivity {
     }
 
     private class ForecastTask extends AsyncTask<Void, Void, String> {
+
         @Override
         protected String doInBackground(Void...voids) {
             try {
