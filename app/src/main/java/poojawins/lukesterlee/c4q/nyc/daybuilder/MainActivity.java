@@ -85,6 +85,10 @@ public class MainActivity extends ActionBarActivity {
     double latitude;
     double longitude;
     private static final String WEATHER_ICON_URL = "http://openweathermap.org/img/w/";
+    private static final String JSON_WEATHER_URL = "http://api.openweathermap.org/data/2.5/weather?zip=11206";
+    private static final String JSON_FORECAST_URL = "http://api.openweathermap.org/data/2.5/forecast/daily?q=brooklyn,us&cnt=5";
+//    private static final String JSON_WEATHER_LATLON = "http://api.openweathermap.org/data/2.5/weather?lat=";
+//    private static final String JSON_Weather_END = "&lon=";
 
     // to do view stuffs
 
@@ -102,6 +106,7 @@ public class MainActivity extends ActionBarActivity {
     TextView mTextViewLocation;
     ImageView mImageViewWeatherIcon;
     WeatherTask weather;
+    ForecastTask forecast;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -171,6 +176,8 @@ public class MainActivity extends ActionBarActivity {
         new StockTask().execute(stocksList);
         weather = new WeatherTask();
         weather.execute();
+        forecast = new ForecastTask();
+        forecast.execute();
         setUpListeners(true);
     }
 
@@ -235,7 +242,7 @@ public class MainActivity extends ActionBarActivity {
         @Override
         protected String doInBackground(Void...voids) {
             try {
-                String weatherData = new WeatherGetter().getJSON();
+                String weatherData = new WeatherGetter().getJSON(JSON_WEATHER_URL);
                 return weatherData;
             } catch (Exception e) {
                 return null;
@@ -262,7 +269,7 @@ public class MainActivity extends ActionBarActivity {
                     mTextViewLocation.setText(location);
                     mTextViewTemperature.setText(tempFahrenheit + "°");
                     Picasso.with(MainActivity.this).load(WEATHER_ICON_URL + icon + ".png")
-                            .resize(125,125).centerCrop().into(mImageViewWeatherIcon);
+                            .resize(125, 125).centerCrop().into(mImageViewWeatherIcon);
                 } catch(Exception e) {
                     Log.println(Log.DEBUG, "pooja", "An Exception Happened");
                 }
@@ -270,5 +277,28 @@ public class MainActivity extends ActionBarActivity {
         }
     }
 
+    private class ForecastTask extends AsyncTask<Void, Void, String> {
+        @Override
+        protected String doInBackground(Void...voids) {
+            try {
+                String weatherData = new WeatherGetter().getJSON(JSON_FORECAST_URL);
+                return weatherData;
+            } catch (Exception e) {
+                return null;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(String output) {
+            if (output != null) {
+                try {
+
+
+                } catch(Exception e) {
+                    Log.println(Log.DEBUG, "pooja", "An Exception Happened");
+                }
+            }
+        }
+    }
 
 }

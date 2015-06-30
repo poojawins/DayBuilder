@@ -11,20 +11,16 @@ import java.net.URL;
  * Created by pooja on 6/29/15.
  */
 public class WeatherGetter {
-//    String JSON_WEATHER_LATLON = "http://api.openweathermap.org/data/2.5/weather?lat=";
-//    String JSON_COORDINATE_END = "&lon=";
-    private static final String JSON_WEATHER_URL = "http://api.openweathermap.org/data/2.5/weather?zip=11206";
 
     public WeatherGetter() {
 
     }
 
-    public String getJSON() throws IOException{
+    public String getJSON(String api_url) throws IOException{
         HttpURLConnection connection = null;
         InputStream inputStream = null;
         try {
-            URL url = new URL(JSON_WEATHER_URL);
-//            URL url = new URL(JSON_WEATHER_LATLON + latitude + JSON_COORDINATE_END + longitude);
+            URL url = new URL(api_url);
             connection = (HttpURLConnection) url.openConnection();
             inputStream = connection.getInputStream();
             BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
