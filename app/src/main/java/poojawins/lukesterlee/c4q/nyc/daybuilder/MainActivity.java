@@ -98,7 +98,7 @@ public class MainActivity extends ActionBarActivity {
     private static final String WEATHER_ICON_URL = "http://openweathermap.org/img/w/";
     private static final String JSON_WEATHER_URL = "http://api.openweathermap.org/data/2.5/weather?zip=11206";
 //    private static final String JSON_WEATHER_BASE = "http://api.openweathermap.org/data/2.5/weather?lat=";
-//    private static final String JSON_Weather_END = "&lon=";
+//    private static final String JSON_WEATHER_END = "&lon=";
 //    private static final String JSON_WEATHER_URL = JSON_WEATHER_BASE + latitude + JSON_WEATHER_END + longitude;
 
     // Forecast Data
@@ -137,6 +137,8 @@ public class MainActivity extends ActionBarActivity {
     TextView mTextViewCondition;
     TextView mTextViewHumidity;
     TextView mTextViewWindSpeed;
+    LinearLayout mParentLayoutForecast;
+    ForecastAdapter forecastAdapter;
 
     WeatherTask weather;
     ForecastTask forecast;
@@ -200,6 +202,7 @@ public class MainActivity extends ActionBarActivity {
         mTextViewCondition = (TextView) findViewById(R.id.condition);
         mTextViewHumidity = (TextView) findViewById(R.id.humidity);
         mTextViewWindSpeed = (TextView) findViewById(R.id.wind_speed);
+        mParentLayoutForecast = (LinearLayout) findViewById(R.id.forecast_list_parent);
     }
 
 
@@ -342,25 +345,11 @@ public class MainActivity extends ActionBarActivity {
             if (output != null) {
                 try {
                     JSONObject jObject = new JSONObject(output);
-                    JSONArray forecastData = jObject.getJSONArray("list");
+                    JSONArray data = jObject.getJSONArray("list");
+                    setForecastDataArray(data);
 
-//                    something like this...
-//                    forecastData = new ArrayList<Forecast>();
-//
-//                    for (i = 0; i < forecastData.length(); i++) {
-//                        int day = forecastData.get(i).getInt("dt");
-//                        int highTemp = jObject.getString("temp").getInt("max"); // convert to fahrenheit + String
-//                        int lowTemp = jObject.getString("temp").getInt("min"); // convert to fahrenheit + String
-//                        String icon = jObject.getJSONArray("weather").getJSONObject(0).getString("icon");
-//
-//                        Forecast forecast = new Forecast();
-//                        forecast.setDay(day);
-//                        forecast.setHighTemp(highTemp); // temp must be string
-//                        forecast.setLowTemp(lowTemp); // temp must be string
-//                        forecast.setIcon(icon);
-//
-//                        forecastData.add(forecast);
-//                    }
+//                    forecastAdapter = new ForecastAdapter<>(MainActivity.this, mParentLayoutForecast, R.layout.list_item_forecast);
+//                    forecastAdapter.addForecastViews(forecastData);
 
                 } catch(Exception e) {
                     Log.println(Log.DEBUG, "pooja", "An Exception Happened");
@@ -430,5 +419,33 @@ public class MainActivity extends ActionBarActivity {
             }
         };
         timer.schedule(doAsynchronousTask, 0, msec); // execute every 15 minutes
+    }
+
+    public void setForecastDataArray(JSONArray data) {
+        forecastData = new ArrayList<>();
+
+        for (int i = 0; i < 5; i++) {
+            try {
+
+                JSONObject item = data.getJSONObject(i);
+//                int day = item.getInt("dt"); // convert to day (String)
+//                String temp = item.getString("temp");
+//                int highTemp = temp.getInt("max"); // convert to fahrenheit + String
+//                int lowTemp = temp.getInt("min"); // convert to fahrenheit + String
+                String icon = item.getJSONArray("weather").getJSONObject(0).getString("icon");
+
+                Forecast forecast = new Forecast();
+//                forecast.setDay(day);
+//                forecast.setHighTemp(highTemp); // temp must be string
+//                forecast.setLowTemp(lowTemp); // temp must be string
+                forecast.setIcon(icon);
+
+                forecastData.add(forecast);
+            } catch (Exception e){
+                Log.println(Log.DEBUG, "pooja", "An Exception Happened");
+            }
+
+        }
+
     }
 }
