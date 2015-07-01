@@ -15,15 +15,13 @@ import java.util.List;
  */
 public class NoScrollAdapter<T> {
 
-    Context mContext;
-    LayoutInflater inflater;
-    LinearLayout mParentLayout;
-    List<T> mList;
-
-    int mLayoutResource;
-
-
-    List<View> mChildViews;
+    private Context mContext;
+    private LayoutInflater inflater;
+    private LinearLayout mParentLayout;
+    private List<T> mList;
+    private int mLayoutResource;
+    private int numOfHighPriorities;
+    private List<View> mChildViews;
 
 
     public NoScrollAdapter(Context mContext, LinearLayout mParentLayout, int mLayoutResource) {
@@ -32,7 +30,7 @@ public class NoScrollAdapter<T> {
         this.mParentLayout = mParentLayout;
         this.mLayoutResource = mLayoutResource;
         mChildViews = new ArrayList<>();
-
+        numOfHighPriorities = 0;
     }
 
     public List<View> getChildViews() {
@@ -46,6 +44,7 @@ public class NoScrollAdapter<T> {
     public T getItem(int position) {
         return mList.get(position);
     }
+
 
 
 
@@ -91,11 +90,14 @@ public class NoScrollAdapter<T> {
     }
 
 
+
+
     public void addTaskViews(List<T> mList, boolean isRest) {
         this.mList = mList;
         if (!isRest) {
             mChildViews.clear();
             mParentLayout.removeAllViews();
+            numOfHighPriorities = 0;
         }
 
 
@@ -112,13 +114,36 @@ public class NoScrollAdapter<T> {
             String firstLetter = task.substring(0, 1);
             String sentence = task.substring(1);
 
+            if (firstLetter.equals("H")) {
+                priority.setBackgroundResource(R.drawable.button_high);
+            } else if (firstLetter.equals("M")) {
+                priority.setBackgroundResource(R.drawable.button_medium);
+            } else {
+                priority.setBackgroundResource(R.drawable.button_low);
+            }
+
             priority.setText(firstLetter);
             title.setText(sentence);
 
 
             mChildViews.add(row);
-            mParentLayout.addView(row,i);
+            mParentLayout.addView(row,getTaskPosition(firstLetter));
 
+        }
+    }
+
+    public int getTaskPosition(String firstLetter) {
+        if (firstLetter.equals("H")) {
+            numOfHighPriorities++;
+            return 0;
+        } else if (firstLetter.equals("L")) {
+            if (mChildViews.size() == 0) {
+                return 0;
+            } else {
+                return mChildViews.size() - 1;
+            }
+        } else {
+            return numOfHighPriorities;
         }
     }
 

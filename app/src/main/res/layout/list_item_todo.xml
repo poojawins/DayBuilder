@@ -14,11 +14,11 @@
         android:layout_height="wrap_content">
 
         <Button
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:fontFamily="sans-serif"
-            android:textSize="20sp"
-            android:background="@drawable/button_white"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:fontFamily="sans-serif-thin"
+            android:textColor="@color/white"
+            android:textSize="30sp"
             android:id="@+id/button_todo"/>
 
         <TextView

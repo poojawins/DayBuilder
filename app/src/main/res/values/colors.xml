@@ -26,11 +26,13 @@
     <color name="blue">#1976D2</color>
     <color name="green">#4BAE4F</color>
     <color name="half_black">#808080</color>
-    <color name="white">#fafafa</color>
+    <color name="white">#FFFFFF</color>
     <color name="white_pressed">#f1f1f1</color>
     <color name="pink">#e91e63</color>
     <color name="pink_pressed">#ec407a</color>
     <color name="red">#FF0000</color>
+    <color name="red_high">#E06055</color>
+    <color name="red_material">#DA4336</color>
     <color name="blue_semi_transparent">#805677fc</color>
     <color name="blue_semi_transparent_pressed">#80738ffe</color>
 </resources>

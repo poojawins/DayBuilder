@@ -20,7 +20,7 @@ import android.widget.TextView;
 /**
  * Created by Luke on 6/30/2015.
  */
-public class WebViewFragment extends DialogFragment {
+public class WebViewDialogFragment extends DialogFragment {
 
     private View mDialogView;
     private String mUrl;

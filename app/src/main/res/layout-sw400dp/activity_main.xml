@@ -21,7 +21,7 @@
                 android:id="@+id/imageView_app_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true" />
+                android:layout_centerHorizontal="true"/>
 
 
 
@@ -151,30 +151,17 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
 
-                        <LinearLayout
-                            android:orientation="horizontal"
+
+                        <TextView
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content">
+                            android:layout_height="wrap_content"
+                            android:padding="20dp"
 
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:padding="20dp"
-                                android:text="@string/title_todo"
-                                android:background="@drawable/border"
-                                android:fontFamily="sans-serif-thin"
-                                android:textSize="40sp"
-                                android:id="@+id/textView_todo_title"/>
-
-                            <ImageButton
-                                android:id="@+id/button_todo_info"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:src="@drawable/ic_info_outline_black_18dp" />
-
-                            </LinearLayout>
-
-
+                            android:text="@string/title_todo"
+                            android:background="@drawable/border"
+                            android:fontFamily="sans-serif-thin"
+                            android:textSize="40sp"
+                            android:id="@+id/textView_todo_title"/>
 
                         <LinearLayout
                             android:animateLayoutChanges="true"
@@ -274,7 +261,7 @@
             </LinearLayout>
 
 
-            </RelativeLayout>
+        </RelativeLayout>
 
 
     </ScrollView>

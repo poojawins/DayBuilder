@@ -30,7 +30,8 @@ public class StocksGetter {
     public StocksGetter(String jsonUrl, HashMap<String, String> stockNames) {
         this.jsonUrl = jsonUrl;
         this.stockNames = stockNames;
-        stockNames.put("GOOGL", "Google Inc.");
+        stockNames.put("GOOGL", "Google Inc. Class A");
+        stockNames.put("GOOG", "Google Inc. Class C");
     }
 
     public String getJsonString() throws IOException {

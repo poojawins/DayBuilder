@@ -5,24 +5,20 @@ import android.app.Activity;
 import android.app.DialogFragment;
 import android.app.Notification;
 import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.graphics.Typeface;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v4.app.NotificationCompat;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.support.v7.widget.CardView;
 import android.view.LayoutInflater;
-import android.content.Intent;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -56,13 +52,20 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
     private SharedPreferences mSharedPreferences;
     private SharedPreferences.Editor editor;
 
-    private static final String JSON_STOCK_ENDPOINT = "http://finance.google.com/finance/info?client=ig&q=GOOGL";
+    private static final String JSON_NYT_ENDPOINT = "http://api.nytimes.com/svc/search/v2/articlesearch.json?fq=pub_date:2005-07-02&page=3&api-key=6c976382a905719c0ed18ad05cf374c2:5:71503619";
+
+
+    private static final String JSON_STOCK_ENDPOINT = "http://finance.google.com/finance/info?client=ig&q=GOOGL,GOOG";
     private static final String SHARED_PREFERENCES_STOCK_KEY = "stock";
     private static final String SHARED_PREFERENCES_TODO_KEY = "todo";
+    private static final String SHARED_PREFERENCES_COMPLETED_KEY = "completed";
+    private static final String SHARED_PREFERENCES_DELETED_KEY = "deleted";
     private static final int REQUEST_CODE_TODO = 1;
     private static final int REQUEST_CODE_STOCK = 2;
 
     LayoutInflater inflater;
+
+    final Handler mHandler = new Handler();
 
     ConnectivityManager connectivityManager;
     NetworkInfo activeNetwork;
@@ -103,12 +106,14 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
     // to do view stuffs
     private LinearLayout mParentLayoutTodo;
     private Button mButtonTodoFooter;
+    private ImageButton mButtonTodoInfo;
     private Set<String> todoSet;
     private NoScrollAdapter<String> todoAdapter;
     private List<String> mRestOfTodos = null;
     private boolean isShowMoreTodo;
     private boolean isFromDialogTodo;
-
+    private int totalDeleted;
+    private int totalCompleted;
 
     // Stock view stuffs
     private LinearLayout mParentLayoutStock;
@@ -119,14 +124,13 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
     private NoScrollAdapter<Stock> stockAdapter;
     private boolean isShowMoreStock;
     private boolean isFromDialogStock;
-    Date lastUpdated;
-    final Handler mHandler = new Handler();
+    private Date lastUpdatedStock;
     private final static int INTERVAL = 1000 * 60;
     Runnable postTimeRunnable = new Runnable() {
         @Override
         public void run() {
             Date now = new Date();
-            int difference = (int) ((now.getTime() - lastUpdated.getTime())/INTERVAL);
+            int difference = (int) ((now.getTime() - lastUpdatedStock.getTime())/INTERVAL);
             if (difference == 1) {
                 mTextViewStockUpdate.setText("Updated " + difference + " minute ago");
             } else if (difference < 60) {
@@ -144,7 +148,10 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
         }
     };
 
-
+    // new york times stuff
+    String mostViewed_key = "http://api.nytimes.com/svc/mostpopular/v2/mostviewed/U.S./7.json?api-key=3f91a526526725b63f921c029e209d73:2:71503619";
+    private static final String ENDPOINT_MOST_VIEWED = "http://api.nytimes.com/svc/mostpopular/v2/mostviewed/U.S./7.json?api-key=";
+    private Date lastUpdatedNews;
 
 
     private void initializeWeatherViews() {
@@ -166,6 +173,7 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
     private void initializeTodoViews() {
         mParentLayoutTodo = (LinearLayout) findViewById(R.id.todo_list_parent);
         mButtonTodoFooter = (Button) findViewById(R.id.button_todo_footer);
+        mButtonTodoInfo = (ImageButton) findViewById(R.id.button_todo_info);
     }
 
     private void initializeStockViews() {
@@ -215,7 +223,6 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
         connectivityManager = (ConnectivityManager) MainActivity.this.getSystemService(Context.CONNECTIVITY_SERVICE);
 
 
-
         initializeViews();
         initializeWeatherViews();
         initializeStockViews();
@@ -244,8 +251,13 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
 
         } else {
             stockAdapter.addNetworkWarningMessageView();
+            mButtonStockFooter.setText("Add a stock");
+            mButtonStockFooter.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_add_white_18dp, 0, 0, 0);
+            isShowMoreStock = false;
         }
     }
+
+
 
     private boolean hasNetwork() {
         activeNetwork = connectivityManager.getActiveNetworkInfo();
@@ -257,6 +269,7 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
             mButtonTodoFooter.setOnClickListener(null);
             mButtonStockFooter.setOnClickListener(null);
             mSwipeRefreshLayout.setOnRefreshListener(null);
+
         } else {
             mButtonStockFooter.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -292,6 +305,19 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
                 }
             });
 
+            mButtonTodoInfo.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    TaskInfoDialogFragment taskInfo = new TaskInfoDialogFragment();
+                    Bundle argument = new Bundle();
+                    argument.putInt(SHARED_PREFERENCES_COMPLETED_KEY, totalCompleted);
+                    argument.putInt(SHARED_PREFERENCES_DELETED_KEY, totalDeleted);
+                    taskInfo.setArguments(argument);
+                    taskInfo.show(getFragmentManager(), "TaskInfoDialogFragment");
+
+                }
+            });
+
 
         }
     }
@@ -299,7 +325,8 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
     private void fetchDataFromSharedPreferences() {
         stockNameSet = mSharedPreferences.getStringSet(SHARED_PREFERENCES_STOCK_KEY, new TreeSet<String>());
         todoSet = mSharedPreferences.getStringSet(SHARED_PREFERENCES_TODO_KEY, new TreeSet<String>());
-
+        totalCompleted = mSharedPreferences.getInt(SHARED_PREFERENCES_COMPLETED_KEY, 0);
+        totalDeleted = mSharedPreferences.getInt(SHARED_PREFERENCES_DELETED_KEY, 0);
     }
 
 
@@ -389,11 +416,7 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
 
     }
 
-    public void addToCompletedList() {
-
-    }
-
-    public void deleteTodo(String todo) {
+    public void deleteTodo(String todo, boolean isLeft) {
         Set<String> list = mSharedPreferences.getStringSet(SHARED_PREFERENCES_TODO_KEY, new TreeSet<String>());
         Set<String> newTodoList = new TreeSet<>();
         newTodoList.addAll(list);
@@ -404,9 +427,18 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
                 break;
             }
         }
+
+        if (isLeft) {
+            totalDeleted++;
+            editor.putInt(SHARED_PREFERENCES_DELETED_KEY, totalDeleted);
+            Toast.makeText(MainActivity.this, "Deleted!", Toast.LENGTH_SHORT).show();
+        } else {
+            totalCompleted++;
+            editor.putInt(SHARED_PREFERENCES_COMPLETED_KEY, totalCompleted);
+            Toast.makeText(MainActivity.this, "Completed!", Toast.LENGTH_SHORT).show();
+        }
         editor.putStringSet(SHARED_PREFERENCES_TODO_KEY, newTodoList);
         editor.apply();
-        Toast.makeText(MainActivity.this, "Deleted!", Toast.LENGTH_SHORT).show();
 
     }
 
@@ -469,7 +501,7 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
                 @Override
                 public void onClick(View view) {
                     TextView ticker = (TextView) view.findViewById(R.id.stock_category);
-                    WebViewFragment webFragment = new WebViewFragment();
+                    WebViewDialogFragment webFragment = new WebViewDialogFragment();
                     Bundle argument = new Bundle();
                     argument.putString("ticker", ticker.getText().toString());
                     webFragment.setArguments(argument);
@@ -482,7 +514,8 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
     }
 
     private void addTaskTouchListener() {
-        for (View row : todoAdapter.getChildViews()) {
+        for (final View row : todoAdapter.getChildViews()) {
+
 
             row.setOnTouchListener(new SwipeDismissTouchListener(row, null, new SwipeDismissTouchListener.DismissCallbacks() {
                 @Override
@@ -493,14 +526,8 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
                 @Override
                 public void onDismiss(View view, Object token, boolean isLeft) {
                     mParentLayoutTodo.removeView(view);
-                    if (isLeft) {
-                        TextView task = (TextView) view.findViewById(R.id.textView_todo);
-                        deleteTodo(task.getText().toString());
-                    } else {
-                        addToCompletedList();
-                        Toast.makeText(MainActivity.this, "Dismissed!", Toast.LENGTH_SHORT).show();
-                    }
-
+                    TextView task = (TextView) view.findViewById(R.id.textView_todo);
+                    deleteTodo(task.getText().toString(), isLeft);
                 }
             }));
         }
@@ -534,7 +561,7 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
 
         @Override
         protected void onPostExecute(List<Stock> stocks) {
-            lastUpdated = new Date();
+            lastUpdatedStock = new Date();
             mHandler.removeCallbacks(postTimeRunnable);
             postTimeRunnable.run();
             mTextViewStockUpdate.setText("Just updated");
