@@ -11,7 +11,9 @@ import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.location.Criteria;
 import android.location.Location;
+import android.location.LocationListener;
 import android.location.LocationManager;
+import android.location.LocationProvider;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
@@ -76,32 +78,23 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
     private SwipeRefreshLayout mSwipeRefreshLayout;
 
     // Location
-    double latitude;
-    double longitude;
+    public static double latitude = 40.7005350;
+    public static double longitude = -73.9396370;
 
     // Weather Data
     private static final String WEATHER_ICON_URL = "http://openweathermap.org/img/w/";
-    private static final String JSON_WEATHER_URL = "http://api.openweathermap.org/data/2.5/weather?zip=11206";
-//    private static final String JSON_WEATHER_BASE = "http://api.openweathermap.org/data/2.5/weather?lat=";
-//    private static final String JSON_WEATHER_END = "&lon=";
-//    private static final String JSON_WEATHER_URL = JSON_WEATHER_BASE + latitude + JSON_WEATHER_END + longitude;
+    private static final String JSON_WEATHER_BASE = "http://api.openweathermap.org/data/2.5/weather?lat=";
+    private static final String JSON_WEATHER_END = "&lon=";
 
     // Forecast Data
-    private static final String JSON_FORECAST_URL = "http://api.openweathermap.org/data/2.5/forecast/daily?q=brooklyn,us&units=imperial&cnt=6";
-//    private static final String JSON_FORECAST_BASE = "http://api.openweathermap.org/data/2.5/forecast/daily?lat=";
-//    private static final String JSON_FORECAST_LON = "&lon=";
-//    private static final String JSON_FORECAST_END = "&units=imperial&cnt=6";
-//    private static final String JSON_FORECAST_URL = JSON_FORECAST_BASE + latitude + JSON_FORECAST_LON + longitude + JSON_FORECAST_END;
+    private static final String JSON_FORECAST_BASE = "http://api.openweathermap.org/data/2.5/forecast/daily?lat=";
+    private static final String JSON_FORECAST_LON = "&lon=";
+    private static final String JSON_FORECAST_END = "&units=imperial&cnt=6";
     public List<Forecast> forecastData;
 
     // Dark Sky Notifications
     private static final String DARK_SKY_API_KEY = "d1dfd9033517c3d793c2b2744cdda637";
-    private static final String lat = "40.7005350"; //bk
-    private static final String lon = "-73.9396370"; //bk
-    private static final String DARK_SKY_URL = "https://api.forecast.io/forecast/"
-            + DARK_SKY_API_KEY + "/" + lat + "," + lon;
-//    private static final String DARK_SKY_BASE = "https://api.darkskyapp.com/v1/forecast/";
-//    private static final String DARK_SKY_URL = DARK_SKY_BASE + DARK_SKY_API_KEY + "/" + latitude + "," + longitude;
+    private static final String DARK_SKY_BASE = "https://api.forecast.io/forecast/";
     Handler handler;
 
     // Weather view
@@ -563,7 +556,7 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
         @Override
         protected String doInBackground(Void...voids) {
             try {
-                String weatherData = new WeatherGetter().getJSON(JSON_WEATHER_URL);
+                String weatherData = new WeatherGetter().getJSON(JSON_WEATHER_BASE + currentLocation().getLatitude() + JSON_WEATHER_END + currentLocation().getLongitude());
                 return weatherData;
             } catch (Exception e) {
                 return null;
@@ -609,7 +602,7 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
         @Override
         protected String doInBackground(Void...voids) {
             try {
-                String weatherData = new WeatherGetter().getJSON(JSON_FORECAST_URL);
+                String weatherData = new WeatherGetter().getJSON(JSON_FORECAST_BASE + currentLocation().getLatitude() + JSON_FORECAST_LON + currentLocation().getLongitude() + JSON_FORECAST_END);
                 return weatherData;
             } catch (Exception e) {
                 return null;
@@ -640,7 +633,7 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
         @Override
         protected String doInBackground(Void...voids) {
             try {
-                String weatherData = new WeatherGetter().getJSON(DARK_SKY_URL);
+                String weatherData = new WeatherGetter().getJSON(DARK_SKY_BASE + DARK_SKY_API_KEY + "/" + currentLocation().getLatitude() + "," + currentLocation().getLongitude());
                 return weatherData;
             } catch (Exception e) {
                 return null;
@@ -744,6 +737,15 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
     public String tempFormatter(double temp) {
         int fahRounded = (int) Math.round(temp);
         return Integer.toString(fahRounded);
+    }
+
+    public Location currentLocation() {
+        LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        Criteria criteria = new Criteria();
+        criteria.setAccuracy(Criteria.ACCURACY_FINE);
+        criteria.setPowerRequirement(Criteria.POWER_LOW);
+        Location location = lm.getLastKnownLocation(lm.getBestProvider(criteria, true));
+        return location;
     }
 
 }
