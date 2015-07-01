@@ -9,6 +9,9 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Typeface;
+import android.location.Criteria;
+import android.location.Location;
+import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
@@ -88,7 +91,7 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
 //    private static final String JSON_FORECAST_LON = "&lon=";
 //    private static final String JSON_FORECAST_END = "&cnt=5";
 //    private static final String JSON_FORECAST_URL = JSON_FORECAST_BASE + latitude + JSON_FORECAST_LON + longitude + JSON_FORECAST_END;
-    ArrayList<Forecast> forecastData;
+    public List<Forecast> forecastData;
 
     // Dark Sky Notifications
     private static final String DARK_SKY_API_KEY = "d1dfd9033517c3d793c2b2744cdda637";
@@ -99,6 +102,19 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
 //    private static final String DARK_SKY_BASE = "https://api.darkskyapp.com/v1/forecast/";
 //    private static final String DARK_SKY_URL = DARK_SKY_BASE + DARK_SKY_API_KEY + "/" + latitude + "," + longitude;
     Handler handler;
+
+    // Weather view
+    TextView mTextViewTemperature;
+    TextView mTextViewLocation;
+    ImageView mImageViewWeatherIcon;
+    TextView mTextViewCondition;
+    TextView mTextViewHumidity;
+    TextView mTextViewWindSpeed;
+    LinearLayout mParentLayoutForecast;
+    NoScrollAdapter<Forecast> forecastAdapter;
+
+    WeatherTask weather;
+    ForecastTask forecast;
 
     // to do view stuffs
     private LinearLayout mParentLayoutTodo;
@@ -152,8 +168,6 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
         mTextViewLocation = (TextView) findViewById(R.id.location);
         mImageViewWeatherIcon = (ImageView) findViewById(R.id.weatherIcon);
 
-
-
         mTextViewTemperature = (TextView) findViewById(R.id.temperature);
         mTextViewLocation = (TextView) findViewById(R.id.location);
         mImageViewWeatherIcon = (ImageView) findViewById(R.id.weatherIcon);
@@ -182,18 +196,6 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
         Picasso.with(MainActivity.this).load(R.drawable.c4qrainbow).resize(800, 800).into(mImageViewTItle);
     }
 
-    // Weather view
-    TextView mTextViewTemperature;
-    TextView mTextViewLocation;
-    ImageView mImageViewWeatherIcon;
-    TextView mTextViewCondition;
-    TextView mTextViewHumidity;
-    TextView mTextViewWindSpeed;
-    LinearLayout mParentLayoutForecast;
-    ForecastAdapter forecastAdapter;
-
-    WeatherTask weather;
-    ForecastTask forecast;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -226,11 +228,6 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
         fetchDataFromSharedPreferences();
         fetchTask();
         doNetworkJob();
-
-
-//        DarkSkyTask darkSkyTask = new DarkSkyTask();
-//        Timer timer = new Timer();
-//        timer.schedule(darkSkyTask, 0, 60000);
 
         callDarkSkyTask();
     }
@@ -624,10 +621,11 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
                 try {
                     JSONObject jObject = new JSONObject(output);
                     JSONArray data = jObject.getJSONArray("list");
-                    setForecastDataArray(data);
 
-//                    forecastAdapter = new ForecastAdapter<>(MainActivity.this, mParentLayoutForecast, R.layout.list_item_forecast);
-//                    forecastAdapter.addForecastViews(forecastData);
+                    List<Forecast> result = setForecastDataArray(data);
+
+                    forecastAdapter = new NoScrollAdapter<>(MainActivity.this, mParentLayoutForecast, R.layout.list_item_forecast);
+                    forecastAdapter.addForecastViews(result);
 
                 } catch(Exception e) {
                     Log.println(Log.DEBUG, "pooja", "An Exception Happened");
@@ -700,8 +698,8 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
         timer.schedule(doAsynchronousTask, 0, msec); // execute every 15 minutes
     }
 
-    public void setForecastDataArray(JSONArray data) {
-        forecastData = new ArrayList<>();
+    public List<Forecast> setForecastDataArray(JSONArray data) {
+        forecastData = new ArrayList<Forecast>();
 
         for (int i = 0; i < 5; i++) {
             try {
@@ -711,13 +709,19 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
 //                String temp = item.getString("temp");
 //                int highTemp = temp.getInt("max"); // convert to fahrenheit + String
 //                int lowTemp = temp.getInt("min"); // convert to fahrenheit + String
-                String icon = item.getJSONArray("weather").getJSONObject(0).getString("icon");
+                //String icon = item.getJSONArray("weather").getJSONObject(0).getString("icon");
 
                 Forecast forecast = new Forecast();
 //                forecast.setDay(day);
 //                forecast.setHighTemp(highTemp); // temp must be string
 //                forecast.setLowTemp(lowTemp); // temp must be string
-                forecast.setIcon(icon);
+//                forecast.setIcon(icon);
+
+                //dummy data
+                forecast.setDay("day");
+                forecast.setHighTemp("75");
+                forecast.setLowTemp("60");
+                forecast.setIcon("10d");
 
                 forecastData.add(forecast);
             } catch (Exception e){
@@ -725,6 +729,8 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
             }
 
         }
+        return forecastData;
 
     }
+
 }

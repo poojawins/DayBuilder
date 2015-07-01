@@ -4,8 +4,11 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -120,6 +123,32 @@ public class NoScrollAdapter<T> {
             mParentLayout.addView(row,i);
 
         }
+    }
+
+    public void addForecastViews(List<T> mList) {
+        this.mList = mList;
+
+
+        for (int i = 0; i < mList.size(); i++) {
+            final View column = inflater.inflate(mLayoutResource, null);
+
+            TextView day = (TextView) column.findViewById(R.id.day);
+            TextView high = (TextView) column.findViewById(R.id.high_temp);
+            TextView low = (TextView) column.findViewById(R.id.low_temp);
+            ImageView image = (ImageView) column.findViewById(R.id.image);
+
+            Forecast forecast = (Forecast) getItem(i);
+
+            day.setText(forecast.getDay());
+            high.setText(forecast.getHighTemp());
+            low.setText(forecast.getLowTemp());
+            Picasso.with(this.mContext).load("http://openweathermap.org/img/w/" + forecast.getIcon() + ".png")
+                    .resize(100, 100).centerCrop().into(image);
+
+            mChildViews.add(column);
+            mParentLayout.addView(column,i);
+        }
+
     }
 
     public void addEmptyMessageView() {
