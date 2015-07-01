@@ -31,9 +31,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -51,8 +53,6 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
 
     private SharedPreferences mSharedPreferences;
     private SharedPreferences.Editor editor;
-
-    private static final String JSON_NYT_ENDPOINT = "http://api.nytimes.com/svc/search/v2/articlesearch.json?fq=pub_date:2005-07-02&page=3&api-key=6c976382a905719c0ed18ad05cf374c2:5:71503619";
 
 
     private static final String JSON_STOCK_ENDPOINT = "http://finance.google.com/finance/info?client=ig&q=GOOGL,GOOG";
@@ -103,6 +103,15 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
 //    private static final String DARK_SKY_URL = DARK_SKY_BASE + DARK_SKY_API_KEY + "/" + latitude + "," + longitude;
     Handler handler;
 
+    // weather stuff
+    private TextView mTextViewTemperature;
+    private TextView mTextViewLocation;
+    private ImageView mImageViewWeatherIcon;
+    private TextView mTextViewCondition;
+    private TextView mTextViewHumidity;
+    private TextView mTextViewWindSpeed;
+    private LinearLayout mParentLayoutForecast;
+
     // to do view stuffs
     private LinearLayout mParentLayoutTodo;
     private Button mButtonTodoFooter;
@@ -149,18 +158,51 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
     };
 
     // new york times stuff
-    String mostViewed_key = "http://api.nytimes.com/svc/mostpopular/v2/mostviewed/U.S./7.json?api-key=3f91a526526725b63f921c029e209d73:2:71503619";
-    private static final String ENDPOINT_MOST_VIEWED = "http://api.nytimes.com/svc/mostpopular/v2/mostviewed/U.S./7.json?api-key=";
-    private Date lastUpdatedNews;
+    private Map<String, Article> mArticleList;
+    private Calendar lastUpdate = null;
+
+    private ImageView mImageViewWorld;
+    private TextView mTextViewTitleWorld;
+    private TextView mTextViewDescriptionWorld;
+    private TextView mTextViewPublishedDateWorld;
+
+    private ImageView mImageViewUs;
+    private TextView mTextViewTitleUs;
+    private TextView mTextViewDescriptionUs;
+    private TextView mTextViewPublishedDateUs;
+
+    private ImageView mImageViewOpinion;
+    private TextView mTextViewTitleOpinion;
+    private TextView mTextViewDescriptionOpinion;
+    private TextView mTextViewPublishedDateOpinion;
+
+    private ImageView mImageViewTech;
+    private TextView mTextViewTitleTech;
+    private TextView mTextViewDescriptionTech;
+    private TextView mTextViewPublishedDateTech;
+
+
+    private boolean isAlreadyUpdated() {
+        Calendar rightNow = Calendar.getInstance();
+        if (lastUpdate == null) {
+            return false;
+        } else if (rightNow.get(Calendar.YEAR) != lastUpdate.get(Calendar.YEAR)) {
+            return false;
+        } else if (rightNow.get(Calendar.DAY_OF_YEAR) == lastUpdate.get(Calendar.DAY_OF_YEAR)) {
+            return true;
+        }
+        return false;
+    }
+
+    private void initializeViews() {
+        mImageViewTItle = (ImageView) findViewById(R.id.imageView_app_title);
+        mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefreshLayout);
+
+        Picasso.with(MainActivity.this).load(R.drawable.c4qnow).resize(550, 550).into(mImageViewTItle);
+    }
 
 
     private void initializeWeatherViews() {
-        mTextViewTemperature = (TextView) findViewById(R.id.temperature);
-        mTextViewLocation = (TextView) findViewById(R.id.location);
-        mImageViewWeatherIcon = (ImageView) findViewById(R.id.weatherIcon);
-
-
-
         mTextViewTemperature = (TextView) findViewById(R.id.temperature);
         mTextViewLocation = (TextView) findViewById(R.id.location);
         mImageViewWeatherIcon = (ImageView) findViewById(R.id.weatherIcon);
@@ -183,21 +225,32 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
         stockAdapter = new NoScrollAdapter<>(MainActivity.this, mParentLayoutStock, R.layout.list_item_stock);
     }
 
-    private void initializeViews() {
-        mImageViewTItle = (ImageView) findViewById(R.id.imageView_app_title);
-        mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefreshLayout);
+    private void initializeArticleViews() {
+        mImageViewWorld = (ImageView) findViewById(R.id.imageView_world);
+        mTextViewTitleWorld = (TextView) findViewById(R.id.headline_world);
+        mTextViewDescriptionWorld = (TextView) findViewById(R.id.description_world);
+        mTextViewPublishedDateWorld = (TextView) findViewById(R.id.published_date_world);
 
-        Picasso.with(MainActivity.this).load(R.drawable.c4qrainbow).resize(800, 800).into(mImageViewTItle);
+        mImageViewUs = (ImageView) findViewById(R.id.imageView_us);
+        mTextViewTitleUs = (TextView) findViewById(R.id.headline_us);
+        mTextViewDescriptionUs = (TextView) findViewById(R.id.description_us);
+        mTextViewPublishedDateUs = (TextView) findViewById(R.id.published_date_us);
+
+        mImageViewOpinion = (ImageView) findViewById(R.id.imageView_opinion);
+        mTextViewTitleOpinion = (TextView) findViewById(R.id.headline_opinion);
+        mTextViewDescriptionOpinion = (TextView) findViewById(R.id.description_opinion);
+        mTextViewPublishedDateOpinion = (TextView) findViewById(R.id.published_date_opinion);
+
+        mImageViewTech = (ImageView) findViewById(R.id.imageView_tech);
+        mTextViewTitleTech = (TextView) findViewById(R.id.headline_tech);
+        mTextViewDescriptionTech = (TextView) findViewById(R.id.description_tech);
+        mTextViewPublishedDateTech = (TextView) findViewById(R.id.published_date_tech);
     }
 
+
+
     // Weather view
-    TextView mTextViewTemperature;
-    TextView mTextViewLocation;
-    ImageView mImageViewWeatherIcon;
-    TextView mTextViewCondition;
-    TextView mTextViewHumidity;
-    TextView mTextViewWindSpeed;
-    LinearLayout mParentLayoutForecast;
+
     ForecastAdapter forecastAdapter;
 
     WeatherTask weather;
@@ -227,7 +280,7 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
         initializeWeatherViews();
         initializeStockViews();
         initializeTodoViews();
-
+        initializeArticleViews();
 
 
         fetchDataFromSharedPreferences();
@@ -245,9 +298,15 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
     private void doNetworkJob() {
         if (hasNetwork()) {
             mParentLayoutStock.removeAllViews();
-            new StockTask().execute(stockNameSet);
             new WeatherTask().execute();
             new ForecastTask().execute();
+            mHandler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    new StockTask().execute(stockNameSet);
+                }
+            }, 1000);
+            new ArticleTask().execute();
 
         } else {
             stockAdapter.addNetworkWarningMessageView();
@@ -585,6 +644,58 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
             mSwipeRefreshLayout.setRefreshing(false);
             addStockTouchListener();
         }
+    }
+
+    private class ArticleTask extends AsyncTask<Void, Void, Map<String, Article>> {
+
+        @Override
+        protected Map<String, Article> doInBackground(Void... voids) {
+            try {
+                return new ArticleGetter().getArticleList();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Map<String, Article> articles) {
+            lastUpdate = Calendar.getInstance();
+            mArticleList = articles;
+            fetchArticleData();
+
+        }
+    }
+
+    private void fetchArticleData() {
+        Article world = mArticleList.get("World");
+        Picasso.with(MainActivity.this).load(world.getThumbnailUrl()).resize(200, 200).into(mImageViewWorld);
+        Article us = mArticleList.get("Us");
+        Picasso.with(MainActivity.this).load(us.getThumbnailUrl()).resize(200, 200).into(mImageViewUs);
+        Article opinion = mArticleList.get("Opinion");
+        Picasso.with(MainActivity.this).load(opinion.getThumbnailUrl()).resize(200, 200).into(mImageViewOpinion);
+        Article tech = mArticleList.get("Tech");
+        Picasso.with(MainActivity.this).load(tech.getThumbnailUrl()).resize(200, 200).into(mImageViewTech);
+
+        mTextViewTitleWorld.setText(world.getTitle());
+        mTextViewDescriptionWorld.setText(world.getDescription());
+        mTextViewPublishedDateWorld.setText(world.getPublished_date());
+
+        mTextViewTitleUs.setText(us.getTitle());
+        mTextViewDescriptionUs.setText(us.getDescription());
+        mTextViewPublishedDateUs.setText(us.getPublished_date());
+
+        mTextViewTitleOpinion.setText(opinion.getTitle());
+        mTextViewDescriptionOpinion.setText(opinion.getDescription());
+        mTextViewPublishedDateOpinion.setText(opinion.getPublished_date());
+
+        mTextViewTitleTech.setText(tech.getTitle());
+        mTextViewDescriptionTech.setText(tech.getDescription());
+        mTextViewPublishedDateTech.setText(tech.getPublished_date());
+
+
     }
 
     private class WeatherTask extends AsyncTask<Void, Void, String> {
