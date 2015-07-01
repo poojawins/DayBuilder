@@ -75,7 +75,6 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
     private ImageView mImageViewTItle;
     private SwipeRefreshLayout mSwipeRefreshLayout;
 
-    // weather stuffs
     // Location
     double latitude;
     double longitude;
@@ -88,10 +87,10 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
 //    private static final String JSON_WEATHER_URL = JSON_WEATHER_BASE + latitude + JSON_WEATHER_END + longitude;
 
     // Forecast Data
-    private static final String JSON_FORECAST_URL = "http://api.openweathermap.org/data/2.5/forecast/daily?q=brooklyn,us&cnt=5";
+    private static final String JSON_FORECAST_URL = "http://api.openweathermap.org/data/2.5/forecast/daily?q=brooklyn,us&units=imperial&cnt=6";
 //    private static final String JSON_FORECAST_BASE = "http://api.openweathermap.org/data/2.5/forecast/daily?lat=";
 //    private static final String JSON_FORECAST_LON = "&lon=";
-//    private static final String JSON_FORECAST_END = "&cnt=5";
+//    private static final String JSON_FORECAST_END = "&units=imperial&cnt=6";
 //    private static final String JSON_FORECAST_URL = JSON_FORECAST_BASE + latitude + JSON_FORECAST_LON + longitude + JSON_FORECAST_END;
     public List<Forecast> forecastData;
 
@@ -703,7 +702,7 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
     public List<Forecast> setForecastDataArray(JSONArray data) {
         forecastData = new ArrayList<Forecast>();
 
-        for (int i = 0; i < data.length(); i++) {
+        for (int i = 1; i < data.length(); i++) {
             try {
 
                 JSONObject item = data.getJSONObject(i);
@@ -743,8 +742,7 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
     }
 
     public String tempFormatter(double temp) {
-        double fah = ((temp - 273.15) * 1.8) + 32.0;
-        int fahRounded = (int) Math.round(fah);
+        int fahRounded = (int) Math.round(temp);
         return Integer.toString(fahRounded);
     }
 

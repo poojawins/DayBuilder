@@ -128,6 +128,8 @@ public class NoScrollAdapter<T> {
     public void addForecastViews(List<T> mList) {
         this.mList = mList;
 
+        mChildViews.clear();
+        mParentLayout.removeAllViews();
 
         for (int i = 0; i < mList.size(); i++) {
             final View column = inflater.inflate(mLayoutResource, null);
