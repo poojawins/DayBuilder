@@ -37,7 +37,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -701,28 +703,29 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
     public List<Forecast> setForecastDataArray(JSONArray data) {
         forecastData = new ArrayList<Forecast>();
 
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < data.length(); i++) {
             try {
 
                 JSONObject item = data.getJSONObject(i);
-//                int day = item.getInt("dt"); // convert to day (String)
-//                String temp = item.getString("temp");
-//                int highTemp = temp.getInt("max"); // convert to fahrenheit + String
-//                int lowTemp = temp.getInt("min"); // convert to fahrenheit + String
-                //String icon = item.getJSONArray("weather").getJSONObject(0).getString("icon");
+
+                long unixDatetime = item.getLong("dt");
+                String day = dayFormatter(unixDatetime);
+
+                JSONObject temp = item.getJSONObject("temp");
+
+                double highTemp = temp.getInt("max");
+                String tempH = tempFormatter(highTemp);
+
+                double lowTemp = temp.getInt("min");
+                String tempL = tempFormatter(lowTemp);
+
+                String icon = item.getJSONArray("weather").getJSONObject(0).getString("icon");
 
                 Forecast forecast = new Forecast();
-//                forecast.setDay(day);
-//                forecast.setHighTemp(highTemp); // temp must be string
-//                forecast.setLowTemp(lowTemp); // temp must be string
-//                forecast.setIcon(icon);
-
-                //dummy data
-                forecast.setDay("day");
-                forecast.setHighTemp("75");
-                forecast.setLowTemp("60");
-                forecast.setIcon("10d");
-
+                forecast.setDay(day);
+                forecast.setHighTemp(tempH);
+                forecast.setLowTemp(tempL);
+                forecast.setIcon(icon);
                 forecastData.add(forecast);
             } catch (Exception e){
                 Log.println(Log.DEBUG, "pooja", "An Exception Happened");
@@ -731,6 +734,18 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
         }
         return forecastData;
 
+    }
+
+    public String dayFormatter(long unixDateTime) {
+        Date date = new Date(unixDateTime * 1000); // needs to be in milliseconds
+        String day = new SimpleDateFormat("EE").format(date);
+        return day;
+    }
+
+    public String tempFormatter(double temp) {
+        double fah = ((temp - 273.15) * 1.8) + 32.0;
+        int fahRounded = (int) Math.round(fah);
+        return Integer.toString(fahRounded);
     }
 
 }

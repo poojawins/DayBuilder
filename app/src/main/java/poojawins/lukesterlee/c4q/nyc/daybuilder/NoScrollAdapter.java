@@ -145,7 +145,6 @@ public class NoScrollAdapter<T> {
             Picasso.with(this.mContext).load("http://openweathermap.org/img/w/" + forecast.getIcon() + ".png")
                     .resize(100, 100).centerCrop().into(image);
 
-            mChildViews.add(column);
             mParentLayout.addView(column,i);
         }
 
