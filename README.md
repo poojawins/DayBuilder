@@ -12,21 +12,42 @@
 
 #### 1. Todo card
 
-Prioritized todo list, swipes to delete or complete, provides statistics and Show More layout
+* Prioritized todo list
+* Swipe to delete or complete
+* Provides statistics (percentage of items that have been completed)
+* Show More layout
+* Change priorities dynamically
+
+![](https://github.com/lukesterlee/DayBuilder/blob/master/sample/todo_top.png)
+![](https://github.com/lukesterlee/DayBuilder/blob/master/sample/task_add.png)
+![](https://github.com/lukesterlee/DayBuilder/blob/master/sample/statistics.png)
 
 #### 2. Weather card
 
-5 days forecast with high/low temp, get user's GPS, provide wind speed and humidity, rain notification
+* Displays current weather conditions (temperature, wind speed, humidity)
+* 5 day forecast with high and low temperature
+* Gets user's location using GPS
+* Rain notifications using Dark Sky API
+
+![](https://github.com/lukesterlee/DayBuilder/blob/master/sample/front.png)
 
 #### 3. Stock card
 
-add stocks with Live Search from over 8000 companies listed in Nasdaq, NYSE, etc., indicates last updated time, provides Show More layout, click to see more with web view
+* Add stocks with Live Search from over 8000 companies listed in Nasdaq, NYSE, etc.
+* Indicates last updated time
+* Provides Show More layout
+* Click to see more with web view
+
+![](https://github.com/lukesterlee/DayBuilder/blob/master/sample/stock.png)
+![](https://github.com/lukesterlee/DayBuilder/blob/master/sample/stock_add.png)
+![](https://github.com/lukesterlee/DayBuilder/blob/master/sample/stock_webview.png)
 
 #### 4. Article card
 
-last 7 days most viewed articles from The New York Times sections (World, U.S., Opinion, Tech)
+* Shows the most viewed articles in the last 7 days from The New York Times sections (World, U.S., Opinion, Tech)
 
-
+![](https://github.com/lukesterlee/DayBuilder/blob/master/sample/article_top.png)
+![](https://github.com/lukesterlee/DayBuilder/blob/master/sample/article_bottom.png)
 
 
 ## Libraries & APIs
@@ -38,23 +59,3 @@ last 7 days most viewed articles from The New York Times sections (World, U.S., 
 5. [Dark Sky API](https://developer.forecast.io/docs)
 6. romannurik's [Swipe Dismiss Touch Listener Library](https://github.com/romannurik/Android-SwipeToDismiss) (modified by us)
 7. PhilJay's [Circle Display Library](https://github.com/PhilJay/CircleDisplay)
-
-
-## Rules
-1. always "git pull origin master" first before starting to work
-2. push to master only when the code is working
-3. keep refactoring each other's code
-
-## Recourses + Study materials
-
-1.
-
-## Credits
-
-1. Alessandro for using handler and live search
-2. Robert for useful icon and title logo
-3. Joe and Amy for structure and guiding (getting us through RecyclerView rabbit hole)
-4. John and Jared for being awesome and frequest helps
-5. Kevin and Sultan for SharedPreferences and Notification lectures
-6. Pooja and Luke for being supportive and a great team member each other
-7. the most important, to make this happen and give us a chance, All of C4Q members!
