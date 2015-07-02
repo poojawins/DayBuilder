@@ -285,7 +285,6 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
         fetchDataFromSharedPreferences();
         fetchTask();
         doNetworkJob();
-
         callDarkSkyTask();
     }
 
@@ -294,18 +293,19 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
             mParentLayoutStock.removeAllViews();
             new WeatherTask().execute();
             new ForecastTask().execute();
-            mHandler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    new StockTask().execute(stockNameSet);
-                }
-            }, 500);
+            new StockTask().execute(stockNameSet);
             //new ArticleTask().execute();
 
         } else {
-            stockAdapter.addNetworkWarningMessageView();
-            mButtonStockFooter.setText("Add a stock");
-            isShowMoreStock = false;
+            mTextViewLocation.setText("Check your network");
+            mTextViewStockUpdate.setText("Check your network state");
+            mTextViewDescriptionWorld.setText("Check your network state");
+            mTextViewDescriptionUs.setText("Check your network state");
+            mTextViewDescriptionOpinion.setText("Check your network state");
+            mTextViewDescriptionTech.setText("Check your network state");
+            //stockAdapter.addNetworkWarningMessageView();
+//            mButtonStockFooter.setText("Add a stock");
+//            isShowMoreStock = false;
         }
     }
 

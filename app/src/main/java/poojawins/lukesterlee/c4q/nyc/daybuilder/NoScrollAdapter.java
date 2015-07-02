@@ -185,6 +185,9 @@ public class NoScrollAdapter<T> {
 
 
     public void addNetworkWarningMessageView() {
+
+
+
         mParentLayout.removeAllViews(); // TODO: find a better way
         View network = inflater.inflate(R.layout.message_network, null);
         mParentLayout.addView(network, 0);
