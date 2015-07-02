@@ -20,9 +20,11 @@ Prioritized todo list, swipes to delete or complete, provides statistics and Sho
 
 #### 3. Stock card
 
-add stocks with Live Search from over 8000 companies listed in Nasdaq, NYSE, etc., indicates last updated time, provides Show More layout 
+add stocks with Live Search from over 8000 companies listed in Nasdaq, NYSE, etc., indicates last updated time, provides Show More layout, click to see more with web view
 
 #### 4. Article card
+
+last 7 days most viewed articles from The New York Times sections (World, U.S., Opinion, Tech)
 
 
 
