@@ -16,6 +16,13 @@
 #### 4. Article card
 
 
+## Libraries & APIs
+
+1. Picasso Library
+2. Google Finance API
+3. The New York Times API
+4. Open Weather API
+5. Swipe Dismiss Touch Listener Library (modified by us)
 
 
 # Rules
