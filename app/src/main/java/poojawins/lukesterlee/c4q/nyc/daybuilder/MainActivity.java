@@ -7,6 +7,9 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.location.Criteria;
+import android.location.Location;
+import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
@@ -30,6 +33,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -73,35 +77,26 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
     private ImageView mImageViewTItle;
     private SwipeRefreshLayout mSwipeRefreshLayout;
 
-    // weather stuffs
     // Location
-    double latitude;
-    double longitude;
+    public static double latitude = 40.7005350;
+    public static double longitude = -73.9396370;
 
     // Weather Data
     private static final String WEATHER_ICON_URL = "http://openweathermap.org/img/w/";
-    private static final String JSON_WEATHER_URL = "http://api.openweathermap.org/data/2.5/weather?zip=11206";
-//    private static final String JSON_WEATHER_BASE = "http://api.openweathermap.org/data/2.5/weather?lat=";
-//    private static final String JSON_WEATHER_END = "&lon=";
-//    private static final String JSON_WEATHER_URL = JSON_WEATHER_BASE + latitude + JSON_WEATHER_END + longitude;
+    private static final String JSON_WEATHER_BASE = "http://api.openweathermap.org/data/2.5/weather?lat=";
+    private static final String JSON_WEATHER_END = "&lon=";
 
     // Forecast Data
-    private static final String JSON_FORECAST_URL = "http://api.openweathermap.org/data/2.5/forecast/daily?q=brooklyn,us&cnt=5";
-//    private static final String JSON_FORECAST_BASE = "http://api.openweathermap.org/data/2.5/forecast/daily?lat=";
-//    private static final String JSON_FORECAST_LON = "&lon=";
-//    private static final String JSON_FORECAST_END = "&cnt=5";
-//    private static final String JSON_FORECAST_URL = JSON_FORECAST_BASE + latitude + JSON_FORECAST_LON + longitude + JSON_FORECAST_END;
-    ArrayList<Forecast> forecastData;
+    private static final String JSON_FORECAST_BASE = "http://api.openweathermap.org/data/2.5/forecast/daily?lat=";
+    private static final String JSON_FORECAST_LON = "&lon=";
+    private static final String JSON_FORECAST_END = "&units=imperial&cnt=6";
+    public List<Forecast> forecastData;
 
     // Dark Sky Notifications
     private static final String DARK_SKY_API_KEY = "d1dfd9033517c3d793c2b2744cdda637";
-    private static final String lat = "40.7005350"; //bk
-    private static final String lon = "-73.9396370"; //bk
-    private static final String DARK_SKY_URL = "https://api.forecast.io/forecast/"
-            + DARK_SKY_API_KEY + "/" + lat + "," + lon;
-//    private static final String DARK_SKY_BASE = "https://api.darkskyapp.com/v1/forecast/";
-//    private static final String DARK_SKY_URL = DARK_SKY_BASE + DARK_SKY_API_KEY + "/" + latitude + "," + longitude;
+    private static final String DARK_SKY_BASE = "https://api.forecast.io/forecast/";
     Handler handler;
+
 
     // weather stuff
     private TextView mTextViewTemperature;
@@ -111,6 +106,10 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
     private TextView mTextViewHumidity;
     private TextView mTextViewWindSpeed;
     private LinearLayout mParentLayoutForecast;
+    NoScrollAdapter<Forecast> forecastAdapter;
+
+    WeatherTask weather;
+    ForecastTask forecast;
 
     // to do view stuffs
     private LinearLayout mParentLayoutTodo;
@@ -198,8 +197,10 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
         mImageViewTItle = (ImageView) findViewById(R.id.imageView_app_title);
         mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefreshLayout);
 
+
         Picasso.with(MainActivity.this).load(R.drawable.c4qnow).resize(550, 550).into(mImageViewTItle);
     }
+
 
 
     private void initializeWeatherViews() {
@@ -248,14 +249,6 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
     }
 
 
-
-    // Weather view
-
-    ForecastAdapter forecastAdapter;
-
-    WeatherTask weather;
-    ForecastTask forecast;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -286,11 +279,6 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
         fetchDataFromSharedPreferences();
         fetchTask();
         doNetworkJob();
-
-
-//        DarkSkyTask darkSkyTask = new DarkSkyTask();
-//        Timer timer = new Timer();
-//        timer.schedule(darkSkyTask, 0, 60000);
 
         callDarkSkyTask();
     }
@@ -703,7 +691,7 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
         @Override
         protected String doInBackground(Void...voids) {
             try {
-                String weatherData = new WeatherGetter().getJSON(JSON_WEATHER_URL);
+                String weatherData = new WeatherGetter().getJSON(JSON_WEATHER_BASE + currentLocation().getLatitude() + JSON_WEATHER_END + currentLocation().getLongitude());
                 return weatherData;
             } catch (Exception e) {
                 return null;
@@ -749,7 +737,7 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
         @Override
         protected String doInBackground(Void...voids) {
             try {
-                String weatherData = new WeatherGetter().getJSON(JSON_FORECAST_URL);
+                String weatherData = new WeatherGetter().getJSON(JSON_FORECAST_BASE + currentLocation().getLatitude() + JSON_FORECAST_LON + currentLocation().getLongitude() + JSON_FORECAST_END);
                 return weatherData;
             } catch (Exception e) {
                 return null;
@@ -762,10 +750,11 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
                 try {
                     JSONObject jObject = new JSONObject(output);
                     JSONArray data = jObject.getJSONArray("list");
-                    setForecastDataArray(data);
 
-//                    forecastAdapter = new ForecastAdapter<>(MainActivity.this, mParentLayoutForecast, R.layout.list_item_forecast);
-//                    forecastAdapter.addForecastViews(forecastData);
+                    List<Forecast> result = setForecastDataArray(data);
+
+                    forecastAdapter = new NoScrollAdapter<>(MainActivity.this, mParentLayoutForecast, R.layout.list_item_forecast);
+                    forecastAdapter.addForecastViews(result);
 
                 } catch(Exception e) {
                     Log.println(Log.DEBUG, "pooja", "An Exception Happened");
@@ -779,7 +768,7 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
         @Override
         protected String doInBackground(Void...voids) {
             try {
-                String weatherData = new WeatherGetter().getJSON(DARK_SKY_URL);
+                String weatherData = new WeatherGetter().getJSON(DARK_SKY_BASE + DARK_SKY_API_KEY + "/" + currentLocation().getLatitude() + "," + currentLocation().getLongitude());
                 return weatherData;
             } catch (Exception e) {
                 return null;
@@ -838,31 +827,60 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
         timer.schedule(doAsynchronousTask, 0, msec); // execute every 15 minutes
     }
 
-    public void setForecastDataArray(JSONArray data) {
-        forecastData = new ArrayList<>();
+    public List<Forecast> setForecastDataArray(JSONArray data) {
+        forecastData = new ArrayList<Forecast>();
 
-        for (int i = 0; i < 5; i++) {
+        for (int i = 1; i < data.length(); i++) {
             try {
 
                 JSONObject item = data.getJSONObject(i);
-//                int day = item.getInt("dt"); // convert to day (String)
-//                String temp = item.getString("temp");
-//                int highTemp = temp.getInt("max"); // convert to fahrenheit + String
-//                int lowTemp = temp.getInt("min"); // convert to fahrenheit + String
+
+                long unixDatetime = item.getLong("dt");
+                String day = dayFormatter(unixDatetime);
+
+                JSONObject temp = item.getJSONObject("temp");
+
+                double highTemp = temp.getInt("max");
+                String tempH = tempFormatter(highTemp);
+
+                double lowTemp = temp.getInt("min");
+                String tempL = tempFormatter(lowTemp);
+
                 String icon = item.getJSONArray("weather").getJSONObject(0).getString("icon");
 
                 Forecast forecast = new Forecast();
-//                forecast.setDay(day);
-//                forecast.setHighTemp(highTemp); // temp must be string
-//                forecast.setLowTemp(lowTemp); // temp must be string
+                forecast.setDay(day);
+                forecast.setHighTemp(tempH);
+                forecast.setLowTemp(tempL);
                 forecast.setIcon(icon);
-
                 forecastData.add(forecast);
             } catch (Exception e){
                 Log.println(Log.DEBUG, "pooja", "An Exception Happened");
             }
 
         }
+        return forecastData;
 
     }
+
+    public String dayFormatter(long unixDateTime) {
+        Date date = new Date(unixDateTime * 1000); // needs to be in milliseconds
+        String day = new SimpleDateFormat("EE").format(date);
+        return day;
+    }
+
+    public String tempFormatter(double temp) {
+        int fahRounded = (int) Math.round(temp);
+        return Integer.toString(fahRounded);
+    }
+
+    public Location currentLocation() {
+        LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        Criteria criteria = new Criteria();
+        criteria.setAccuracy(Criteria.ACCURACY_FINE);
+        criteria.setPowerRequirement(Criteria.POWER_LOW);
+        Location location = lm.getLastKnownLocation(lm.getBestProvider(criteria, true));
+        return location;
+    }
+
 }
