@@ -587,6 +587,53 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
                     deleteTodo(task.getText().toString(), isLeft);
                 }
             }));
+
+
+            Button priority = (Button) row.findViewById(R.id.button_todo);
+            priority.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Button priorityButton = (Button) view;
+                    String letter = priorityButton.getText().toString();
+                    String newTodo = "";
+                    TextView task = (TextView) row.findViewById(R.id.textView_todo);
+                    String text = task.getText().toString();
+                    todoSet = mSharedPreferences.getStringSet(SHARED_PREFERENCES_TODO_KEY, new TreeSet<String>());
+                    Set<String> newList = new TreeSet<String>();
+                    if (letter.equals("H")) {
+                        priorityButton.setText("L");
+                        for (String sentence : todoSet) {
+                            if (sentence.contains(text)) {
+                                newList.add("L" + text);
+                            } else {
+                                newList.add(sentence);
+                            }
+                        }
+
+                    } else if (letter.equals("M")) {
+                        priorityButton.setText("H");
+                        for (String sentence : todoSet) {
+                            if (sentence.contains(text)) {
+                                newList.add("H" + text);
+                            } else {
+                                newList.add(sentence);
+                            }
+                        }
+                    } else {
+                        priorityButton.setText("M");
+                        for (String sentence : todoSet) {
+                            if (sentence.contains(text)) {
+                                newList.add("M" + text);
+                            } else {
+                                newList.add(sentence);
+                            }
+                        }
+                    }
+                    editor.putStringSet(SHARED_PREFERENCES_TODO_KEY, newList);
+                    editor.apply();
+                }
+            });
+
         }
     }
 

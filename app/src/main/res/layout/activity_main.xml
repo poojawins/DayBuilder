@@ -286,7 +286,8 @@
                                 android:layout_height="wrap_content"
                                 android:fontFamily="sans-serif-thin"
                                 android:text="powered by The New York Times"
-                                android:textSize="12sp" />
+                                android:textSize="12sp"
+                                android:layout_gravity="right" />
 
 
                         </LinearLayout>
