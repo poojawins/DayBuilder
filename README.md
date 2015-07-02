@@ -8,10 +8,10 @@
 
 ## Features
 
-1. Todo card
-2. Weather card
-3. Stock card
-4. Article card
+#### 1. Todo card
+#### 2. Weather card
+#### 3. Stock card
+#### 4. Article card
 
 1. Must have a todo list feature that stores/retrieves a file locally.
 1. Must have at least n of the following features, where n is the number of people in your team:
