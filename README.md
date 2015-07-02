@@ -14,7 +14,7 @@
 
 Prioritized todo list, swipes to delete or complete, provides statistics and Show More layout
 
-
+![](https://github.com/lukesterlee/DayBuilder/blob/master/sample/todo_top.png)
 
 #### 2. Weather card
 
