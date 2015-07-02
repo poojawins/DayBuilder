@@ -56,5 +56,5 @@ last 7 days most viewed articles from The New York Times sections (World, U.S., 
 3. Joe and Amy for structure and guiding (getting us through RecyclerView rabbit hole)
 4. John and Jared for being awesome and frequest helps
 5. Kevin and Sultan for SharedPreferences and Notification lectures
-6. Pooja and Luke for being supportive and a great team member
+6. Pooja and Luke for being supportive and a great team member each other
 7. the most important, to make this happen and give us a chance, All of C4Q members!
