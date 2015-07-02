@@ -5,7 +5,7 @@
 
     <TextView
         android:padding="16dp"
-        android:text="Credits"
+        android:text="Thanks to"
         android:textSize="30sp"
         android:fontFamily="sans-serif-thin"
         android:layout_width="match_parent"
