@@ -1,10 +1,8 @@
 # Introduction
 
-Team Name : Day Builder
-
-Product Name : C4Q NOW
-
-Team Members : Luke Lee, Pooja Pasawala
+1. Team Name : Day Builder
+2. Product Name : C4Q NOW
+3. Team Members : Luke Lee, Pooja Pasawala
 
 
 ### Now Feed
