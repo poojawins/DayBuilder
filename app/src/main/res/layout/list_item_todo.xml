@@ -18,7 +18,7 @@
             android:layout_height="40dp"
             android:fontFamily="sans-serif-thin"
             android:textColor="@color/white"
-            android:textSize="18sp"
+            android:textSize="14sp"
             android:id="@+id/button_todo"/>
 
         <TextView
