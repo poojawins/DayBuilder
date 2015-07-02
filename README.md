@@ -12,14 +12,19 @@
 
 #### 1. Todo card
 
-Prioritized todo list, swipes to delete or complete, provides statistics 
+Prioritized todo list, swipes to delete or complete, provides statistics and Show More layout
 
 #### 2. Weather card
 
 5 days forecast with high/low temp, get user's GPS, provide wind speed and humidity 
 
 #### 3. Stock card
+
+add stocks with Live Search from over 8000 companies listed in Nasdaq, NYSE, etc., indicates last updated time, provides Show More layout 
+
 #### 4. Article card
+
+
 
 
 ## Libraries & APIs
