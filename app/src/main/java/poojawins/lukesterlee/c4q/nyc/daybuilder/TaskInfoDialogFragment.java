@@ -39,7 +39,12 @@ public class TaskInfoDialogFragment extends DialogFragment implements CircleDisp
 
         total = completed + deleted;
 
-        percentage = (completed / total) * 100f;
+        if (total == 0) {
+            percentage = 0;
+        } else {
+            percentage = (completed*100f)/total;
+        }
+
 
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -53,8 +58,6 @@ public class TaskInfoDialogFragment extends DialogFragment implements CircleDisp
 
         mTextViewCompleted.setText(completed + "");
         mTextViewDeleted.setText(deleted + "");
-
-
 
 
         builder.setView(mDialogView);
@@ -81,6 +84,7 @@ public class TaskInfoDialogFragment extends DialogFragment implements CircleDisp
         mCircleDisplay.setUnit("%");
         mCircleDisplay.setStepSize(0.5f);
         mCircleDisplay.setDimAlpha(0);
+        mCircleDisplay.setFormatDigits(1);
         mCircleDisplay.showValue(percentage, 100f, true);
 
     }
