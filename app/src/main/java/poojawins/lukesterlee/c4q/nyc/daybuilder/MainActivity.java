@@ -653,6 +653,7 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
                     Set<String> newList = new TreeSet<String>();
                     if (letter.equals("H")) {
                         priorityButton.setText("L");
+                        priorityButton.setBackgroundResource(R.drawable.button_low);
                         for (String sentence : todoSet) {
                             if (sentence.contains(text)) {
                                 newList.add("L" + text);
@@ -663,6 +664,7 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
 
                     } else if (letter.equals("M")) {
                         priorityButton.setText("H");
+                        priorityButton.setBackgroundResource(R.drawable.button_high);
                         for (String sentence : todoSet) {
                             if (sentence.contains(text)) {
                                 newList.add("H" + text);
@@ -672,6 +674,7 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
                         }
                     } else {
                         priorityButton.setText("M");
+                        priorityButton.setBackgroundResource(R.drawable.button_medium);
                         for (String sentence : todoSet) {
                             if (sentence.contains(text)) {
                                 newList.add("M" + text);
