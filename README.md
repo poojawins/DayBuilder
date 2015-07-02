@@ -59,15 +59,3 @@
 5. [Dark Sky API](https://developer.forecast.io/docs)
 6. romannurik's [Swipe Dismiss Touch Listener Library](https://github.com/romannurik/Android-SwipeToDismiss) (modified by us)
 7. PhilJay's [Circle Display Library](https://github.com/PhilJay/CircleDisplay)
-
-
-
-## Credits
-
-* Amy and John for their amazing lectures and help
-* Joe and Jared for being awesome and guiding
-* Kevin and Sultan for special lectures
-* Alessandro for using handler and live search
-* Robert for useful icon and title logo
-* Pooja and Luke for being supportive and great team members
-* Most importantly, for making this happen and giving us a chance, All C4Q members!
