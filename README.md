@@ -5,26 +5,13 @@
 3. Team Members : Luke Lee, Pooja Pasawala
 
 
-### Now Feed
 
-#### Requirements
+## Features
 
-The purpose of this project is to create a Google Now style feed. Every item in the feed is a card. The user can
-scroll through the feed of cards or interact with cards.
-
-You application should have the following properites:
-* Does not crash.
-* Does not hang - that is, there should be little to no delay visible to the user.
-* Does not fail when internet connection is slow/unavailable.
-* Have a consistent look and feel visually across the app.
-* Have consistent coding style across the source.
-* Have well-organized code that makes it easy to add new features.
-* Either be locked to one orientation or look great in both landscape and portrait.
-
-Remember to use the software engineering practices we've developed this unit! Work on different branches for
-different features. Code review each other. Design APIs together. You can do it!
-
-#### Features
+1. Todo card
+2. Weather card
+3. Stock card
+4. Article card
 
 1. Must have a todo list feature that stores/retrieves a file locally.
 1. Must have at least n of the following features, where n is the number of people in your team:
