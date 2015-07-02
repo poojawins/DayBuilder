@@ -62,14 +62,6 @@ last 7 days most viewed articles from The New York Times sections (World, U.S., 
 
 
 
-
-## Rules
-1. always "git pull origin master" first before starting to work
-2. push to master only when the code is working
-3. keep refactoring each other's code
-
-
-
 ## Credits
 
 * Amy and John for amazing lectures and countless helps
