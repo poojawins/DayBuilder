@@ -298,7 +298,6 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
         } else {
             stockAdapter.addNetworkWarningMessageView();
             mButtonStockFooter.setText("Add a stock");
-            mButtonStockFooter.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_add_white_18dp, 0, 0, 0);
             isShowMoreStock = false;
         }
     }
@@ -324,7 +323,6 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
                         stockAdapter.addStockViews(mRestOfStocks, true);
                         addStockTouchListener();
                         mButtonStockFooter.setText("Add a stock");
-                        mButtonStockFooter.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_add_white_18dp, 0, 0, 0);
                         isShowMoreStock = false;
                     } else {
                         new AddStockDialogFragment().show(getFragmentManager(), "AddStockDialogFragment");
@@ -342,7 +340,6 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
                         todoAdapter.addTaskViews(mRestOfTodos, true);
                         addTaskTouchListener();
                         mButtonTodoFooter.setText("Add a task");
-                        mButtonTodoFooter.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_add_white_18dp, 0, 0, 0);
                         isShowMoreTodo = false;
                     } else {
                         new AddTaskDialogFragment().show(getFragmentManager(), "AddTaskDialogFragment");
@@ -506,7 +503,7 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
                 if (list.size() > 4) {
                     isShowMoreTodo = true;
                     mButtonTodoFooter.setText("Show more");
-                    mButtonTodoFooter.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_keyboard_arrow_down_white_18dp, 0, 0, 0);
+                    mButtonTodoFooter.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_keyboard_arrow_down_white_24dp, 0, 0, 0);
                     List<String> firstFour = list.subList(0,4);
                     mRestOfTodos = list.subList(4, list.size());
                     todoAdapter.addTaskViews(firstFour, false);
@@ -619,7 +616,7 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
                 if (stocks.size() > 4) {
                     isShowMoreStock = true;
                     mButtonStockFooter.setText("Show more");
-                    mButtonStockFooter.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_keyboard_arrow_down_white_18dp,0,0,0);
+                    mButtonStockFooter.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_keyboard_arrow_down_white_24dp,0,0,0);
                     List<Stock> firstFour = stocks.subList(0,4);
                     mRestOfStocks = stocks.subList(4, stocks.size());
                     stockAdapter.addStockViews(firstFour,false);
@@ -658,13 +655,13 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
 
     private void fetchArticleData() {
         Article world = mArticleList.get("World");
-        Picasso.with(MainActivity.this).load(world.getThumbnailUrl()).resize(400, 400).into(mImageViewWorld);
+        Picasso.with(MainActivity.this).load(world.getThumbnailUrl()).resize(400, 400).centerCrop().into(mImageViewWorld);
         Article us = mArticleList.get("Us");
-        Picasso.with(MainActivity.this).load(us.getThumbnailUrl()).resize(200, 200).into(mImageViewUs);
+        Picasso.with(MainActivity.this).load(us.getThumbnailUrl()).resize(400, 400).centerCrop().into(mImageViewUs);
         Article opinion = mArticleList.get("Opinion");
-        Picasso.with(MainActivity.this).load(opinion.getThumbnailUrl()).resize(200, 200).into(mImageViewOpinion);
+        Picasso.with(MainActivity.this).load(opinion.getThumbnailUrl()).resize(400, 400).centerCrop().into(mImageViewOpinion);
         Article tech = mArticleList.get("Tech");
-        Picasso.with(MainActivity.this).load(tech.getThumbnailUrl()).resize(200, 200).into(mImageViewTech);
+        Picasso.with(MainActivity.this).load(tech.getThumbnailUrl()).resize(400, 400).centerCrop().into(mImageViewTech);
 
         mTextViewTitleWorld.setText(world.getTitle());
         mTextViewDescriptionWorld.setText(world.getDescription());
