@@ -14,6 +14,8 @@
 
 Prioritized todo list, swipes to delete or complete, provides statistics and Show More layout
 
+
+
 #### 2. Weather card
 
 5 days forecast with high/low temp, get user's GPS, provide wind speed and humidity, rain notification
@@ -40,6 +42,8 @@ last 7 days most viewed articles from The New York Times sections (World, U.S., 
 7. PhilJay's [Circle Display Library](https://github.com/PhilJay/CircleDisplay)
 
 
+
+
 ## Rules
 1. always "git pull origin master" first before starting to work
 2. push to master only when the code is working
@@ -51,7 +55,8 @@ last 7 days most viewed articles from The New York Times sections (World, U.S., 
 
 ## Credits
 
-1. Alessandro for using handler and live search
+* Amy and John for amazing lectures and countless helps"
+* 
 2. Robert for useful icon and title logo
 3. Joe and Amy for structure and guiding (getting us through RecyclerView rabbit hole)
 4. John and Jared for being awesome and frequest helps
