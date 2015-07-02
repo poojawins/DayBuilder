@@ -6,7 +6,7 @@
     android:clickable="true"
     android:focusable="true"
     android:background="@drawable/border"
-    android:padding="8dp">
+    android:padding="12dp">
 
     <LinearLayout
         android:orientation="horizontal"

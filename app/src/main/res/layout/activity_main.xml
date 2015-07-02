@@ -43,19 +43,20 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:padding="8dp">
+                        android:orientation="vertical">
 
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="LOCATION"
+                            android:padding="16dp"
                             android:fontFamily="sans-serif-thin"
                             android:textSize="25sp"
                             android:layout_marginBottom="8dp"
                             android:id="@+id/location"/>
 
                         <LinearLayout
+                            android:paddingLeft="16dp"
+                            android:paddingRight="16dp"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:orientation="horizontal">
@@ -222,7 +223,7 @@
                             android:orientation="vertical"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:padding="8dp"
+                            android:padding="16dp"
                             android:background="@drawable/border"
                             android:id="@+id/stock_header">
 
@@ -238,6 +239,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:fontFamily="sans-serif-thin"
+                                android:textSize="12sp"
                                 android:id="@+id/stock_update"/>
 
 
@@ -286,7 +288,7 @@
                             android:orientation="vertical"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:padding="8dp"
+                            android:padding="16dp"
                             android:background="@drawable/border">
 
                             <TextView
@@ -294,7 +296,7 @@
                                 android:layout_height="wrap_content"
                                 android:fontFamily="sans-serif-thin"
                                 android:text="Most Viewed"
-                                android:textSize="28sp"/>
+                                android:textSize="25sp"/>
 
                             <TextView
                                 android:layout_width="match_parent"
@@ -313,7 +315,7 @@
 
 
                             <LinearLayout
-                                android:padding="16dp"
+                                android:padding="12dp"
                                 android:id="@+id/most_read_world"
                                 android:orientation="vertical"
                                 android:background="@drawable/border"

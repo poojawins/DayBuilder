@@ -9,7 +9,7 @@
 
     <TextView
         android:text="Add a task"
-        android:textSize="35sp"
+        android:textSize="30sp"
         android:fontFamily="sans-serif-thin"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
