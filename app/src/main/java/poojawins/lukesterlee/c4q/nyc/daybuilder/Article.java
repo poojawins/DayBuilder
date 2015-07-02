@@ -1,15 +1,48 @@
 package poojawins.lukesterlee.c4q.nyc.daybuilder;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import java.io.Serializable;
+
 /**
  * Created by Luke on 7/1/2015.
  */
-public class Article {
+public class Article  implements Parcelable, Serializable {
 
     private String title;
     private String description;
     private String published_date;
     private String articleUrl;
     private String thumbnailUrl;
+
+    public static final Creator<Article> CREATOR = new Creator<Article>() {
+        @Override
+        public Article createFromParcel(Parcel parcel) {
+            return new Article(parcel);
+        }
+
+        @Override
+        public Article[] newArray(int size) {
+            return new Article[size];
+        }
+    };
+
+    public Article() {
+        title = "";
+        description = "";
+        published_date = "";
+        articleUrl = "";
+        thumbnailUrl = "";
+    }
+
+    public Article(Parcel parcel) {
+        title = parcel.readString();
+        description = parcel.readString();
+        published_date = parcel.readString();
+        articleUrl = parcel.readString();
+        thumbnailUrl = parcel.readString();
+    }
 
     public Article(String title, String description, String published_date, String articleUrl, String thumbnailUrl) {
         this.title = title;
@@ -57,5 +90,19 @@ public class Article {
 
     public void setThumbnailUrl(String thumbnailUrl) {
         this.thumbnailUrl = thumbnailUrl;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int flags) {
+        parcel.writeString(title);
+        parcel.writeString(description);
+        parcel.writeString(published_date);
+        parcel.writeString(articleUrl);
+        parcel.writeString(thumbnailUrl);
     }
 }

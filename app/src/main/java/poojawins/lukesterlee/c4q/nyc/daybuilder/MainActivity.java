@@ -33,7 +33,14 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.StreamCorruptedException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -55,6 +62,10 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
 
 
     private static final String JSON_STOCK_ENDPOINT = "http://finance.google.com/finance/info?client=ig&q=GOOGL,GOOG";
+    private static final String ARTICLE_WORLD_KEY = "World";
+    private static final String ARTICLE_US_KEY = "Us";
+    private static final String ARTICLE_OPINION_KEY = "Opinion";
+    private static final String ARTICLE_TECH_KEY = "Tech";
     private static final String SHARED_PREFERENCES_STOCK_KEY = "stock";
     private static final String SHARED_PREFERENCES_TODO_KEY = "todo";
     private static final String SHARED_PREFERENCES_COMPLETED_KEY = "completed";
@@ -166,6 +177,11 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
     private TextView mTextViewDescriptionTech;
     private TextView mTextViewPublishedDateTech;
 
+    private Article world = new Article();
+    private Article us = new Article();
+    private Article opinion = new Article();
+    private Article tech = new Article();
+
     private Date lastClicked;
     int count;
 
@@ -256,10 +272,32 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
         mTextViewPublishedDateTech = (TextView) findViewById(R.id.published_date_tech);
     }
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+
+        File directory = getExternalCacheDir();
+        File file = new File(directory, "article.ser");
+        try {
+            FileInputStream fileStream = new FileInputStream(file);
+            ObjectInputStream os = new ObjectInputStream(fileStream);
+            world = (Article) os.readObject();
+            us = (Article) os.readObject();
+            opinion = (Article) os.readObject();
+            tech = (Article) os.readObject();
+            os.close();
+        } catch (FileNotFoundException e) {
+
+        } catch (StreamCorruptedException e) {
+
+        } catch (IOException e) {
+
+        } catch (ClassNotFoundException e) {
+
+        }
 
 
         isShowMoreStock = false;
@@ -288,24 +326,31 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
         callDarkSkyTask();
     }
 
+
+
     private void doNetworkJob() {
         if (hasNetwork()) {
             mParentLayoutStock.removeAllViews();
             new WeatherTask().execute();
             new ForecastTask().execute();
             new StockTask().execute(stockNameSet);
-            //new ArticleTask().execute();
+            if (!isAlreadyUpdated()) {
+                new ArticleTask().execute();
+            }
 
         } else {
             mTextViewLocation.setText("Check your network");
             mTextViewStockUpdate.setText("Check your network state");
-            mTextViewDescriptionWorld.setText("Check your network state");
-            mTextViewDescriptionUs.setText("Check your network state");
-            mTextViewDescriptionOpinion.setText("Check your network state");
-            mTextViewDescriptionTech.setText("Check your network state");
-            //stockAdapter.addNetworkWarningMessageView();
-//            mButtonStockFooter.setText("Add a stock");
-//            isShowMoreStock = false;
+
+            if (world.getTitle().length() == 0) {
+                mTextViewDescriptionWorld.setText("Check your network state");
+                mTextViewDescriptionUs.setText("Check your network state");
+                mTextViewDescriptionOpinion.setText("Check your network state");
+                mTextViewDescriptionTech.setText("Check your network state");
+            } else {
+                fetchArticleData();
+            }
+
         }
     }
 
@@ -418,6 +463,16 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
 
     }
 
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelable(ARTICLE_WORLD_KEY, world);
+        outState.putParcelable(ARTICLE_US_KEY, us);
+        outState.putParcelable(ARTICLE_OPINION_KEY, opinion);
+        outState.putParcelable(ARTICLE_TECH_KEY, tech);
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -431,6 +486,8 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
         fetchTask();
         doNetworkJob();
     }
+
+
 
     @Override
     public void addDialogClicked(DialogFragment dialog, int requestCode, String data) {
@@ -518,6 +575,7 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
         editor.apply();
 
     }
+
 
     private void fetchTask() {
         todoAdapter = new NoScrollAdapter<>(MainActivity.this, mParentLayoutTodo, R.layout.list_item_todo);
@@ -657,14 +715,21 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
     }
 
     private void fetchArticleData() {
-        Article world = mArticleList.get("World");
-        Picasso.with(MainActivity.this).load(world.getThumbnailUrl()).resize(400, 400).centerCrop().into(mImageViewWorld);
-        Article us = mArticleList.get("Us");
-        Picasso.with(MainActivity.this).load(us.getThumbnailUrl()).resize(400, 400).centerCrop().into(mImageViewUs);
-        Article opinion = mArticleList.get("Opinion");
-        Picasso.with(MainActivity.this).load(opinion.getThumbnailUrl()).resize(400, 400).centerCrop().into(mImageViewOpinion);
-        Article tech = mArticleList.get("Tech");
-        Picasso.with(MainActivity.this).load(tech.getThumbnailUrl()).resize(400, 400).centerCrop().into(mImageViewTech);
+        //world = mArticleList.get(ARTICLE_WORLD_KEY);
+
+        if (world.getThumbnailUrl().length() != 0) {
+            Picasso.with(MainActivity.this).load(world.getThumbnailUrl()).error(R.drawable.warning).resize(400, 400).centerCrop().into(mImageViewWorld);
+            Picasso.with(MainActivity.this).load(us.getThumbnailUrl()).error(R.drawable.warning).resize(400, 400).centerCrop().into(mImageViewUs);
+            Picasso.with(MainActivity.this).load(opinion.getThumbnailUrl()).error(R.drawable.warning).resize(400, 400).centerCrop().into(mImageViewOpinion);
+            Picasso.with(MainActivity.this).load(tech.getThumbnailUrl()).error(R.drawable.warning).resize(400, 400).centerCrop().into(mImageViewTech);
+        } else {
+            Picasso.with(MainActivity.this).load(R.drawable.warning).error(R.drawable.warning).resize(400, 400).centerCrop().into(mImageViewWorld);
+            Picasso.with(MainActivity.this).load(R.drawable.warning).error(R.drawable.warning).resize(400, 400).centerCrop().into(mImageViewUs);
+            Picasso.with(MainActivity.this).load(R.drawable.warning).error(R.drawable.warning).resize(400, 400).centerCrop().into(mImageViewOpinion);
+            Picasso.with(MainActivity.this).load(R.drawable.warning).error(R.drawable.warning).resize(400, 400).centerCrop().into(mImageViewTech);
+        }
+
+
 
         mTextViewTitleWorld.setText(world.getTitle());
         mTextViewDescriptionWorld.setText(world.getDescription());
@@ -848,6 +913,29 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
             lastUpdate = Calendar.getInstance();
             mArticleList = articles;
             fetchArticleData();
+
+            world = mArticleList.get(ARTICLE_WORLD_KEY);
+            us = mArticleList.get(ARTICLE_US_KEY);
+            opinion = mArticleList.get(ARTICLE_OPINION_KEY);
+            tech = mArticleList.get(ARTICLE_TECH_KEY);
+
+            File directory = getExternalCacheDir();
+            File file = new File(directory, "article.ser");
+
+            try {
+                FileOutputStream fs = new FileOutputStream(file);
+                ObjectOutputStream os = new ObjectOutputStream(fs);
+                os.writeObject(world);
+                os.writeObject(us);
+                os.writeObject(opinion);
+                os.writeObject(tech);
+                os.close();
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
 
         }
     }
