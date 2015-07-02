@@ -79,7 +79,7 @@ public class TaskInfoDialogFragment extends DialogFragment implements CircleDisp
         mCircleDisplay.setValueWidthPercent(10f);
         mCircleDisplay.setDrawInnerCircle(true);
         mCircleDisplay.setFormatDigits(1);
-        mCircleDisplay.setTouchEnabled(true);
+        mCircleDisplay.setTouchEnabled(false);
         mCircleDisplay.setSelectionListener(this);
         mCircleDisplay.setUnit("%");
         mCircleDisplay.setStepSize(0.5f);

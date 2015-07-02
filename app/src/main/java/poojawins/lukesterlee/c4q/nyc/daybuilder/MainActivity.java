@@ -868,6 +868,11 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
         }
 
         @Override
+        protected void onProgressUpdate(Void... values) {
+            mTextViewStockUpdate.setText("Loading stock info...");
+        }
+
+        @Override
         protected void onPostExecute(List<Stock> stocks) {
             lastUpdatedStock = new Date();
             mHandler.removeCallbacks(postTimeRunnable);
@@ -950,6 +955,12 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
             } catch (Exception e) {
                 return null;
             }
+        }
+
+        @Override
+        protected void onProgressUpdate(Void... values) {
+            mTextViewLocation.setText("Loading whether info...");
+
         }
 
         @Override
