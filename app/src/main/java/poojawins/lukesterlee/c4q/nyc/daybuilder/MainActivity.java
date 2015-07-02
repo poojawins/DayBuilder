@@ -189,7 +189,7 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
         mImageViewTItle = (ImageView) findViewById(R.id.imageView_app_title);
         mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefreshLayout);
 
-        Picasso.with(MainActivity.this).load(R.drawable.c4qnow).resize(550, 550).into(mImageViewTItle);
+        Picasso.with(MainActivity.this).load(R.drawable.c4qnow).resize(650, 650).into(mImageViewTItle);
         mImageViewTItle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
