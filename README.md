@@ -13,10 +13,10 @@
 #### 1. Todo card
 
 * Prioritized todo list
-* swipes to delete or complete
+* Swipe to delete or complete
 * provides statistics
 * Show More layout
-* change priorities dynamically
+* Change priorities dynamically
 
 ![](https://github.com/lukesterlee/DayBuilder/blob/master/sample/todo_top.png)
 ![](https://github.com/lukesterlee/DayBuilder/blob/master/sample/task_add.png)
@@ -24,19 +24,19 @@
 
 #### 2. Weather card
 
-* 5 days forecast with high/low temp
-* get user's GPSp
-* rovide wind speed and humidity
-* rain notification
+* Displays current weather conditions (temperature, wind speed and humidity)
+* 5 day forecast with high/low temp
+* Gets user's location using GPS
+* Rain notifications using Dark Sky API
 
 ![](https://github.com/lukesterlee/DayBuilder/blob/master/sample/front.png)
 
 #### 3. Stock card
 
-* add stocks with Live Search from over 8000 companies listed in Nasdaq, NYSE, etc.
-* indicates last updated time
-* provides Show More layout
-* click to see more with web view
+* Add stocks with Live Search from over 8000 companies listed in Nasdaq, NYSE, etc.
+* Indicates last updated time
+* Provides Show More layout
+* Click to see more with web view
 
 ![](https://github.com/lukesterlee/DayBuilder/blob/master/sample/stock.png)
 ![](https://github.com/lukesterlee/DayBuilder/blob/master/sample/stock_add.png)
@@ -44,7 +44,7 @@
 
 #### 4. Article card
 
-last 7 days most viewed articles from The New York Times sections (World, U.S., Opinion, Tech)
+* Shows the most viewed articles in the last 7 days from The New York Times sections (World, U.S., Opinion, Tech)
 
 ![](https://github.com/lukesterlee/DayBuilder/blob/master/sample/article_top.png)
 ![](https://github.com/lukesterlee/DayBuilder/blob/master/sample/article_bottom.png)
@@ -64,10 +64,10 @@ last 7 days most viewed articles from The New York Times sections (World, U.S., 
 
 ## Credits
 
-* Amy and John for amazing lectures and countless helps
+* Amy and John for their amazing lectures and help
 * Joe and Jared for being awesome and guiding
 * Kevin and Sultan for special lectures
 * Alessandro for using handler and live search
 * Robert for useful icon and title logo
-* Pooja and Luke for being supportive and a great team member each other
-* the most important, to make this happen and give us a chance, All of C4Q members!
+* Pooja and Luke for being supportive and great team members
+* Most importantly, for making this happen and giving us a chance, All C4Q members!
