@@ -11,7 +11,13 @@
 ## Features
 
 #### 1. Todo card
+
+Prioritized todo list, swipes to delete or complete, provides statistics 
+
 #### 2. Weather card
+
+5 days forecast with high/low temp, get user's GPS, provide wind speed and humidity 
+
 #### 3. Stock card
 #### 4. Article card
 
