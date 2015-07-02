@@ -47,8 +47,9 @@
                             android:layout_height="wrap_content"
                             android:layout_marginBottom="8dp"
                             android:fontFamily="sans-serif-thin"
-                            android:padding="16dp"
-                            android:paddingBottom="12dp"
+                            android:paddingTop="16dp"
+                            android:paddingLeft="16dp"
+                            android:paddingBottom="8dp"
                             android:textSize="25sp" />
 
                         <LinearLayout
@@ -182,7 +183,7 @@
                             android:id="@+id/button_todo_footer"
                             android:layout_width="match_parent"
                             android:layout_height="50dp"
-                            android:background="@color/blue"
+                            android:background="@color/button_grey"
                             android:text="Add a task"
                             android:textColor="@color/white" />
 
@@ -245,7 +246,7 @@
                             android:id="@+id/button_stock_footer"
                             android:layout_width="match_parent"
                             android:layout_height="50dp"
-                            android:background="@color/blue"
+                            android:background="@color/button_grey"
                             android:text="@string/stock_add"
                             android:textColor="@color/white" />
 
@@ -287,6 +288,7 @@
                                 android:fontFamily="sans-serif-thin"
                                 android:text="powered by The New York Times"
                                 android:textSize="12sp"
+                                android:gravity="right"
                                 android:layout_gravity="right" />
 
 
@@ -336,7 +338,7 @@
                                         android:fontFamily="sans-serif-thin"
                                         android:gravity="center_vertical|center|center_horizontal"
                                         android:paddingLeft="8dp"
-                                        android:textSize="18sp" />
+                                        android:textSize="17sp" />
 
 
                                 </LinearLayout>
@@ -397,7 +399,7 @@
                                         android:fontFamily="sans-serif-thin"
                                         android:gravity="center_vertical|center|center_horizontal"
                                         android:paddingLeft="8dp"
-                                        android:textSize="18sp" />
+                                        android:textSize="17sp" />
 
 
                                 </LinearLayout>
@@ -458,7 +460,7 @@
                                         android:fontFamily="sans-serif-thin"
                                         android:gravity="center_vertical|center|center_horizontal"
                                         android:paddingLeft="8dp"
-                                        android:textSize="18sp" />
+                                        android:textSize="17sp" />
 
 
                                 </LinearLayout>
@@ -518,7 +520,7 @@
                                         android:fontFamily="sans-serif-thin"
                                         android:gravity="center_vertical|center|center_horizontal"
                                         android:paddingLeft="8dp"
-                                        android:textSize="18sp" />
+                                        android:textSize="17sp" />
 
 
                                 </LinearLayout>

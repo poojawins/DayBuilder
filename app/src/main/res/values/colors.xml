@@ -20,10 +20,11 @@
     <drawable name="selected_gray">#2c000000</drawable>
 
     <color name="grey">#2c000000</color>
-
+    <color name="button_grey">#808080</color>
     <color name="black_semi_transparent">#B2000000</color>
     <color name="background">#e5e5e5</color>
-    <color name="blue">#1976D2</color>
+    <color name="blue2">#1976D2</color>
+    <color name="blue">#5E97F6</color>
     <color name="green">#4BAE4F</color>
     <color name="half_black">#808080</color>
     <color name="white">#FFFFFF</color>

@@ -516,8 +516,7 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
             } else {
                 if (list.size() > 4) {
                     isShowMoreTodo = true;
-                    mButtonTodoFooter.setText("Show more");
-                    mButtonTodoFooter.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_keyboard_arrow_down_white_24dp, 0, 0, 0);
+                    mButtonTodoFooter.setText("↓ Show more ↓");
                     List<String> firstFour = list.subList(0, 4);
                     mRestOfTodos = list.subList(4, list.size());
                     todoAdapter.addTaskViews(firstFour, false);
@@ -796,8 +795,7 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
             } else {
                 if (stocks.size() > 4) {
                     isShowMoreStock = true;
-                    mButtonStockFooter.setText("Show more");
-                    mButtonStockFooter.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_keyboard_arrow_down_white_24dp, 0, 0, 0);
+                    mButtonStockFooter.setText("↓ Show more ↓");
                     List<Stock> firstFour = stocks.subList(0, 4);
                     mRestOfStocks = stocks.subList(4, stocks.size());
                     stockAdapter.addStockViews(firstFour, false);
