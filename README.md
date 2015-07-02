@@ -49,17 +49,14 @@ last 7 days most viewed articles from The New York Times sections (World, U.S., 
 2. push to master only when the code is working
 3. keep refactoring each other's code
 
-## Recourses + Study materials
 
-1.
 
 ## Credits
 
-* Amy and John for amazing lectures and countless helps"
-* 
-2. Robert for useful icon and title logo
-3. Joe and Amy for structure and guiding (getting us through RecyclerView rabbit hole)
-4. John and Jared for being awesome and frequest helps
-5. Kevin and Sultan for SharedPreferences and Notification lectures
-6. Pooja and Luke for being supportive and a great team member each other
-7. the most important, to make this happen and give us a chance, All of C4Q members!
+* Amy and John for amazing lectures and countless helps
+* Joe and Jared for being awesome and guiding
+* Kevin and Sultan for special lectures
+* Alessandro for using handler and live search
+* Robert for useful icon and title logo
+* Pooja and Luke for being supportive and a great team member each other
+* the most important, to make this happen and give us a chance, All of C4Q members!
