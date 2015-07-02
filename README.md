@@ -14,7 +14,7 @@
 
 * Prioritized todo list
 * Swipe to delete or complete
-* provides statistics
+* Provides statistics (percentage of items that have been completed)
 * Show More layout
 * Change priorities dynamically
 
@@ -24,8 +24,8 @@
 
 #### 2. Weather card
 
-* Displays current weather conditions (temperature, wind speed and humidity)
-* 5 day forecast with high/low temp
+* Displays current weather conditions (temperature, wind speed, humidity)
+* 5 day forecast with high and low temperature
 * Gets user's location using GPS
 * Rain notifications using Dark Sky API
 
