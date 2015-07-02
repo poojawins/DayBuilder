@@ -1,6 +1,5 @@
 package poojawins.lukesterlee.c4q.nyc.daybuilder;
 
-
 import android.app.Activity;
 import android.app.DialogFragment;
 import android.app.Notification;
@@ -25,14 +24,11 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.example.android.swipedismiss.SwipeDismissTouchListener;
 import com.squareup.picasso.Picasso;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -60,7 +56,6 @@ import java.util.TreeSet;
 
 public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefreshListener, AddDialogListener {
 
-
     private static final String JSON_STOCK_ENDPOINT = "http://finance.google.com/finance/info?client=ig&q=GOOGL,GOOG";
     private static final String ARTICLE_WORLD_KEY = "World";
     private static final String ARTICLE_US_KEY = "Us";
@@ -70,36 +65,28 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
     private static final String SHARED_PREFERENCES_TODO_KEY = "todo";
     private static final String SHARED_PREFERENCES_COMPLETED_KEY = "completed";
     private static final String SHARED_PREFERENCES_DELETED_KEY = "deleted";
-    private static final int REQUEST_CODE_TODO = 1;
-    private static final int REQUEST_CODE_STOCK = 2;
-    // Weather Data
     private static final String WEATHER_ICON_URL = "http://openweathermap.org/img/w/";
     private static final String JSON_WEATHER_BASE = "http://api.openweathermap.org/data/2.5/weather?lat=";
     private static final String JSON_WEATHER_END = "&lon=";
-    // Forecast Data
     private static final String JSON_FORECAST_BASE = "http://api.openweathermap.org/data/2.5/forecast/daily?lat=";
     private static final String JSON_FORECAST_LON = "&lon=";
     private static final String JSON_FORECAST_END = "&units=imperial&cnt=6";
-    // Dark Sky Notifications
     private static final String DARK_SKY_API_KEY = "d1dfd9033517c3d793c2b2744cdda637";
     private static final String DARK_SKY_BASE = "https://api.forecast.io/forecast/";
+
+    private static final int REQUEST_CODE_TODO = 1;
+    private static final int REQUEST_CODE_STOCK = 2;
     private final static int INTERVAL = 1000 * 60;
-    // Location
-    public static double latitude = 40.7005350;
-    public static double longitude = -73.9396370;
-    final Handler mHandler = new Handler();
-    public List<Forecast> forecastData;
-    LayoutInflater inflater;
-    ConnectivityManager connectivityManager;
-    NetworkInfo activeNetwork;
-    Handler handler;
-    NoScrollAdapter<Forecast> forecastAdapter;
-    WeatherTask weather;
-    ForecastTask forecast;
+
+    private final Handler mHandler = new Handler();
+
+    private ConnectivityManager connectivityManager;
+    private NetworkInfo activeNetwork;
     private SharedPreferences mSharedPreferences;
     private SharedPreferences.Editor editor;
     private ImageView mImageViewTItle;
     private SwipeRefreshLayout mSwipeRefreshLayout;
+
     // weather stuff
     private TextView mTextViewTemperature;
     private TextView mTextViewLocation;
@@ -108,6 +95,9 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
     private TextView mTextViewHumidity;
     private TextView mTextViewWindSpeed;
     private LinearLayout mParentLayoutForecast;
+    private NoScrollAdapter<Forecast> forecastAdapter;
+    private List<Forecast> forecastData;
+
     // to do view stuffs
     private LinearLayout mParentLayoutTodo;
     private Button mButtonTodoFooter;
@@ -119,6 +109,7 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
     private boolean isFromDialogTodo;
     private int totalDeleted;
     private int totalCompleted;
+
     // Stock view stuffs
     private LinearLayout mParentLayoutStock;
     private TextView mTextViewStockUpdate;
@@ -151,15 +142,14 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
             mHandler.postDelayed(postTimeRunnable, INTERVAL);
         }
     };
+
     // new york times stuff
     private Map<String, Article> mArticleList;
     private Calendar lastUpdate = null;
-
     private LinearLayout mParentWorld;
     private LinearLayout mParentUs;
     private LinearLayout mParentOpinion;
     private LinearLayout mParentTech;
-
     private ImageView mImageViewWorld;
     private TextView mTextViewTitleWorld;
     private TextView mTextViewDescriptionWorld;
@@ -176,14 +166,12 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
     private TextView mTextViewTitleTech;
     private TextView mTextViewDescriptionTech;
     private TextView mTextViewPublishedDateTech;
-
     private Article world = new Article();
     private Article us = new Article();
     private Article opinion = new Article();
     private Article tech = new Article();
 
-    private Date lastClicked;
-    int count;
+
 
     private boolean isAlreadyUpdated() {
         Calendar rightNow = Calendar.getInstance();
@@ -205,18 +193,7 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
         mImageViewTItle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Date now = new Date();
-                if (lastClicked == null) {
-                    count = 1;
-                } else if (now.getTime() - lastClicked.getTime() < 1000) {
-                    count++;
-                } else {
-                    count = 1;
-                }
-                lastClicked = new Date();
-                if (count == 7) {
-                    Toast.makeText(MainActivity.this, "right!", Toast.LENGTH_SHORT);
-                }
+                new CreditDialogFragment().show(getFragmentManager(), "CreditDialogFragment");
             }
         });
     }
@@ -308,7 +285,6 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
 
         mSharedPreferences = MainActivity.this.getPreferences(Context.MODE_PRIVATE);
         editor = mSharedPreferences.edit();
-        inflater = (LayoutInflater) MainActivity.this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         connectivityManager = (ConnectivityManager) MainActivity.this.getSystemService(Context.CONNECTIVITY_SERVICE);
 
@@ -486,8 +462,6 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
         fetchTask();
         doNetworkJob();
     }
-
-
 
     @Override
     public void addDialogClicked(DialogFragment dialog, int requestCode, String data) {

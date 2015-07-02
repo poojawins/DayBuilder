@@ -47,9 +47,9 @@
                             android:layout_height="wrap_content"
                             android:layout_marginBottom="8dp"
                             android:fontFamily="sans-serif-thin"
-                            android:paddingTop="16dp"
-                            android:paddingLeft="16dp"
                             android:paddingBottom="8dp"
+                            android:paddingLeft="16dp"
+                            android:paddingTop="16dp"
                             android:textSize="25sp" />
 
                         <LinearLayout
@@ -158,10 +158,10 @@
                                 android:id="@+id/button_todo_info"
                                 android:layout_width="30dp"
                                 android:layout_height="30dp"
-                                android:textAllCaps="false"
                                 android:layout_gravity="center_vertical|right"
                                 android:background="@drawable/button_info"
                                 android:text="i"
+                                android:textAllCaps="false"
                                 android:textColor="@color/grey" />
 
 
@@ -285,11 +285,11 @@
                             <TextView
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
+                                android:layout_gravity="right"
                                 android:fontFamily="sans-serif-thin"
-                                android:text="powered by The New York Times"
-                                android:textSize="12sp"
                                 android:gravity="right"
-                                android:layout_gravity="right" />
+                                android:text="powered by The New York Times"
+                                android:textSize="12sp" />
 
 
                         </LinearLayout>
@@ -355,8 +355,8 @@
                                     android:id="@+id/published_date_world"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:fontFamily="sans-serif-thin"
-                                    android:layout_gravity="right" />
+                                    android:layout_gravity="right"
+                                    android:fontFamily="sans-serif-thin" />
 
 
                             </LinearLayout>
@@ -416,8 +416,8 @@
                                     android:id="@+id/published_date_us"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:fontFamily="sans-serif-thin"
-                                    android:layout_gravity="right" />
+                                    android:layout_gravity="right"
+                                    android:fontFamily="sans-serif-thin" />
 
 
                             </LinearLayout>
@@ -477,8 +477,8 @@
                                     android:id="@+id/published_date_opinion"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:fontFamily="sans-serif-thin"
-                                    android:layout_gravity="right" />
+                                    android:layout_gravity="right"
+                                    android:fontFamily="sans-serif-thin" />
 
 
                             </LinearLayout>
@@ -537,8 +537,8 @@
                                     android:id="@+id/published_date_tech"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:fontFamily="sans-serif-thin"
-                                    android:layout_gravity="right" />
+                                    android:layout_gravity="right"
+                                    android:fontFamily="sans-serif-thin" />
 
 
                             </LinearLayout>

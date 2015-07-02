@@ -71,9 +71,8 @@ public class TaskInfoDialogFragment extends DialogFragment implements CircleDisp
         super.onResume();
 
 
-        mCircleDisplay.setAnimDuration(2000);
-        mCircleDisplay.setValueWidthPercent(55f);
-        mCircleDisplay.setTextSize(36f);
+        mCircleDisplay.setAnimDuration(1500);
+        mCircleDisplay.setTextSize(44f);
         mCircleDisplay.setColor(getResources().getColor(R.color.blue));
         mCircleDisplay.setDrawText(true);
         mCircleDisplay.setValueWidthPercent(10f);

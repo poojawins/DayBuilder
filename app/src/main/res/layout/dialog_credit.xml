@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:padding="16dp"
+        android:text="Credits"
+        android:textSize="30sp"
+        android:fontFamily="sans-serif-thin"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal" />
+
+    <TextView
+        android:padding="6dp"
+        android:text="* Amy and John for amazing lectures and countless helps"
+        android:fontFamily="sans-serif-thin"
+        android:layout_width="match_parent"
+        android:textSize="16sp"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:padding="6dp"
+        android:text="* Joe and Jared for being awesome and guiding"
+        android:fontFamily="sans-serif-thin"
+        android:layout_width="match_parent"
+        android:textSize="16sp"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:padding="6dp"
+        android:text="* Kevin and Sultan for special lectures"
+        android:fontFamily="sans-serif-thin"
+        android:layout_width="match_parent"
+        android:textSize="16sp"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:padding="6dp"
+        android:text="* Alessandro for using handler and live search"
+        android:fontFamily="sans-serif-thin"
+        android:layout_width="match_parent"
+        android:textSize="16sp"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:padding="6dp"
+        android:text="* Robert for useful icon and title logo"
+        android:fontFamily="sans-serif-thin"
+        android:textSize="16sp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+
+    <TextView
+        android:padding="6dp"
+        android:text="* Pooja and Luke for being supportive and a great team member each other"
+        android:fontFamily="sans-serif-thin"
+        android:layout_width="match_parent"
+        android:textSize="16sp"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:padding="6dp"
+        android:text="* the most important, to make this happen and give us a chance, All of C4Q members!"
+        android:fontFamily="sans-serif-thin"
+        android:layout_width="match_parent"
+        android:textSize="16sp"
+        android:layout_height="wrap_content" />
+
+
+</LinearLayout>

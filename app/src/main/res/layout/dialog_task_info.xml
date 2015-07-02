@@ -2,13 +2,14 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:padding="16dp"
     android:gravity="center_vertical|center_horizontal">
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:fontFamily="sans-serif-thin"
-        android:text="completed"/>
+        android:text="Completed"/>
 
     <TextView
         android:id="@+id/textView_todo_completed"
@@ -21,8 +22,8 @@
 
     <com.philjay.circledisplay.CircleDisplay
         android:id="@+id/circleDisplay"
-        android:layout_width="200dp"
-        android:layout_height="200dp" />
+        android:layout_width="220dp"
+        android:layout_height="220dp" />
 
     <TextView
         android:id="@+id/textVIew_todo_deleted"
@@ -38,7 +39,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:fontFamily="sans-serif-thin"
-        android:text="deleted"
+        android:text="Deleted"
         android:gravity="right" />
 
 </LinearLayout>
