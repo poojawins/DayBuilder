@@ -28,12 +28,14 @@ public class WebViewDialogFragment extends DialogFragment {
     private WebView mWebView;
     private Button mButton;
 
+    private static final String ARGUMENT_URL_KEY = "url";
+
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
 
         Bundle argument = getArguments();
-        mUrl = "https://www.google.com/search?q=" + argument.getString("ticker");
+        mUrl = argument.getString(ARGUMENT_URL_KEY);
 
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());

@@ -13,25 +13,26 @@ import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
-import android.os.Handler;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v4.app.NotificationCompat;
 import android.os.Bundle;
-import android.view.LayoutInflater;
+import android.os.Handler;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.example.android.swipedismiss.SwipeDismissTouchListener;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -44,7 +45,6 @@ import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.TreeSet;
-import java.lang.Math;
 
 /*
  * C4Q Access Code 2.1 Unit 2 Final Project
@@ -54,11 +54,6 @@ import java.lang.Math;
 public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefreshListener, AddDialogListener {
 
 
-
-    private SharedPreferences mSharedPreferences;
-    private SharedPreferences.Editor editor;
-
-
     private static final String JSON_STOCK_ENDPOINT = "http://finance.google.com/finance/info?client=ig&q=GOOGL,GOOG";
     private static final String SHARED_PREFERENCES_STOCK_KEY = "stock";
     private static final String SHARED_PREFERENCES_TODO_KEY = "todo";
@@ -66,38 +61,34 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
     private static final String SHARED_PREFERENCES_DELETED_KEY = "deleted";
     private static final int REQUEST_CODE_TODO = 1;
     private static final int REQUEST_CODE_STOCK = 2;
-
-    LayoutInflater inflater;
-
-    final Handler mHandler = new Handler();
-
-    ConnectivityManager connectivityManager;
-    NetworkInfo activeNetwork;
-
-    private ImageView mImageViewTItle;
-    private SwipeRefreshLayout mSwipeRefreshLayout;
-
-    // Location
-    public static double latitude = 40.7005350;
-    public static double longitude = -73.9396370;
-
     // Weather Data
     private static final String WEATHER_ICON_URL = "http://openweathermap.org/img/w/";
     private static final String JSON_WEATHER_BASE = "http://api.openweathermap.org/data/2.5/weather?lat=";
     private static final String JSON_WEATHER_END = "&lon=";
-
     // Forecast Data
     private static final String JSON_FORECAST_BASE = "http://api.openweathermap.org/data/2.5/forecast/daily?lat=";
     private static final String JSON_FORECAST_LON = "&lon=";
     private static final String JSON_FORECAST_END = "&units=imperial&cnt=6";
-    public List<Forecast> forecastData;
-
     // Dark Sky Notifications
     private static final String DARK_SKY_API_KEY = "d1dfd9033517c3d793c2b2744cdda637";
     private static final String DARK_SKY_BASE = "https://api.forecast.io/forecast/";
+    private final static int INTERVAL = 1000 * 60;
+    // Location
+    public static double latitude = 40.7005350;
+    public static double longitude = -73.9396370;
+    final Handler mHandler = new Handler();
+    public List<Forecast> forecastData;
+    LayoutInflater inflater;
+    ConnectivityManager connectivityManager;
+    NetworkInfo activeNetwork;
     Handler handler;
-
-
+    NoScrollAdapter<Forecast> forecastAdapter;
+    WeatherTask weather;
+    ForecastTask forecast;
+    private SharedPreferences mSharedPreferences;
+    private SharedPreferences.Editor editor;
+    private ImageView mImageViewTItle;
+    private SwipeRefreshLayout mSwipeRefreshLayout;
     // weather stuff
     private TextView mTextViewTemperature;
     private TextView mTextViewLocation;
@@ -106,11 +97,6 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
     private TextView mTextViewHumidity;
     private TextView mTextViewWindSpeed;
     private LinearLayout mParentLayoutForecast;
-    NoScrollAdapter<Forecast> forecastAdapter;
-
-    WeatherTask weather;
-    ForecastTask forecast;
-
     // to do view stuffs
     private LinearLayout mParentLayoutTodo;
     private Button mButtonTodoFooter;
@@ -122,7 +108,6 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
     private boolean isFromDialogTodo;
     private int totalDeleted;
     private int totalCompleted;
-
     // Stock view stuffs
     private LinearLayout mParentLayoutStock;
     private TextView mTextViewStockUpdate;
@@ -133,12 +118,12 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
     private boolean isShowMoreStock;
     private boolean isFromDialogStock;
     private Date lastUpdatedStock;
-    private final static int INTERVAL = 1000 * 60;
+
     Runnable postTimeRunnable = new Runnable() {
         @Override
         public void run() {
             Date now = new Date();
-            int difference = (int) ((now.getTime() - lastUpdatedStock.getTime())/INTERVAL);
+            int difference = (int) ((now.getTime() - lastUpdatedStock.getTime()) / INTERVAL);
             if (difference == 1) {
                 mTextViewStockUpdate.setText("Updated " + difference + " minute ago");
             } else if (difference < 60) {
@@ -155,31 +140,31 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
             mHandler.postDelayed(postTimeRunnable, INTERVAL);
         }
     };
-
     // new york times stuff
     private Map<String, Article> mArticleList;
     private Calendar lastUpdate = null;
+
+    private LinearLayout mParentWorld;
+    private LinearLayout mParentUs;
+    private LinearLayout mParentOpinion;
+    private LinearLayout mParentTech;
 
     private ImageView mImageViewWorld;
     private TextView mTextViewTitleWorld;
     private TextView mTextViewDescriptionWorld;
     private TextView mTextViewPublishedDateWorld;
-
     private ImageView mImageViewUs;
     private TextView mTextViewTitleUs;
     private TextView mTextViewDescriptionUs;
     private TextView mTextViewPublishedDateUs;
-
     private ImageView mImageViewOpinion;
     private TextView mTextViewTitleOpinion;
     private TextView mTextViewDescriptionOpinion;
     private TextView mTextViewPublishedDateOpinion;
-
     private ImageView mImageViewTech;
     private TextView mTextViewTitleTech;
     private TextView mTextViewDescriptionTech;
     private TextView mTextViewPublishedDateTech;
-
 
     private boolean isAlreadyUpdated() {
         Calendar rightNow = Calendar.getInstance();
@@ -199,8 +184,6 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
 
         Picasso.with(MainActivity.this).load(R.drawable.c4qnow).resize(550, 550).into(mImageViewTItle);
     }
-
-
 
     private void initializeWeatherViews() {
         mTextViewTemperature = (TextView) findViewById(R.id.temperature);
@@ -226,6 +209,12 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
     }
 
     private void initializeArticleViews() {
+
+        mParentWorld = (LinearLayout) findViewById(R.id.most_read_world);
+        mParentUs = (LinearLayout) findViewById(R.id.most_read_us);
+        mParentOpinion = (LinearLayout) findViewById(R.id.most_read_opinion);
+        mParentTech = (LinearLayout) findViewById(R.id.most_read_tech);
+
         mImageViewWorld = (ImageView) findViewById(R.id.imageView_world);
         mTextViewTitleWorld = (TextView) findViewById(R.id.headline_world);
         mTextViewDescriptionWorld = (TextView) findViewById(R.id.description_world);
@@ -247,12 +236,10 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
         mTextViewPublishedDateTech = (TextView) findViewById(R.id.published_date_tech);
     }
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
 
 
         isShowMoreStock = false;
@@ -292,7 +279,7 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
                 public void run() {
                     new StockTask().execute(stockNameSet);
                 }
-            }, 1000);
+            }, 500);
             new ArticleTask().execute();
 
         } else {
@@ -301,8 +288,6 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
             isShowMoreStock = false;
         }
     }
-
-
 
     private boolean hasNetwork() {
         activeNetwork = connectivityManager.getActiveNetworkInfo();
@@ -361,8 +346,42 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
                 }
             });
 
+            mParentWorld.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    showArticle(mArticleList.get("World"));
+                }
+            });
 
+            mParentUs.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    showArticle(mArticleList.get("Us"));
+                }
+            });
+
+            mParentOpinion.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    showArticle(mArticleList.get("Opinion"));
+                }
+            });
+
+            mParentTech.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    showArticle(mArticleList.get("Tech"));
+                }
+            });
         }
+    }
+
+    private void showArticle(Article article) {
+        WebViewDialogFragment webFragment = new WebViewDialogFragment();
+        Bundle argument = new Bundle();
+        argument.putString("url", article.getArticleUrl());
+        webFragment.setArguments(argument);
+        webFragment.show(getFragmentManager(), "WebViewFragment");
     }
 
     private void fetchDataFromSharedPreferences() {
@@ -372,12 +391,11 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
         totalDeleted = mSharedPreferences.getInt(SHARED_PREFERENCES_DELETED_KEY, 0);
     }
 
-
     @Override
     protected void onPause() {
         super.onPause();
         setUpListeners(false);
-        
+
     }
 
     @Override
@@ -393,8 +411,6 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
         fetchTask();
         doNetworkJob();
     }
-
-
 
     @Override
     public void addDialogClicked(DialogFragment dialog, int requestCode, String data) {
@@ -435,8 +451,6 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
         }
 
     }
-
-
 
     public void deleteStock(String companyName) {
         Set<String> list = mSharedPreferences.getStringSet(SHARED_PREFERENCES_STOCK_KEY, new TreeSet<String>());
@@ -504,7 +518,7 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
                     isShowMoreTodo = true;
                     mButtonTodoFooter.setText("Show more");
                     mButtonTodoFooter.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_keyboard_arrow_down_white_24dp, 0, 0, 0);
-                    List<String> firstFour = list.subList(0,4);
+                    List<String> firstFour = list.subList(0, 4);
                     mRestOfTodos = list.subList(4, list.size());
                     todoAdapter.addTaskViews(firstFour, false);
                 } else {
@@ -546,7 +560,7 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
                     TextView ticker = (TextView) view.findViewById(R.id.stock_category);
                     WebViewDialogFragment webFragment = new WebViewDialogFragment();
                     Bundle argument = new Bundle();
-                    argument.putString("ticker", ticker.getText().toString());
+                    argument.putString("url", "https://www.google.com/search?q=" + ticker.getText().toString());
                     webFragment.setArguments(argument);
                     webFragment.show(getFragmentManager(), "WebViewFragment");
 
@@ -573,83 +587,6 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
                     deleteTodo(task.getText().toString(), isLeft);
                 }
             }));
-        }
-    }
-
-    private class StockTask extends AsyncTask<Set<String>, Void, List<Stock>> {
-
-        @Override
-        protected List<Stock> doInBackground(Set<String>... params) {
-            Set<String> mList = params[0];
-            String jsonUrl = JSON_STOCK_ENDPOINT;
-            HashMap<String, String> stockNames = new HashMap<>();
-            if (mList.size() > 0) {
-                for (String line : mList) {
-                    int index = line.indexOf("|");
-                    String ticker = line.substring(0, index);
-                    String name = line.substring(index + 1);
-                    stockNames.put(ticker, name);
-                    jsonUrl += "," + ticker;
-                }
-            }
-            try {
-                return new StocksGetter(jsonUrl, stockNames).getStocksList();
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(List<Stock> stocks) {
-            lastUpdatedStock = new Date();
-            mHandler.removeCallbacks(postTimeRunnable);
-            postTimeRunnable.run();
-            mTextViewStockUpdate.setText("Just updated");
-
-            if (isFromDialogStock) {
-                isShowMoreStock = false;
-                stockAdapter.addStockViews(stocks, false);
-            } else {
-                if (stocks.size() > 4) {
-                    isShowMoreStock = true;
-                    mButtonStockFooter.setText("Show more");
-                    mButtonStockFooter.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_keyboard_arrow_down_white_24dp,0,0,0);
-                    List<Stock> firstFour = stocks.subList(0,4);
-                    mRestOfStocks = stocks.subList(4, stocks.size());
-                    stockAdapter.addStockViews(firstFour,false);
-                } else {
-                    stockAdapter.addStockViews(stocks, false);
-                }
-            }
-            isFromDialogStock = false;
-            mSwipeRefreshLayout.setRefreshing(false);
-            addStockTouchListener();
-        }
-    }
-
-    private class ArticleTask extends AsyncTask<Void, Void, Map<String, Article>> {
-
-        @Override
-        protected Map<String, Article> doInBackground(Void... voids) {
-            try {
-                return new ArticleGetter().getArticleList();
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Map<String, Article> articles) {
-            lastUpdate = Calendar.getInstance();
-            mArticleList = articles;
-            fetchArticleData();
-
         }
     }
 
@@ -681,112 +618,6 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
 
 
     }
-
-    private class WeatherTask extends AsyncTask<Void, Void, String> {
-
-        @Override
-        protected String doInBackground(Void...voids) {
-            try {
-                String weatherData = new WeatherGetter().getJSON(JSON_WEATHER_BASE + currentLocation().getLatitude() + JSON_WEATHER_END + currentLocation().getLongitude());
-                return weatherData;
-            } catch (Exception e) {
-                return null;
-            }
-        }
-
-        @Override
-         protected void onPostExecute(String output) {
-            if (output != null) {
-                try {
-                    JSONObject jObject = new JSONObject(output);
-
-                    JSONObject main = jObject.getJSONObject("main");
-                    String temp = main.getString("temp");
-                    String location = jObject.getString("name");
-                    double tempKelvin = Double.parseDouble(temp);
-                    double fah = ((tempKelvin - 273.15) * 1.8) + 32.0;
-                    int fahRounded = (int) Math.round(fah);
-                    String tempFahrenheit = Integer.toString(fahRounded);
-
-                    String condition = jObject.getJSONArray("weather").getJSONObject(0).getString("main");
-                    String humidity = main.getString("humidity");
-                    String windSpeed = jObject.getJSONObject("wind").getString("speed");
-
-                    String icon = jObject.getJSONArray("weather").getJSONObject(0).getString("icon");
-
-                    mTextViewLocation.setText(location);
-                    mTextViewTemperature.setText(tempFahrenheit + "°");
-                    mTextViewCondition.setText(condition);
-                    mTextViewHumidity.setText(humidity + "% humidity");
-                    mTextViewWindSpeed.setText("Wind " + windSpeed + "mph");
-                    Picasso.with(MainActivity.this).load(WEATHER_ICON_URL + icon + ".png")
-                            .resize(300, 300).centerCrop().into(mImageViewWeatherIcon);
-                } catch(Exception e) {
-                    Log.println(Log.DEBUG, "pooja", "An Exception Happened");
-                }
-            }
-        }
-    }
-
-    private class ForecastTask extends AsyncTask<Void, Void, String> {
-
-        @Override
-        protected String doInBackground(Void...voids) {
-            try {
-                String weatherData = new WeatherGetter().getJSON(JSON_FORECAST_BASE + currentLocation().getLatitude() + JSON_FORECAST_LON + currentLocation().getLongitude() + JSON_FORECAST_END);
-                return weatherData;
-            } catch (Exception e) {
-                return null;
-            }
-        }
-
-        @Override
-        protected void onPostExecute(String output) {
-            if (output != null) {
-                try {
-                    JSONObject jObject = new JSONObject(output);
-                    JSONArray data = jObject.getJSONArray("list");
-
-                    List<Forecast> result = setForecastDataArray(data);
-
-                    forecastAdapter = new NoScrollAdapter<>(MainActivity.this, mParentLayoutForecast, R.layout.list_item_forecast);
-                    forecastAdapter.addForecastViews(result);
-
-                } catch(Exception e) {
-                    Log.println(Log.DEBUG, "pooja", "An Exception Happened");
-                }
-            }
-        }
-    }
-
-    private class DarkSkyTask extends AsyncTask<Void, Void, String> {
-
-        @Override
-        protected String doInBackground(Void...voids) {
-            try {
-                String weatherData = new WeatherGetter().getJSON(DARK_SKY_BASE + DARK_SKY_API_KEY + "/" + currentLocation().getLatitude() + "," + currentLocation().getLongitude());
-                return weatherData;
-            } catch (Exception e) {
-                return null;
-            }
-        }
-
-        @Override
-        protected void onPostExecute(String output) {
-            if (output != null) {
-                try {
-                    JSONObject jObject = new JSONObject(output);
-                    int precipitating = jObject.getJSONObject("currently").getInt("precipIntensity");
-                    if (precipitating == 0) { //CHANGE TO != WHEN DONE TESTING!!
-                        showNotification();
-                    }
-                } catch(Exception e) {
-                    Log.println(Log.DEBUG, "pooja", "An Exception Happened");
-                }
-            }
-        }
-    }
-
 
     private void showNotification() {
         NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
@@ -850,7 +681,7 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
                 forecast.setLowTemp(tempL);
                 forecast.setIcon(icon);
                 forecastData.add(forecast);
-            } catch (Exception e){
+            } catch (Exception e) {
                 Log.println(Log.DEBUG, "pooja", "An Exception Happened");
             }
 
@@ -878,5 +709,188 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
         Location location = lm.getLastKnownLocation(lm.getBestProvider(criteria, true));
         return location;
     }
+
+    private class StockTask extends AsyncTask<Set<String>, Void, List<Stock>> {
+
+        @Override
+        protected List<Stock> doInBackground(Set<String>... params) {
+            Set<String> mList = params[0];
+            String jsonUrl = JSON_STOCK_ENDPOINT;
+            HashMap<String, String> stockNames = new HashMap<>();
+            if (mList.size() > 0) {
+                for (String line : mList) {
+                    int index = line.indexOf("|");
+                    String ticker = line.substring(0, index);
+                    String name = line.substring(index + 1);
+                    stockNames.put(ticker, name);
+                    jsonUrl += "," + ticker;
+                }
+            }
+            try {
+                return new StocksGetter(jsonUrl, stockNames).getStocksList();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(List<Stock> stocks) {
+            lastUpdatedStock = new Date();
+            mHandler.removeCallbacks(postTimeRunnable);
+            postTimeRunnable.run();
+            mTextViewStockUpdate.setText("Just updated");
+
+            if (isFromDialogStock) {
+                isShowMoreStock = false;
+                stockAdapter.addStockViews(stocks, false);
+            } else {
+                if (stocks.size() > 4) {
+                    isShowMoreStock = true;
+                    mButtonStockFooter.setText("Show more");
+                    mButtonStockFooter.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_keyboard_arrow_down_white_24dp, 0, 0, 0);
+                    List<Stock> firstFour = stocks.subList(0, 4);
+                    mRestOfStocks = stocks.subList(4, stocks.size());
+                    stockAdapter.addStockViews(firstFour, false);
+                } else {
+                    stockAdapter.addStockViews(stocks, false);
+                }
+            }
+            isFromDialogStock = false;
+            mSwipeRefreshLayout.setRefreshing(false);
+            addStockTouchListener();
+        }
+    }
+
+    private class ArticleTask extends AsyncTask<Void, Void, Map<String, Article>> {
+
+        @Override
+        protected Map<String, Article> doInBackground(Void... voids) {
+            try {
+                return new ArticleGetter().getArticleList();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Map<String, Article> articles) {
+            lastUpdate = Calendar.getInstance();
+            mArticleList = articles;
+            fetchArticleData();
+
+        }
+    }
+
+    private class WeatherTask extends AsyncTask<Void, Void, String> {
+
+        @Override
+        protected String doInBackground(Void... voids) {
+            try {
+                String weatherData = new WeatherGetter().getJSON(JSON_WEATHER_BASE + currentLocation().getLatitude() + JSON_WEATHER_END + currentLocation().getLongitude());
+                return weatherData;
+            } catch (Exception e) {
+                return null;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(String output) {
+            if (output != null) {
+                try {
+                    JSONObject jObject = new JSONObject(output);
+
+                    JSONObject main = jObject.getJSONObject("main");
+                    String temp = main.getString("temp");
+                    String location = jObject.getString("name");
+                    double tempKelvin = Double.parseDouble(temp);
+                    double fah = ((tempKelvin - 273.15) * 1.8) + 32.0;
+                    int fahRounded = (int) Math.round(fah);
+                    String tempFahrenheit = Integer.toString(fahRounded);
+
+                    String condition = jObject.getJSONArray("weather").getJSONObject(0).getString("main");
+                    String humidity = main.getString("humidity");
+                    String windSpeed = jObject.getJSONObject("wind").getString("speed");
+
+                    String icon = jObject.getJSONArray("weather").getJSONObject(0).getString("icon");
+
+                    mTextViewLocation.setText(location);
+                    mTextViewTemperature.setText(tempFahrenheit + "°");
+                    mTextViewCondition.setText(condition);
+                    mTextViewHumidity.setText(humidity + "% humidity");
+                    mTextViewWindSpeed.setText("Wind " + windSpeed + "mph");
+                    Picasso.with(MainActivity.this).load(WEATHER_ICON_URL + icon + ".png")
+                            .resize(300, 300).centerCrop().into(mImageViewWeatherIcon);
+                } catch (Exception e) {
+                    Log.println(Log.DEBUG, "pooja", "An Exception Happened");
+                }
+            }
+        }
+    }
+
+    private class ForecastTask extends AsyncTask<Void, Void, String> {
+
+        @Override
+        protected String doInBackground(Void... voids) {
+            try {
+                String weatherData = new WeatherGetter().getJSON(JSON_FORECAST_BASE + currentLocation().getLatitude() + JSON_FORECAST_LON + currentLocation().getLongitude() + JSON_FORECAST_END);
+                return weatherData;
+            } catch (Exception e) {
+                return null;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(String output) {
+            if (output != null) {
+                try {
+                    JSONObject jObject = new JSONObject(output);
+                    JSONArray data = jObject.getJSONArray("list");
+
+                    List<Forecast> result = setForecastDataArray(data);
+
+                    forecastAdapter = new NoScrollAdapter<>(MainActivity.this, mParentLayoutForecast, R.layout.list_item_forecast);
+                    forecastAdapter.addForecastViews(result);
+
+                } catch (Exception e) {
+                    Log.println(Log.DEBUG, "pooja", "An Exception Happened");
+                }
+            }
+        }
+    }
+
+    private class DarkSkyTask extends AsyncTask<Void, Void, String> {
+
+        @Override
+        protected String doInBackground(Void... voids) {
+            try {
+                String weatherData = new WeatherGetter().getJSON(DARK_SKY_BASE + DARK_SKY_API_KEY + "/" + currentLocation().getLatitude() + "," + currentLocation().getLongitude());
+                return weatherData;
+            } catch (Exception e) {
+                return null;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(String output) {
+            if (output != null) {
+                try {
+                    JSONObject jObject = new JSONObject(output);
+                    int precipitating = jObject.getJSONObject("currently").getInt("precipIntensity");
+                    if (precipitating == 0) { //CHANGE TO != WHEN DONE TESTING!!
+                        showNotification();
+                    }
+                } catch (Exception e) {
+                    Log.println(Log.DEBUG, "pooja", "An Exception Happened");
+                }
+            }
+        }
+    }
+
 
 }
