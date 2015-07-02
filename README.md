@@ -15,20 +15,29 @@
 Prioritized todo list, swipes to delete or complete, provides statistics and Show More layout
 
 ![](https://github.com/lukesterlee/DayBuilder/blob/master/sample/todo_top.png)
+![](https://github.com/lukesterlee/DayBuilder/blob/master/sample/task_add.png)
+![](https://github.com/lukesterlee/DayBuilder/blob/master/sample/statistics.png)
 
 #### 2. Weather card
 
 5 days forecast with high/low temp, get user's GPS, provide wind speed and humidity, rain notification
 
+![](https://github.com/lukesterlee/DayBuilder/blob/master/sample/front.png)
+
 #### 3. Stock card
 
 add stocks with Live Search from over 8000 companies listed in Nasdaq, NYSE, etc., indicates last updated time, provides Show More layout, click to see more with web view
+
+![](https://github.com/lukesterlee/DayBuilder/blob/master/sample/stock.png)
+![](https://github.com/lukesterlee/DayBuilder/blob/master/sample/stock_add.png)
+![](https://github.com/lukesterlee/DayBuilder/blob/master/sample/stock_webview.png)
 
 #### 4. Article card
 
 last 7 days most viewed articles from The New York Times sections (World, U.S., Opinion, Tech)
 
-
+![](https://github.com/lukesterlee/DayBuilder/blob/master/sample/article_top.png)
+![](https://github.com/lukesterlee/DayBuilder/blob/master/sample/article_bottom.png)
 
 
 ## Libraries & APIs
