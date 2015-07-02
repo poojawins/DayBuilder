@@ -166,6 +166,9 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
     private TextView mTextViewDescriptionTech;
     private TextView mTextViewPublishedDateTech;
 
+    private Date lastClicked;
+    int count;
+
     private boolean isAlreadyUpdated() {
         Calendar rightNow = Calendar.getInstance();
         if (lastUpdate == null) {
@@ -183,6 +186,23 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
         mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefreshLayout);
 
         Picasso.with(MainActivity.this).load(R.drawable.c4qnow).resize(550, 550).into(mImageViewTItle);
+        mImageViewTItle.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Date now = new Date();
+                if (lastClicked == null) {
+                    count = 1;
+                } else if (now.getTime() - lastClicked.getTime() < 1000) {
+                    count++;
+                } else {
+                    count = 1;
+                }
+                lastClicked = new Date();
+                if (count == 7) {
+                    Toast.makeText(MainActivity.this, "right!", Toast.LENGTH_SHORT);
+                }
+            }
+        });
     }
 
     private void initializeWeatherViews() {
@@ -280,7 +300,7 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
                     new StockTask().execute(stockNameSet);
                 }
             }, 500);
-            new ArticleTask().execute();
+            //new ArticleTask().execute();
 
         } else {
             stockAdapter.addNetworkWarningMessageView();
@@ -516,7 +536,7 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
             } else {
                 if (list.size() > 4) {
                     isShowMoreTodo = true;
-                    mButtonTodoFooter.setText("↓ Show more ↓");
+                    mButtonTodoFooter.setText("Show more");
                     List<String> firstFour = list.subList(0, 4);
                     mRestOfTodos = list.subList(4, list.size());
                     todoAdapter.addTaskViews(firstFour, false);
@@ -795,7 +815,7 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
             } else {
                 if (stocks.size() > 4) {
                     isShowMoreStock = true;
-                    mButtonStockFooter.setText("↓ Show more ↓");
+                    mButtonStockFooter.setText("Show more");
                     List<Stock> firstFour = stocks.subList(0, 4);
                     mRestOfStocks = stocks.subList(4, stocks.size());
                     stockAdapter.addStockViews(firstFour, false);
