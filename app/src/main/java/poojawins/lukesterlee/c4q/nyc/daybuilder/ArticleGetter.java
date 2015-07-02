@@ -92,7 +92,7 @@ public class ArticleGetter {
         JSONArray media = first.getJSONArray("media");
         JSONObject firstMedia = media.getJSONObject(0);
         JSONArray metadata = firstMedia.getJSONArray("media-metadata");
-        JSONObject firstItem = metadata.getJSONObject(0);
+        JSONObject firstItem = metadata.getJSONObject(1);
         String thumbnailUrl = firstItem.getString("url");
 
         return new Article(title, description, published_date, articleUrl, thumbnailUrl);

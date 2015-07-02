@@ -51,7 +51,7 @@
                             android:layout_height="wrap_content"
                             android:text="LOCATION"
                             android:fontFamily="sans-serif-thin"
-                            android:textSize="30sp"
+                            android:textSize="25sp"
                             android:layout_marginBottom="8dp"
                             android:id="@+id/location"/>
 
@@ -67,8 +67,17 @@
                                 android:text="CONDITION"
                                 android:layout_marginBottom="8dp"
                                 android:layout_weight="1"
-                                android:textSize="16sp"
+                                android:textSize="12sp"
                                 android:id="@+id/condition"/>
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="sans-serif-thin"
+                                android:layout_marginBottom="8dp"
+                                android:layout_weight="1"
+                                android:textSize="12sp"
+                                android:id="@+id/wind_speed"/>
 
                             <TextView
                                 android:layout_width="match_parent"
@@ -77,18 +86,10 @@
                                 android:text="HUMIDITY"
                                 android:layout_marginBottom="8dp"
                                 android:layout_weight="1"
-                                android:textSize="16sp"
+                                android:textSize="12sp"
                                 android:id="@+id/humidity"/>
 
-                            <TextView
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:fontFamily="sans-serif-thin"
-                                android:text="WINDSPEED"
-                                android:layout_marginBottom="8dp"
-                                android:layout_weight="1"
-                                android:textSize="16sp"
-                                android:id="@+id/wind_speed"/>
+
 
                         </LinearLayout>
 
@@ -101,19 +102,16 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
+                                android:layout_gravity="center_vertical"
                                 android:id="@+id/weatherIcon"
-                                android:layout_marginBottom="8dp"
-                                android:src="@drawable/placekitten50"
                                 android:scaleType="center"/>
 
                             <TextView
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:fontFamily="sans-serif-thin"
-                                android:text="TEMP"
-                                android:layout_marginBottom="8dp"
+                                android:fontFamily="sans-serif"
                                 android:layout_weight="1"
-                                android:textSize="30sp"
+                                android:textSize="70sp"
                                 android:id="@+id/temperature"/>
 
                         </LinearLayout>
@@ -122,7 +120,8 @@
                             android:id="@+id/forecast_list_parent"
                             android:orientation="horizontal"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content">
+                            android:layout_height="wrap_content"
+                            android:gravity="center_horizontal">
 
                         </LinearLayout>
 
@@ -155,19 +154,22 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_weight="9"
                                 android:text="@string/title_todo"
                                 android:fontFamily="sans-serif-thin"
                                 android:textSize="25sp"
                                 android:id="@+id/textView_todo_title"/>
 
-                            <ImageButton
-                                android:layout_weight="1"
+
+                            <Button
                                 android:id="@+id/button_todo_info"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:background="@color/white"
-                                android:src="@drawable/ic_info_outline_black_18dp" />
+                                android:background="@drawable/button_info"
+                                android:text="i"
+                                android:textColor="@color/grey"
+                                android:layout_width="30dp"
+                                android:layout_height="30dp"
+                                android:layout_gravity="center_vertical|right"
+                                />
+
 
                             </LinearLayout>
 
@@ -229,7 +231,7 @@
                                 android:layout_height="wrap_content"
                                 android:fontFamily="sans-serif-thin"
                                 android:text="@string/stock_title"
-                                android:textSize="28sp"
+                                android:textSize="25sp"
                                 android:id="@+id/stock_title"/>
 
                             <TextView
@@ -311,6 +313,7 @@
 
 
                             <LinearLayout
+                                android:padding="16dp"
                                 android:id="@+id/most_read_world"
                                 android:orientation="vertical"
                                 android:background="@drawable/border"
@@ -321,36 +324,50 @@
 
                                 <LinearLayout
                                     android:orientation="horizontal"
-                                    android:layout_width="wrap_content"
+                                    android:layout_width="match_parent"
                                     android:layout_height="wrap_content">
 
                                     <ImageView
                                         android:id="@+id/imageView_world"
-                                        android:layout_width="wrap_content"
+                                        android:layout_weight="1"
+                                        android:layout_width="0dp"
                                         android:layout_height="wrap_content"/>
 
                                     <TextView
-                                        android:layout_width="wrap_content"
+                                        android:layout_width="0dp"
                                         android:layout_height="wrap_content"
-                                        android:fontFamily="sans-serif-thin"
-                                        android:paddingLeft="16dp"
-                                        android:textSize="18sp"
-                                        android:id="@+id/headline_world"/>
+                                        android:gravity="center_vertical|center|center_horizontal"
+                                        android:layout_gravity="center_vertical"
+                                        android:layout_weight="2"
+                                        android:fontFamily="san-serif"
+                                        android:textSize="20sp"
+                                        android:text="World"/>
 
-                                    </LinearLayout>
+
+
+                                 </LinearLayout>
 
                                 <TextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:fontFamily="sans-serif-thin"
+                                    android:paddingLeft="18dp"
+                                    android:textSize="15sp"
+                                    android:id="@+id/headline_world"
+                                    android:gravity="center_horizontal" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:fontFamily="sans-serif-thin"
+                                    android:textSize="12sp"
                                     android:id="@+id/description_world"/>
 
                                 <TextView
                                     android:fontFamily="sans-serif-thin"
                                     android:id="@+id/published_date_world"
                                     android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="Section : World"/>
+                                    android:layout_height="wrap_content"/>
 
 
                             </LinearLayout>

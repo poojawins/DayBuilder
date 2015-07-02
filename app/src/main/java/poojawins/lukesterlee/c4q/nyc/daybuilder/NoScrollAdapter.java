@@ -166,9 +166,9 @@ public class NoScrollAdapter<T> {
 
             Forecast forecast = (Forecast) getItem(i);
 
-            day.setText(forecast.getDay());
-            high.setText(forecast.getHighTemp());
-            low.setText(forecast.getLowTemp());
+            day.setText(forecast.getDay().toUpperCase());
+            high.setText(forecast.getHighTemp() + "°");
+            low.setText(forecast.getLowTemp() + "°");
             Picasso.with(this.mContext).load("http://openweathermap.org/img/w/" + forecast.getIcon() + ".png")
                     .resize(100, 100).centerCrop().into(image);
 

@@ -114,7 +114,7 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
     // to do view stuffs
     private LinearLayout mParentLayoutTodo;
     private Button mButtonTodoFooter;
-    private ImageButton mButtonTodoInfo;
+    private Button mButtonTodoInfo;
     private Set<String> todoSet;
     private NoScrollAdapter<String> todoAdapter;
     private List<String> mRestOfTodos = null;
@@ -197,7 +197,6 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
         mImageViewTItle = (ImageView) findViewById(R.id.imageView_app_title);
         mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefreshLayout);
 
-
         Picasso.with(MainActivity.this).load(R.drawable.c4qnow).resize(550, 550).into(mImageViewTItle);
     }
 
@@ -216,7 +215,7 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
     private void initializeTodoViews() {
         mParentLayoutTodo = (LinearLayout) findViewById(R.id.todo_list_parent);
         mButtonTodoFooter = (Button) findViewById(R.id.button_todo_footer);
-        mButtonTodoInfo = (ImageButton) findViewById(R.id.button_todo_info);
+        mButtonTodoInfo = (Button) findViewById(R.id.button_todo_info);
     }
 
     private void initializeStockViews() {
@@ -659,7 +658,7 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
 
     private void fetchArticleData() {
         Article world = mArticleList.get("World");
-        Picasso.with(MainActivity.this).load(world.getThumbnailUrl()).resize(200, 200).into(mImageViewWorld);
+        Picasso.with(MainActivity.this).load(world.getThumbnailUrl()).resize(400, 400).into(mImageViewWorld);
         Article us = mArticleList.get("Us");
         Picasso.with(MainActivity.this).load(us.getThumbnailUrl()).resize(200, 200).into(mImageViewUs);
         Article opinion = mArticleList.get("Opinion");
@@ -724,7 +723,7 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
                     mTextViewHumidity.setText(humidity + "% humidity");
                     mTextViewWindSpeed.setText("Wind " + windSpeed + "mph");
                     Picasso.with(MainActivity.this).load(WEATHER_ICON_URL + icon + ".png")
-                            .resize(125, 125).centerCrop().into(mImageViewWeatherIcon);
+                            .resize(300, 300).centerCrop().into(mImageViewWeatherIcon);
                 } catch(Exception e) {
                     Log.println(Log.DEBUG, "pooja", "An Exception Happened");
                 }
