@@ -12,7 +12,11 @@
 
 #### 1. Todo card
 
-Prioritized todo list, swipes to delete or complete, provides statistics and Show More layout
+* Prioritized todo list
+* swipes to delete or complete
+* provides statistics
+* Show More layout
+* change priorities dynamically
 
 ![](https://github.com/lukesterlee/DayBuilder/blob/master/sample/todo_top.png)
 ![](https://github.com/lukesterlee/DayBuilder/blob/master/sample/task_add.png)
@@ -20,13 +24,19 @@ Prioritized todo list, swipes to delete or complete, provides statistics and Sho
 
 #### 2. Weather card
 
-5 days forecast with high/low temp, get user's GPS, provide wind speed and humidity, rain notification
+* 5 days forecast with high/low temp
+* get user's GPSp
+* rovide wind speed and humidity
+* rain notification
 
 ![](https://github.com/lukesterlee/DayBuilder/blob/master/sample/front.png)
 
 #### 3. Stock card
 
-add stocks with Live Search from over 8000 companies listed in Nasdaq, NYSE, etc., indicates last updated time, provides Show More layout, click to see more with web view
+* add stocks with Live Search from over 8000 companies listed in Nasdaq, NYSE, etc.
+* indicates last updated time
+* provides Show More layout
+* click to see more with web view
 
 ![](https://github.com/lukesterlee/DayBuilder/blob/master/sample/stock.png)
 ![](https://github.com/lukesterlee/DayBuilder/blob/master/sample/stock_add.png)
