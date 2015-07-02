@@ -31,12 +31,13 @@ last 7 days most viewed articles from The New York Times sections (World, U.S., 
 
 ## Libraries & APIs
 
-1. Picasso Library
+1. Square's [Picasso Library](http://square.github.io/picasso/)
 2. Google Finance API
-3. The New York Times API
-4. Open Weather API
-5. Dark Sky API
-6. Swipe Dismiss Touch Listener Library (modified by us)
+3. [The New York Times API](http://developer.nytimes.com/docs)
+4. [Open Weather API](http://openweathermap.org/api)
+5. [Dark Sky API](https://developer.forecast.io/docs)
+6. romannurik's [Swipe Dismiss Touch Listener Library](https://github.com/romannurik/Android-SwipeToDismiss) (modified by us)
+7. PhilJay's [Circle Display Library](https://github.com/PhilJay/CircleDisplay)
 
 
 ## Rules
