@@ -1,4 +1,4 @@
-# C4Q Access Code 2.1 Google Now Replica Project
+# C4Q Access Code Google Now Replica Project
 
 ## Introduction
 
